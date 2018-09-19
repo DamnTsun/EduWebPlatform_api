@@ -55,7 +55,6 @@ class App {
         try {
             $payload = $client->verifyIdToken($id_token);
         } catch (UnexpectedValueException $e) {
-            echo 'Google OAuth2.0 error: ' . $e->getMessage();
             return null;
         }
 
@@ -65,4 +64,5 @@ class App {
             return null;
         }
     }
+
 }

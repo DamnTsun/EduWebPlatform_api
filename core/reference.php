@@ -9,7 +9,7 @@ $_ENV['db_user'] = 'mea';
 $_ENV['db_pass'] = 'mea';
 
 // Directory paths.
-$_ENV['dir_base'] = 'http://localhost/api/';
+$_ENV['dir_base'] = 'http://localhost/matheduapp-prototype_api/';
 $_ENV['dir_core'] = 'core/';
 $_ENV['dir_controllers'] = 'controllers/';
 $_ENV['dir_models'] = 'models/';
