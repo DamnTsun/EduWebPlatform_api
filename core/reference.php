@@ -18,4 +18,6 @@ $_ENV['dir_vendor'] = 'vendor/';
 // Google OAuth API information.
 $_ENV['google_client_id'] = '140771721886-3ht78s72map4d75dd0iletdh6b5lkmsr.apps.googleusercontent.com';
 $_ENV['google_client_secret'] = '2zUMuYz4FIrr1Ikq2oa5dqHP';
-$_ENV['google_redirect_url'] = 'http://localhost/mvc/account/signin/';
+
+// Other stuff.
+$_ENV['beautifyJSON'] = false; // Whether to put JSON in pre tag to make it readable.

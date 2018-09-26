@@ -11,8 +11,9 @@ class App {
 
         // Get controller. If none specified, return 400.
         if (isset($url[0])) {
+
             // Check controller exists.
-            if(file_exists($_ENV['dir_controllers'].$url[0].'.php')) {
+            if (is_file($_ENV['dir_controllers'].$url[0].'.php')) {
                 $this->controller = $url[0];
                 unset($url[0]);
                 require_once $_ENV['dir_controllers'].$this->controller.'.php';
@@ -44,7 +45,12 @@ class App {
 
     protected function parseUrl() {
         if (isset($_GET['url'])) {
-            return $url = explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
+            $url = explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
+            // Make first letter capitalized. Controller files are capitalized. Helps with case sensitive file systems.
+            for ($i = 0; $i < count($url); $i++) {
+                $url[$i] = ucfirst($url[$i]);
+            }
+            return $url;
         }
     }
 

@@ -1,6 +1,8 @@
 CREATE DATABASE math_edu_app;
 USE math_edu_app;
 
+
+
 CREATE TABLE `users` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `googleId` VARCHAR(255) NOT NULL UNIQUE,
@@ -20,18 +22,12 @@ CREATE TABLE `posts` (
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 );
 
-CREATE TABLE `topics` (
-    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(100) NOT NULL UNIQUE
-);
 
 CREATE TABLE `tests` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `title` VARCHAR(100) NOT NULL,
-    `topic_id` INT NOT NULL,
     `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `user_id` INT NOT NULL,
-    FOREIGN KEY (`topic_id`) REFERENCES `topic`(`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 );
 
