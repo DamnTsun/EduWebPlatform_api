@@ -22,12 +22,26 @@ CREATE TABLE `posts` (
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 );
 
+CREATE TABLE `topics` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE `lessons` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR (1000) NOT NULL,
+    `body` VARCHAR (10000) NOT NULL,
+    `topic_id` INT NOT NULL,
+    FOREIGN KEY (`topic_id`) REFERENCES `topics`(`id`)
+);
 
 CREATE TABLE `tests` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `title` VARCHAR(100) NOT NULL,
     `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `topic_id` INT NOT NULL,
     `user_id` INT NOT NULL,
+    FOREIGN KEY (`topic_id`) REFERENCES `topisc`(`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 );
 
@@ -59,44 +73,61 @@ INSERT INTO `posts` (`title`, `user_id`) VALUES
     ('I couldn''t think up another title.', 5
 );
 
-INSERT INTO `tests` (`title`, `user_id`) VALUES
-    ('Test 01', 1),
-    ('Test 02', 2),
-    ('Test 03', 2),
-    ('Test 04', 4),
-    ('Test 05', 5
+INSERT INTO `topics` (`name`) VALUES
+    ('Addition'),
+    ('Subtraction'),
+    ('Multiplication'),
+    ('Division'),
+    ('Fractions'
+);
+
+INSERT INTO `tests` (`title`, `user_id`, `topic_id`) VALUES
+    ('Addition 01', 1, 1),
+    ('Addition 02', 2, 1),
+    ('Subtraction 01', 2, 2),
+    ('Multiplication 01', 4, 3),
+    ('Division 01', 5, 4
 );
 
 INSERT INTO `questions` (`content`, `answer`, `userAnswer`, `test_id`) VALUES
-    ('2 + 2', '4', 'potatoes', 1),
-    ('7 + 2', '9', '9', 1),
-    ('5²', '25', '2147m', 1),
-    ('17 - 5', '12', 'uhh dunno', 1),
+    ('2 + 2', '4', '4', 1),
+    ('7 + 2', '9', '8', 1),
+    ('5 + 2', '10', '7', 1),
+    ('17 + 5', '22', '22', 1),
     ('2 + 0', '2', '2', 1),
 
     ('33 + 6', '39', '39', 2),
     ('7 + 8', '15', '15', 2),
     ('8 + 4', '12', '12', 2),
-    ('17 - 5', '12', '11', 2),
-    ('11 * 2', '22', '23', 2),
+    ('17 + 5', '22', '22', 2),
+    ('11 + 2', '13', '11', 2),
 
-    ('4²', '16', '16', 3),
-    ('3²', '9', '9', 3),
+    ('4 - 1', '3', '3', 3),
+    ('3 - 5', '-2', '0', 3),
     ('5 - 2', '3', '3', 3),
     ('12 - 8', '4', '4', 3),
     ('3 - 0', '3', '3', 3),
 
-    ('2 + 2', '4', 'NaN', 4),
-    ('12²', '144', '144', 4),
-    ('11 + 14', '25', '???', 4),
-    ('11 - 1', '10', '10', 4),
-    ('4 * 11', '44', '44', 4),
+    ('2 * 2', '4', '5', 4),
+    ('12 * 2', '24', '24', 4),
+    ('11 * 4', '44', '44', 4),
+    ('11 * 2', '22', '22', 4),
+    ('4 * 7', '28', '28', 4),
 
-    ('2 + 1', '3', 'cabbages', 5),
-    ('9 - 9', '0', '0', 5),
-    ('10²', '100', '100', 5),
-    ('11 + 1', '12', 'hmmmmm', 5),
-    ('3 + 9', '12', '12', 5
+    ('2 / 1', '2', '2', 5),
+    ('9 / 9', '1', '1', 5),
+    ('10 / 2', '5', '5', 5),
+    ('15 / 3', '5', '5', 5),
+    ('2 / 2', '1', '1', 5
+);
+
+INSERT INTO `lessons` (`title`, `body`, `topic_id`) VALUES
+    ('Addition', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Addition', 1),
+    ('Addition 2.0 Electric Boogaloo', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Addition 2.0 Electric Boogaloo', 1),
+    ('Subtraction', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Subtraction', 2),
+    ('Multiplication', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Multiplication', 3),
+    ('Division', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Division', 4),
+    ('Fractions', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Fractions', 5
 );
 
 
@@ -162,4 +193,4 @@ WHERE
 ORDER BY
 	questions.id ASC;
 
-*/Test 02
+*/
