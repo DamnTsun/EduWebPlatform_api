@@ -8,7 +8,9 @@ class Model_Topic extends Model {
                 topics.id,
                 topics.name
             FROM
-                topics",
+                topics
+            ORDER BY
+                topics.id ASC",
             null,
             Model::TYPE_FETCHALL
         );

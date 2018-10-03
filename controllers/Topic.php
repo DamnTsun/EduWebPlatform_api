@@ -24,11 +24,12 @@ class Topic extends Controller {
         $values = array();
 
         $results = $this->db->getAllTopics();
+        
         foreach ($results as $res) {
             array_push(
                 $values,
                 array(
-                    'id' => $res['id'],
+                    'id' => (int)$res['id'],
                     'name' => $res['name']
                 )
             );

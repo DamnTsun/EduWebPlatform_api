@@ -41,7 +41,7 @@ CREATE TABLE `tests` (
     `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `topic_id` INT NOT NULL,
     `user_id` INT NOT NULL,
-    FOREIGN KEY (`topic_id`) REFERENCES `topisc`(`id`),
+    FOREIGN KEY (`topic_id`) REFERENCES `topics`(`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 );
 
