@@ -6,7 +6,8 @@ class Model_Topic extends Model {
         return $results = $this->query(
             "SELECT
                 topics.id,
-                topics.name
+                topics.name,
+                topics.imageUrl
             FROM
                 topics
             ORDER BY

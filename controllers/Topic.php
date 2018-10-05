@@ -30,7 +30,8 @@ class Topic extends Controller {
                 $values,
                 array(
                     'id' => (int)$res['id'],
-                    'name' => $res['name']
+                    'name' => $res['name'],
+                    'imageUrl' => $res['imageUrl']
                 )
             );
         }

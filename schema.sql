@@ -24,7 +24,8 @@ CREATE TABLE `posts` (
 
 CREATE TABLE `topics` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(100) NOT NULL UNIQUE
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    `imageUrl` VARCHAR(100) DEFAULT ''
 );
 
 CREATE TABLE `lessons` (
@@ -73,12 +74,12 @@ INSERT INTO `posts` (`title`, `user_id`) VALUES
     ('I couldn''t think up another title.', 5
 );
 
-INSERT INTO `topics` (`name`) VALUES
-    ('Addition'),
-    ('Subtraction'),
-    ('Multiplication'),
-    ('Division'),
-    ('Fractions'
+INSERT INTO `topics` (`name`, `imageUrl`) VALUES
+    ('Addition', 'public/image/test.png'),
+    ('Subtraction', 'public/image/test.png'),
+    ('Multiplication', 'public/image/test.png'),
+    ('Division', 'public/image/test.png'),
+    ('Fractions', 'https://via.placeholder.com/64x64'
 );
 
 INSERT INTO `tests` (`title`, `user_id`, `topic_id`) VALUES
@@ -122,12 +123,12 @@ INSERT INTO `questions` (`content`, `answer`, `userAnswer`, `test_id`) VALUES
 );
 
 INSERT INTO `lessons` (`title`, `body`, `topic_id`) VALUES
-    ('Addition', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Addition', 1),
-    ('Addition 2.0 Electric Boogaloo', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Addition 2.0 Electric Boogaloo', 1),
-    ('Subtraction', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Subtraction', 2),
-    ('Multiplication', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Multiplication', 3),
-    ('Division', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Division', 4),
-    ('Fractions', '<h3 style="color:red;">(TESTING) DEFAULT BODY TEXT</h3><br/>Fractions', 5
+    ('Addition', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 1),
+    ('Addition 2.0 Electric Boogaloo', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 1),
+    ('Subtraction', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 2),
+    ('Multiplication', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 3),
+    ('Division', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 4),
+    ('Fractions', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 5
 );
 
 

@@ -54,6 +54,12 @@ class App {
         }
     }
 
+
+
+    // Utility functions.
+    /**
+     * Validates the given Google ID Token.
+     */
     public static function validateGoogleIdToken($id_token) {
         require_once 'vendor/autoload.php';
 
@@ -71,4 +77,18 @@ class App {
         }
     }
 
+    /**
+     * Returns whether the given string is an integer.
+     * Returns true is a int is given.
+     * Returns false if non-string given.
+     * Returns false if the given value is numeric but has decimal places.
+     */
+    public static function stringIsInt($string) {
+        // Check if already an int.
+        if (is_integer($string)) { echo 'was int'; return true; }
+        // Check it is a string.
+        if (!is_string($string)) { return false; }
+        // Check it only contains numbers. (0 - 9)
+        return preg_match('/^[0123456789]+$/', $string) == 1;
+    }
 }
