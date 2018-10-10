@@ -1,40 +1,79 @@
 <?php
 
+// urls
+//  - /subject
+//      GET - Gets all subjects.
+//      POST [Requires id_token in POST body] - Creates new subject. (Requires admin)
+//      DELETE [Requires id_token in POST body] - Deletes an existing subject. (Requires admin)
+
+//  - /subject/<subjectName>/topic
+//      GET - Gets all topics for a given subject.
+
+//  - /subject/<subjectName>/topic/<topicName>
+//      POST [Requires id_token in POST body] - Creates a new topic for a given subject. (Requires admin)
+//      DELETE [Requires id_token in POST body] - Deletes an existing topic for a given subject. (Requires admin)
+
+//  - /subject/<subjectName>/topic/<topicName>/lesson
+//      GET - Gets all lessons for a given topic for a given subject.
+
+//  - /subject/<subjectName>/topic/<topicName>/lesson/<lessonName>
+//      POST [Requires id_token in POST body] - Creates a new lesson for a given topic for a given subject. (Requires admin)
+//      DELETE [Requires id_token in POST body] - Deletes an existing lesson for a given topic for a given subject. (Requires admin)
+
+//  - /subject/<subjectName>/post
+//      GET - Gets all posts for a given subject.
+//      POST [Requires id_token, postTitle, postBody in POST body] - Creates a new post for a given subject. (Requires admin)
+
+//  - /subject/<subjectName>/post/<postID>
+//      DELETE [Requires id_token in POST body] - Delete an existing post for a given subject. (Requires admin)
+
+
+//  - /user
+//      POST [Requires id_token in POST body] - Gets user record corresponding to given id_token. Returns id, isAdmin, isBanned.
+//          If no user account exists for id_token, a new account is created. Then does above.
+
+//  - /user/all
+//      POST [Requires id_token in POST body] - Gets all user records. Returns id, isAdmin, isBanned. (Requires admin)
+
+//  - /user/<userID>/ban?setTo[true | false]
+//      POST [Requires id_token in POST body] - Gets user record for given userID. Sets isBanned to setTo. (Requires admin)
+
+//  - /user/<userID>/admin?setTo[true | false]
+//      POST [Requires id_token in POST body] - Gets user record for given userID. Sets isAdmin to setTo. (Requires admin)
+
+
 class App {
     
     protected $controller;
     protected $method = 'index';
     protected $params = [];
 
+
+
     public function __construct() {
         $url = $this->parseUrl();
-
-        // Get controller. If none specified, return 400.
-        if (isset($url[0])) {
-
-            // Check controller exists.
-            if (is_file($_ENV['dir_controllers'].$url[0].'.php')) {
-                $this->controller = $url[0];
-                unset($url[0]);
-                require_once $_ENV['dir_controllers'].$this->controller.'.php';
-            } else {
-                http_response_code(400);
-                return;
-            }
-        } else {
+        var_dump($url);
+        // CONTROLLER.
+        if (!isset($url[0]) || !is_file($_ENV['dir_controllers'] . $url[0] . '.php')) {
             http_response_code(400);
             return;
         }
-        $this->controller = new $this->controller;
-        
-        // Get method if specified.
+        require_once $_ENV['dir_controllers'] . $url[0] . '.php';
+        $this->controller = new $url[0];
+        unset($url[0]);
+
+
+        // METHOD
+        // Check for method parameter.
         if (isset($url[1])) {
-            // Check method exists.
+            // Check method exists. (Param may just be a value)
             if (method_exists($this->controller, $url[1])) {
                 $this->method = $url[1];
                 unset($url[1]);
             }
         }
+
+
 
         // Get parameters if specified, else empty array.
         $this->params = $url ? array_values($url) : [];
@@ -45,10 +84,15 @@ class App {
 
     protected function parseUrl() {
         if (isset($_GET['url'])) {
-            $url = explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
-            // Make first letter capitalized. Controller files are capitalized. Helps with case sensitive file systems.
+            // Replace spaces with '+' since FILTER_SANITIZE_URL would remove them.
+            $url = str_replace(' ', '+', $_GET['url']);
+            $url = explode('/', filter_var(rtrim($url, '/'), FILTER_SANITIZE_URL));
+
+            // Capitalize first letter of first param (controller). Due to case sensitive file systems.
+            if (sizeof($url) > 0) { $url[0] = ucfirst($url[0]); }
+            // Convert '+' into spaces.
             for ($i = 0; $i < count($url); $i++) {
-                $url[$i] = ucfirst($url[$i]);
+                $url[$i] = str_replace('+', ' ', $url[$i]);
             }
             return $url;
         }

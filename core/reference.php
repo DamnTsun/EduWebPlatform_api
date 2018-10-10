@@ -12,6 +12,7 @@ $_ENV['db_pass'] = 'mea';
 $_ENV['dir_base'] = 'http://localhost/matheduapp-prototype_api/';
 $_ENV['dir_core'] = 'core/';
 $_ENV['dir_controllers'] = 'controllers/';
+$_ENV['dir_subcontrollers'] = 'controllers/subcontrollers/';
 $_ENV['dir_models'] = 'models/';
 $_ENV['dir_vendor'] = 'vendor/';
 
