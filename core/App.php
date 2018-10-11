@@ -8,15 +8,11 @@
 
 //  - /subject/<subjectName>/topic
 //      GET - Gets all topics for a given subject.
-
-//  - /subject/<subjectName>/topic/<topicName>
 //      POST [Requires id_token in POST body] - Creates a new topic for a given subject. (Requires admin)
 //      DELETE [Requires id_token in POST body] - Deletes an existing topic for a given subject. (Requires admin)
 
 //  - /subject/<subjectName>/topic/<topicName>/lesson
 //      GET - Gets all lessons for a given topic for a given subject.
-
-//  - /subject/<subjectName>/topic/<topicName>/lesson/<lessonName>
 //      POST [Requires id_token in POST body] - Creates a new lesson for a given topic for a given subject. (Requires admin)
 //      DELETE [Requires id_token in POST body] - Deletes an existing lesson for a given topic for a given subject. (Requires admin)
 
@@ -32,8 +28,14 @@
 //      POST [Requires id_token in POST body] - Gets user record corresponding to given id_token. Returns id, isAdmin, isBanned.
 //          If no user account exists for id_token, a new account is created. Then does above.
 
-//  - /user/all
+//  - /user/get/all
 //      POST [Requires id_token in POST body] - Gets all user records. Returns id, isAdmin, isBanned. (Requires admin)
+
+//  - /user/get/admin
+//      POST [Requires id_token in POST body] - Gets user records of admins. Returns id, isAdmin, isBanned. (Requires admin)
+
+//  - /user/get/banned
+//      POST [Requires id_token in POST body] - Gets user records of banned users. Returns id, isAdmin, isBanned. (Requires admin)
 
 //  - /user/<userID>/ban?setTo[true | false]
 //      POST [Requires id_token in POST body] - Gets user record for given userID. Sets isBanned to setTo. (Requires admin)
@@ -43,7 +45,12 @@
 
 
 class App {
-    
+    /*
+    Param 1 is controller.
+    Param 2 is value, such as subjectName / userID.
+    Param 3 is method for controller.
+    Only param 1 is required, though params 2 / 3 are necessary for most functionality.
+    */
     protected $controller;
     protected $method = 'index';
     protected $params = [];
@@ -52,8 +59,9 @@ class App {
 
     public function __construct() {
         $url = $this->parseUrl();
-        var_dump($url);
+
         // CONTROLLER.
+        // Check parameter given a the controller exists.
         if (!isset($url[0]) || !is_file($_ENV['dir_controllers'] . $url[0] . '.php')) {
             http_response_code(400);
             return;
@@ -62,19 +70,18 @@ class App {
         $this->controller = new $url[0];
         unset($url[0]);
 
-
         // METHOD
         // Check for method parameter.
-        if (isset($url[1])) {
+        if (isset($url[2])) {
             // Check method exists. (Param may just be a value)
-            if (method_exists($this->controller, $url[1])) {
-                $this->method = $url[1];
-                unset($url[1]);
+            if (method_exists($this->controller, $url[2])) {
+                $this->method = $url[2];
+                unset($url[2]);
             }
         }
 
 
-
+        //PARAMETERS
         // Get parameters if specified, else empty array.
         $this->params = $url ? array_values($url) : [];
 

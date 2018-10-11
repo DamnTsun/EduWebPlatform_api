@@ -13,19 +13,33 @@ CREATE TABLE `users` (
     `banned` BOOLEAN DEFAULT false
 );
 
+CREATE TABLE `subjects` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(100) NOT NULL UNIQUE
+);
+
 CREATE TABLE `posts` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `title` VARCHAR(1000) NOT NULL,
     `body` VARCHAR(10000),
     `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `subject_id` INT NOT NULL,
     `user_id` INT NOT NULL,
+    FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 );
 
+/*
+Topics table. Topics name must be unique if in the same subject.
+Topic names may be reused if their subject_id field contains a different value.
+*/
 CREATE TABLE `topics` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL UNIQUE,
-    `imageUrl` VARCHAR(100) DEFAULT ''
+    `imageUrl` VARCHAR(100) DEFAULT '',
+    `subject_id` INT NOT NULL,
+    FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`),
+    UNIQUE KEY `subject_topic` (`subject_id`, `name`)
 );
 
 CREATE TABLE `lessons` (
@@ -66,20 +80,26 @@ INSERT INTO `users` (`googleId`, `forename`, `surname`, `email`) VALUES
     ('gid05', 'Biggus' ,'Dickus' ,'oldbutgold@googlemail.com'
 );
 
-INSERT INTO `posts` (`title`, `user_id`) VALUES
-    ('mysqli_real_escape_string() still isn''t dead.', 1),
-    ('abcdefghijklmnop', 2),
-    ('!!drawkcab si egassem', 4),
-    ('10111011 00001011 10001011 10001000 10111111 11111000.', 2),
-    ('I couldn''t think up another title.', 5
+INSERT INTO `subjects` (`name`) VALUES
+    ('Mathematics'),
+    ('English Language'
 );
 
-INSERT INTO `topics` (`name`, `imageUrl`) VALUES
-    ('Addition', 'public/image/test.png'),
-    ('Subtraction', 'public/image/test.png'),
-    ('Multiplication', 'public/image/test.png'),
-    ('Division', 'public/image/test.png'),
-    ('Fractions', 'https://via.placeholder.com/64x64'
+INSERT INTO `posts` (`title`, `subject_id`, `user_id`) VALUES
+    ('Math post here :_;', 1, 1),
+    ('abcdefghijklmnop', 1, 2),
+    ('!!drawkcab si egassem', 1, 4),
+    ('10111011 00001011 10001011 10001000 10111111 11111000.', 1, 2),
+    ('I couldn''t think up another title.', 1, 5
+);
+
+INSERT INTO `topics` (`name`, `imageUrl`, `subject_id`) VALUES
+    ('Addition', 'public/image/test.png', 1),
+    ('Subtraction', 'public/image/test.png', 1),
+    ('Multiplication', 'public/image/test.png', 1),
+    ('Division', 'public/image/test.png', 1),
+    ('Fractions', 'https://via.placeholder.com/64x64', 1),
+    ('Hw tu spal reel guut', 'https://via.placeholder.com/64x64', 2
 );
 
 INSERT INTO `tests` (`title`, `user_id`, `topic_id`) VALUES
