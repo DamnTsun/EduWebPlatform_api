@@ -1,11 +1,11 @@
 <?php
 
 class Model {
-    const TYPE_FETCH = 'fetch';
     const TYPE_FETCHALL = 'fetchAll';
     const TYPE_ROWCOUNT = 'rowcount';
     const TYPE_BOOL = 'boolean';
     const TYPE_INSERT = 'insert';
+    const TYPE_DELETE = 'delete';
 
     private $conn;
 
@@ -23,11 +23,6 @@ class Model {
 
         if (isset($type)) {
             switch ($type) {
-            default:
-                case $this::TYPE_FETCH:
-                    // Return first matched record.
-                    return $stmt->fetch();
-                    break;
                 case $this::TYPE_FETCHALL:
                     // Return all matched records.
                     return $stmt->fetchAll();
@@ -44,6 +39,12 @@ class Model {
                 case $this::TYPE_INSERT:
                     // Return whether insert was successful.
                     return $this->conn->lastInsertId();
+                    break;
+                case $this::TYPE_DELETE:
+                    return $stmt->rowCount() > 0;
+                    break;
+
+                default:
                     break;
             }
         }

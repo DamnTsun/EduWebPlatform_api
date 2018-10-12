@@ -2,7 +2,7 @@
 
 class Model_Topic extends Model {
 
-    public function getTopicsBySubject($subjectName, $count = 10, $offset = 0) {
+    public function getTopicsBySubject($subjectID, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
         try{
             return $results = $this->query(
@@ -13,20 +13,12 @@ class Model_Topic extends Model {
                 FROM
                     topics
                 WHERE
-                    topics.subject_id = (
-                        SELECT
-                            subjects.id
-                        FROM
-                            subjects
-                        WHERE
-                            subjects.name = :_name
-                        LIMIT 1
-                    )
+                    topics.subject_id = :_id
                 ORDER BY
                     topics.name
                 LIMIT :_count OFFSET :_offset",
                 array(
-                    ':_name' => $subjectName,
+                    ':_id' => $subjectID,
                     ':_count' => $count,
                     ':_offset' => $offset
                 ),
@@ -37,7 +29,7 @@ class Model_Topic extends Model {
         }
     }
 
-    public function addTopic($subjectName, $name, $imageUrl) {
+    public function addTopic($subjectID, $name, $imageUrl) {
         try {
             return $result = $this->query(
                 "INSERT INTO
@@ -46,25 +38,63 @@ class Model_Topic extends Model {
                     (
                         :_name,
                         :_imageUrl,
-                        (
-                            SELECT
-                                subjects.id
-                            FROM
-                                subjects
-                            WHERE
-                                subjects.name = :_subjectName
-                            LIMIT 1
-                        )
+                        :_id
                     )", 
                 array(
                     ':_name' => $name,
                     ':_imageUrl' => $imageUrl,
-                    ':_subjectName' => $subjectName
+                    ':_id' => $subjectID
                 ),
                 Model::TYPE_INSERT
             );
         } catch (PDOException $e) {
             return false;
+        }
+    }
+
+    public function deleteTopic($id) {
+        //try {
+            return $result = $this->query(
+                "DELETE FROM
+                    topics
+                WHERE
+                    topics.id = :_id",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_DELETE
+            );
+        //} catch (PDOException $e) {
+        //    return false;
+        //}
+    }
+
+
+
+
+
+
+    public function getTopicByID($id) {
+        try {
+            return $result = $this->query(
+                "SELECT
+                    topics.id,
+                    topics.name,
+                    topics.imageUrl,
+                    topics.subject_id,
+                    (SELECT subjects.name FROM subjects WHERE subjects.id = topics.subject_id LIMIT 1) AS 'subject'
+                FROM
+                    topics
+                WHERE
+                    topics.id = :_id
+                LIMIT 1",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
         }
     }
 }

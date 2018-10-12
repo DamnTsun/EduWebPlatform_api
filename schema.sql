@@ -25,8 +25,8 @@ CREATE TABLE `posts` (
     `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `subject_id` INT NOT NULL,
     `user_id` INT NOT NULL,
-    FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+    FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /*
@@ -38,7 +38,7 @@ CREATE TABLE `topics` (
     `name` VARCHAR(100) NOT NULL UNIQUE,
     `imageUrl` VARCHAR(100) DEFAULT '',
     `subject_id` INT NOT NULL,
-    FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`),
+    FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE KEY `subject_topic` (`subject_id`, `name`)
 );
 
@@ -47,7 +47,7 @@ CREATE TABLE `lessons` (
     `title` VARCHAR (1000) NOT NULL,
     `body` VARCHAR (10000) NOT NULL,
     `topic_id` INT NOT NULL,
-    FOREIGN KEY (`topic_id`) REFERENCES `topics`(`id`)
+    FOREIGN KEY (`topic_id`) REFERENCES `topics`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `tests` (
@@ -56,8 +56,8 @@ CREATE TABLE `tests` (
     `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `topic_id` INT NOT NULL,
     `user_id` INT NOT NULL,
-    FOREIGN KEY (`topic_id`) REFERENCES `topics`(`id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+    FOREIGN KEY (`topic_id`) REFERENCES `topics`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `questions` (
@@ -66,7 +66,7 @@ CREATE TABLE `questions` (
     `answer` VARCHAR(100) NOT NULL,
     `userAnswer` VARCHAR(100) NOT NULL,
     `test_id` INT NOT NULL,
-    FOREIGN KEY (`test_id`) REFERENCES `tests`(`id`)
+    FOREIGN KEY (`test_id`) REFERENCES `tests`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 

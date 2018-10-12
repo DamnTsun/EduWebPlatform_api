@@ -45,6 +45,10 @@
 
 
 class App {
+
+    const ADD_KEYWORD = 'add';
+    const DELETE_KEYWORD = 'delete';
+
     /*
     Param 1 is controller.
     Param 2 is value, such as subjectName / userID.
@@ -52,13 +56,16 @@ class App {
     Only param 1 is required, though params 2 / 3 are necessary for most functionality.
     */
     protected $controller;
+    protected $controllerValue;
     protected $method = 'index';
+    protected $methodValue;
     protected $params = [];
 
 
 
     public function __construct() {
         $url = $this->parseUrl();
+
 
         // CONTROLLER.
         // Check parameter given a the controller exists.
@@ -70,6 +77,13 @@ class App {
         $this->controller = new $url[0];
         unset($url[0]);
 
+        // CONTROLLER VALUE (id for /a/<id>)
+        if (isset($url[1])) {
+            $this->controllerValue = $url[1];
+            unset($url[1]);
+        }
+
+
         // METHOD
         // Check for method parameter.
         if (isset($url[2])) {
@@ -80,10 +94,22 @@ class App {
             }
         }
 
+        // METHOD VALUE (id for /a/b/c/<id>)
+        if (isset($url[3])) {
+            $this->methodValue = $url[3];
+            unset($url[3]);
+        }
 
-        //PARAMETERS
-        // Get parameters if specified, else empty array.
-        $this->params = $url ? array_values($url) : [];
+
+
+        // PREPARE PARAMETERS
+        // Controller value.
+        array_push($this->params, ($this->controllerValue) ? $this->controllerValue : null);
+        // Method value.
+        array_push($this->params, ($this->methodValue) ? $this->methodValue : null);
+
+        // Remaining parameters.
+        array_push($this->params, ($url) ? array_values($url) : null);
 
         // Call specified method on specified controller.
         call_user_func_array([$this->controller, $this->method], $this->params);

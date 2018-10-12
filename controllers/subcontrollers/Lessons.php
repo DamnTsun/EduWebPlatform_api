@@ -1,6 +1,6 @@
 <?php
 
-class Lesson extends Controller {
+class Lessons extends Controller {
 
     const ACTION_GET_BY_TOPIC_ID = 'topic';            // Param for getting list of lessons in a topic.
     const ACTION_GET_BY_ID = 'id';                  // Param for getting a specific lesson using it's id.
