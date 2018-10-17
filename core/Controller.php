@@ -17,4 +17,8 @@ class Controller {
             return new $model();
         }
     }
+
+    protected function printJSON($object) {
+        echo json_encode($object, JSON_HEX_QUOT | JSON_HEX_TAG);
+    }
 }

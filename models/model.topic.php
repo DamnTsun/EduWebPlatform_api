@@ -2,6 +2,7 @@
 
 class Model_Topic extends Model {
 
+    // READ
     public function getTopicsBySubject($subjectID, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
         try{
@@ -9,7 +10,9 @@ class Model_Topic extends Model {
                 "SELECT
                     topics.id,
                     topics.name,
-                    topics.imageUrl
+                    topics.imageUrl,
+                    topics.subject_id,
+                    (SELECT subjects.name FROM subjects WHERE subjects.id = topics.subject_id LIMIT 1) AS 'subjectName'
                 FROM
                     topics
                 WHERE
@@ -29,6 +32,30 @@ class Model_Topic extends Model {
         }
     }
 
+    public function getTopicByID($id) {
+        try {
+            return $result = $this->query(
+                "SELECT
+                    topics.id,
+                    topics.name,
+                    topics.imageUrl
+                FROM
+                    topics
+                WHERE
+                    topics.id = :_id
+                LIMIT 1",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+    // CREATE
     public function addTopic($subjectID, $name, $imageUrl) {
         try {
             return $result = $this->query(
@@ -52,6 +79,8 @@ class Model_Topic extends Model {
         }
     }
 
+
+    // DELETE
     public function deleteTopic($id) {
         //try {
             return $result = $this->query(
@@ -69,32 +98,4 @@ class Model_Topic extends Model {
         //}
     }
 
-
-
-
-
-
-    public function getTopicByID($id) {
-        try {
-            return $result = $this->query(
-                "SELECT
-                    topics.id,
-                    topics.name,
-                    topics.imageUrl,
-                    topics.subject_id,
-                    (SELECT subjects.name FROM subjects WHERE subjects.id = topics.subject_id LIMIT 1) AS 'subject'
-                FROM
-                    topics
-                WHERE
-                    topics.id = :_id
-                LIMIT 1",
-                array(
-                    ':_id' => $id
-                ),
-                Model::TYPE_FETCHALL
-            );
-        } catch (PDOException $e) {
-            return null;
-        }
-    }
 }

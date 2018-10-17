@@ -1,16 +1,21 @@
 <?php
 
-class Subjects extends Controller {
+class Topics extends Controller {
 
     public function __construct() {
         parent::__construct();
-        require_once $_ENV['dir_models'] . 'model.subject.php';
-        $this->db = new Model_Subject();
+        require_once $_ENV['dir_models'] . 'model.topic.php';
+        $this->db = new Model_Topic();
     }
 
 
+    public function getAllTopicsBySubject($id) {
+        // Validate $id.
+        if (!isset($id) || !App::stringIsInt($id)) {
+            http_response_code(400); return;
+        }
+        $id = (int)$id;
 
-    public function getAllSubjects() {
         // Get count / offset GET params if given.
         $count = 10; $offset = 0;
         if (isset($_GET['count']) && App::stringIsInt($_GET['count'])) {
@@ -21,11 +26,12 @@ class Subjects extends Controller {
         }
 
         // Attempt query.
-        $results = $this->db->getAllSubjects($count, $offset);
+        $results = $this->db->getTopicsBySubject($id, $count, $offset);
+        // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
         }
-
+        
         // Format and display results.
         $output = array();
         foreach ($results as $res) {
@@ -33,7 +39,8 @@ class Subjects extends Controller {
                 $output,
                 array(
                     'id' => (int)$res['id'],
-                    'name' => $res['name']
+                    'name' => $res['name'],
+                    'imageUrl' => $res['imageUrl']
                 )
             );
         }
@@ -41,8 +48,7 @@ class Subjects extends Controller {
     }
 
 
-
-    public function getSubjectByID($id) {
+    public function getTopicByID($id) {
         // Validate $id.
         if (!isset($id) || !App::stringIsInt($id)) {
             http_response_code(400); return;
@@ -50,7 +56,7 @@ class Subjects extends Controller {
         $id = (int)$id;
 
         // Attempt query.
-        $results = $this->db->getSubject($id);
+        $results = $this->db->getTopicByID($id);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -60,6 +66,7 @@ class Subjects extends Controller {
             http_response_code(404); return;
         }
 
+
         // Format and display results.
         $output = array();
         foreach ($results as $res) {
@@ -67,7 +74,8 @@ class Subjects extends Controller {
                 $output,
                 array(
                     'id' => (int)$res['id'],
-                    'name' => $res['name']
+                    'name' => $res['name'],
+                    'imageUrl' => $res['imageUrl']
                 )
             );
         }

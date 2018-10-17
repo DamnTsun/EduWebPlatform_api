@@ -55,6 +55,7 @@ class App {
     Param 3 is method for controller.
     Only param 1 is required, though params 2 / 3 are necessary for most functionality.
     */
+    private $router;
     protected $controller;
     protected $controllerValue;
     protected $method = 'index';
@@ -64,55 +65,24 @@ class App {
 
 
     public function __construct() {
-        $url = $this->parseUrl();
+        // Create router instance.
+        $this->router = new Router();
 
-
-        // CONTROLLER.
-        // Check parameter given a the controller exists.
-        if (!isset($url[0]) || !is_file($_ENV['dir_controllers'] . $url[0] . '.php')) {
-            http_response_code(400);
-            return;
-        }
-        require_once $_ENV['dir_controllers'] . $url[0] . '.php';
-        $this->controller = new $url[0];
-        unset($url[0]);
-
-        // CONTROLLER VALUE (id for /a/<id>)
-        if (isset($url[1])) {
-            $this->controllerValue = $url[1];
-            unset($url[1]);
+        // Parse url, getting rid of all the bad things...
+        $urlFragments = $this->parseUrl();
+        // Return BAD REQUEST if url is just base directory.
+        if (!isset($urlFragments)) {
+            http_response_code(400); return;
         }
 
-
-        // METHOD
-        // Check for method parameter.
-        if (isset($url[2])) {
-            // Check method exists. (Param may just be a value)
-            if (method_exists($this->controller, $url[2])) {
-                $this->method = $url[2];
-                unset($url[2]);
-            }
+        // Reconstruct url with slashes using sanitized fragments.
+        $url = '';
+        foreach ($urlFragments as $frag) {
+            $url = $url . '/' . $frag;
         }
-
-        // METHOD VALUE (id for /a/b/c/<id>)
-        if (isset($url[3])) {
-            $this->methodValue = $url[3];
-            unset($url[3]);
-        }
-
-
-
-        // PREPARE PARAMETERS
-        // Controller value.
-        array_push($this->params, ($this->controllerValue) ? $this->controllerValue : null);
-        // Method value.
-        array_push($this->params, ($this->methodValue) ? $this->methodValue : null);
-
-        // Remaining parameters.
-        array_push($this->params, ($url) ? array_values($url) : null);
-
-        // Call specified method on specified controller.
-        call_user_func_array([$this->controller, $this->method], $this->params);
+        
+        // Attempt to match a route.
+        $this->router->checkRoutes($url, $urlFragments);
     }
 
     protected function parseUrl() {
@@ -121,9 +91,7 @@ class App {
             $url = str_replace(' ', '+', $_GET['url']);
             $url = explode('/', filter_var(rtrim($url, '/'), FILTER_SANITIZE_URL));
 
-            // Capitalize first letter of first param (controller). Due to case sensitive file systems.
-            if (sizeof($url) > 0) { $url[0] = ucfirst($url[0]); }
-            // Convert '+' into spaces.
+            // Convert '+' back into spaces.
             for ($i = 0; $i < count($url); $i++) {
                 $url[$i] = str_replace('+', ' ', $url[$i]);
             }
@@ -138,20 +106,19 @@ class App {
      * Validates the given Google ID Token.
      */
     public static function validateGoogleIdToken($id_token) {
-        require_once 'vendor/autoload.php';
+        // Load in Google API.
+        require_once $_ENV['vendor'] . 'autoload.php';
 
-        $client = new Google_Client(['client_id' => $_ENV['google_client_id']]);
+        $client = new Google_Client([ 'client_id' => $_ENV['google_client_id'] ]);
+
+        // Verify id_token. Return JWT payload if successful, otherwise null.
+        $payload = null;
         try {
             $payload = $client->verifyIdToken($id_token);
         } catch (UnexpectedValueException $e) {
-            return null;
+            $payload = null;
         }
-
-        if ($payload) {
-            return $payload;
-        } else {
-            return null;
-        }
+        return $payload;
     }
 
     /**
@@ -167,5 +134,37 @@ class App {
         if (!is_string($string)) { return false; }
         // Check it only contains numbers. (0 - 9)
         return preg_match('/^[0123456789]+$/', $string) == 1;
+    }
+
+    public static function validateSession($requiresAdmin) {
+        session_start();
+        session_regenerate_id();
+        
+        // Attempt to get id_token from session.
+        $id_token = null;
+        if (!isset($_SESSION['id_token'])) {
+            // If id_token not in session, attempt to get it from POST body.
+            if (!isset($_POST['id_token'])) {
+                http_response_code(401); exit();
+            }
+            $id_token = $_POST['id_token'];
+        } else {
+            $id_token = $_SESSION['id_token'];
+        }
+
+        // Attempt to get payload from id_token.
+        $payload = App::validateGoogleIdToken($id_token);
+        // Check successful.
+        if ($payload == null) {
+            http_response_code(400); exit();
+        }
+        
+        // Get users controller instance.
+        require_once $_ENV['dir_controllers'] . 'Users.php';
+        $userController = new Users();
+        
+        if (!$userController->checkUserExistsByGoogleId($payload['sub'])) {
+            
+        }
     }
 }

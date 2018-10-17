@@ -143,12 +143,12 @@ INSERT INTO `questions` (`content`, `answer`, `userAnswer`, `test_id`) VALUES
 );
 
 INSERT INTO `lessons` (`title`, `body`, `topic_id`) VALUES
-    ('Addition', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 1),
-    ('Addition 2.0 Electric Boogaloo', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 1),
-    ('Subtraction', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 2),
-    ('Multiplication', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 3),
-    ('Division', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 4),
-    ('Fractions', '"<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>"', 5
+    ('Addition', '<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>', 1),
+    ('Addition 2.0 Electric Boogaloo', '<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>', 1),
+    ('Subtraction', '<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>', 2),
+    ('Multiplication', '<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>', 3),
+    ('Division', '<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>', 4),
+    ('Fractions', '<p>blah</p><p>&nbsp;</p><p>blahhbhbhhg</p><p>rggwr</p><p><strong>wrgwrgwgwrgwg</strong> rgwgr rwg</p>', 5
 );
 
 
