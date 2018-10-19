@@ -107,18 +107,17 @@ class App {
      */
     public static function validateGoogleIdToken($id_token) {
         // Load in Google API.
-        require_once $_ENV['vendor'] . 'autoload.php';
+        require_once $_ENV['dir_vendor'] . 'autoload.php';
 
         $client = new Google_Client([ 'client_id' => $_ENV['google_client_id'] ]);
 
         // Verify id_token. Return JWT payload if successful, otherwise null.
-        $payload = null;
-        try {
-            $payload = $client->verifyIdToken($id_token);
-        } catch (UnexpectedValueException $e) {
-            $payload = null;
+        $payload = $client->verifyIdToken($id_token);
+        if ($payload) {
+            return $payload;
+        } else {
+            return null;
         }
-        return $payload;
     }
 
     /**
@@ -129,42 +128,94 @@ class App {
      */
     public static function stringIsInt($string) {
         // Check if already an int.
-        if (is_integer($string)) { echo 'was int'; return true; }
+        if (is_integer($string)) { return true; }
         // Check it is a string.
         if (!is_string($string)) { return false; }
         // Check it only contains numbers. (0 - 9)
         return preg_match('/^[0123456789]+$/', $string) == 1;
     }
 
-    public static function validateSession($requiresAdmin) {
-        session_start();
-        session_regenerate_id();
-        
-        // Attempt to get id_token from session.
-        $id_token = null;
-        if (!isset($_SESSION['id_token'])) {
-            // If id_token not in session, attempt to get it from POST body.
-            if (!isset($_POST['id_token'])) {
-                http_response_code(401); exit();
-            }
-            $id_token = $_POST['id_token'];
-        } else {
-            $id_token = $_SESSION['id_token'];
+
+    public static function initSession() {
+        // Check is POST request.
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405); session_destroy(); return;
+        }
+        // Check id_token given in POST body.
+        if (!isset($_POST['id_token'])) {
+            http_response_code(400); session_destroy(); return;
         }
 
         // Attempt to get payload from id_token.
-        $payload = App::validateGoogleIdToken($id_token);
-        // Check successful.
-        if ($payload == null) {
-            http_response_code(400); exit();
+        $payload = App::validateGoogleIdToken($_POST['id_token']);
+        if (!isset($payload)) {
+            http_response_code(400); session_destroy(); return;
         }
-        
-        // Get users controller instance.
+
+        // Get user controller instance and attempt to get user using googleId.
         require_once $_ENV['dir_controllers'] . 'Users.php';
         $userController = new Users();
-        
+        // Create new user if necessary.
         if (!$userController->checkUserExistsByGoogleId($payload['sub'])) {
-            
+            $userController->addUser($payload['sub'], $payload['given_name'], $payload['family_name'], $payload['email']);
         }
+        // Get user record. Check not banned.
+        $user = $userController->getUserByGoogleId($payload['sub']);
+        if (sizeof($user) == 0) {
+            http_response_code(400); return;
+        }
+        if ($user[0]['banned']) {
+            http_response_code(403); session_destroy(); return;
+        }
+
+        // Start session.
+        session_start();
+        $_SESSION['id_token'] = $_POST['id_token'];
+        http_response_code(200);
+    }
+
+    public static function validateSession() {
+        session_start();
+        session_regenerate_id();
+        
+        // Check already in session and that id_token is set.
+        if (!isset($_SESSION) || !isset($_SESSION['id_token'])) {
+            session_destroy();
+            return null;
+        }
+
+        // Attempt to get payload from id_token.
+        $payload = App::validateGoogleIdToken($_SESSION['id_token']);
+        if (!isset($payload)) {
+            session_destroy();
+            return null;
+        }
+
+        // Get user controller instance and attempt to get user using googleId.
+        require_once $_ENV['dir_controllers'] . 'Users.php';
+        $userController = new Users();
+        $user = $userController->getUserByGoogleId($payload['sub']);
+        if (!isset($user) || sizeof($user) == 0) {
+            session_destroy();
+            return null;
+        }
+        if ($user[0]['banned']) {
+            http_response_code(403); return null;
+        }
+        return $user[0];
+    }
+
+
+    public static function getPutParameters() {
+        // Return empty if not PUT request.
+        if ($_SERVER['REQUEST_METHOD'] != 'PUT') { return array(); }
+        // Get PUT data and parse it into array.
+        parse_str(file_get_contents('php://input'), $_PUT);
+        foreach ($_PUT as $key => $value) {
+            unset($_PUT[$key]);
+            $_PUT[str_replace('amp;', '', $key)] = $value;
+        }
+
+        return $_PUT;
     }
 }

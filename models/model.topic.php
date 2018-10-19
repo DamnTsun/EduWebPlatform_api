@@ -2,6 +2,48 @@
 
 class Model_Topic extends Model {
 
+    public function checkTopicExists($subjectId, $name) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    topics.id
+                FROM
+                    topics
+                WHERE
+                    topics.subject_id = :_subjectID
+                LIMIT 1",
+                array(
+                    ':_subjectID' => $subjectId,
+                    ':_name' => $name
+                ),
+                Model::TYPE_BOOL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    public function checkTopicExistsByID($id) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    topics.id
+                FROM
+                    topics
+                WHERE
+                    topics.id = :_id
+                LIMIT 1",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_BOOL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
     // READ
     public function getTopicsBySubject($subjectID, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
@@ -82,7 +124,7 @@ class Model_Topic extends Model {
 
     // DELETE
     public function deleteTopic($id) {
-        //try {
+        try {
             return $result = $this->query(
                 "DELETE FROM
                     topics
@@ -93,9 +135,9 @@ class Model_Topic extends Model {
                 ),
                 Model::TYPE_DELETE
             );
-        //} catch (PDOException $e) {
-        //    return false;
-        //}
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 
 }

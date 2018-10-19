@@ -9,6 +9,14 @@ class Subjects extends Controller {
     }
 
 
+    public function checkSubjectExists($id) {
+        $results = $this->db->checkSubjectExistsByID($id);
+        if (!isset($results)) {
+            return null;
+        }
+        return $results;
+    }
+
 
     public function getAllSubjects() {
         // Get count / offset GET params if given.
@@ -27,16 +35,7 @@ class Subjects extends Controller {
         }
 
         // Format and display results.
-        $output = array();
-        foreach ($results as $res) {
-            array_push(
-                $output,
-                array(
-                    'id' => (int)$res['id'],
-                    'name' => $res['name']
-                )
-            );
-        }
+        $output = $this->formatRecords($results);
         $this->printJSON($output);
     }
 
@@ -61,16 +60,97 @@ class Subjects extends Controller {
         }
 
         // Format and display results.
-        $output = array();
-        foreach ($results as $res) {
+        $output = $this->formatRecords($results);
+        $this->printJSON($output);
+    }
+
+
+
+    /**
+     * Creates a new subject record if validation is passed. Then returns new record as JSON.
+     */
+    public function createSubject() {
+        // Get session user. They must be admin.
+        $user = $this->handleSessionUser(true);
+
+        // Get POST params.
+        if (!isset($_POST['name'])) {
+            http_response_code(400);
+            $this->printMessage('`name` parameter not given in POST body.');
+            return;
+        }
+        $name = $_POST['name'];
+
+        // Check subject with name does not exist.
+        if ($this->db->checkSubjectExists($name)) {
+            http_response_code(400);
+            $this->printMessage('Subject with name `' . $name . '` already exists. Subject names must be unique.');
+            return;
+        }
+
+        // Attempt to create new resource.
+        $result = $this->db->addSubject($name);
+        if (!isset($result)) {
+            http_response_code(500);
+            $this->printMessage('Something went wrong. Unable to add subject.');
+            return;
+        }
+
+        // Get newly create resource and return it.
+        $record = $this->db->getSubject($result);
+        if (!isset($record)) {
+            http_response_code(500);
+            $this->printMessage('Something went wrong. Subject was created, but cannot be retrieved.');
+            return;
+        }
+        $this->printJSON($this->formatRecords($record));
+        http_response_code(201);
+    }
+
+
+    public function deleteSubject($id) {
+        // Get session user. They must be admin.
+        $user = $this->handleSessionUser(true);
+
+        if (!App::stringIsInt($id)) {
+            http_response_code(400);
+            $this->printMessage('Cannot delete. Given id value is not an integer.');
+            return;
+        }
+
+        // Check subject with id exists.
+        $record = $this->db->getSubject($id);
+        if (!isset($record) || sizeof($record) == 0) {
+            http_response_code(404);
+            $this->printMessage('Cannot delete. No subject found with given id.');
+            return;
+        }
+
+        $success = $this->db->deleteSubject($id);
+        if (!$success) {
+            http_response_code(500);
+            $this->printMessage('Something went wrong. Unable to delete subject.');
+            return;
+        }
+
+        http_response_code(200);
+    }
+
+
+    /**
+     * Formats array containing record data, for use before encoding as JSON.
+     */
+    protected function formatRecords($records) {
+        $results = array();
+        foreach ($records as $rec) {
             array_push(
-                $output,
+                $results,
                 array(
-                    'id' => (int)$res['id'],
-                    'name' => $res['name']
+                    'id' => (int)$rec['id'],
+                    'name' => $rec['name']
                 )
             );
         }
-        $this->printJSON($output);
+        return $results;
     }
 }

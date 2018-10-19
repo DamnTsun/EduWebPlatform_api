@@ -63,4 +63,5 @@ class Model {
     protected function setPDOPerformanceMode($state) {
         $this->conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, $state);
     }
+
 }

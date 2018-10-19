@@ -2,13 +2,11 @@
 
 class Model_User extends Model {
 
-    public function checkUserExistsByGoogleID($googleId) {
+    public function checkUserExistsByGoogleId($googleId) {
         try {
             return $results = $this->query(
                 "SELECT
-                    id,
-                    admin,
-                    banned
+                    users.id
                 FROM
                     users
                 WHERE
@@ -24,6 +22,28 @@ class Model_User extends Model {
         }
     }
 
+
+    public function getUserByGoogleId($googleId) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    users.id,
+                    users.admin,
+                    users.banned
+                FROM
+                    users
+                WHERE
+                    users.googleId = :_googleId
+                LIMIT 1",
+                array(
+                    ':_googleId' => $googleId
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 
 
     public function addUser($googleId, $forename, $surname, $email) {

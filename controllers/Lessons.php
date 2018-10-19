@@ -33,17 +33,7 @@ class Lessons extends Controller {
         }
 
         // Format and display results.
-        $output = array();
-        foreach ($results as $res) {
-            array_push(
-                $output,
-                array(
-                    'id' => (int)$res['id'],
-                    'title' => $res['title'],
-                    'body' => addslashes($res['body'])
-                )
-            );
-        }
+        $output = $this->formatRecords($results);
         $this->printJSON($output);
     }
 
@@ -68,17 +58,24 @@ class Lessons extends Controller {
 
 
         // Format and display results.
-        $output = array();
-        foreach ($results as $res) {
+        $output = formatRecords($results);
+        $this->printJSON($output);
+    }
+
+
+
+    protected function formatRecords($records) {
+        $results = array();
+        foreach ($records as $rec) {
             array_push(
-                $output,
+                $results,
                 array(
-                    'id' => (int)$res['id'],
-                    'title' => $res['title'],
-                    'body' => addslashes($res['body'])
+                    'id' => (int)$rec['id'],
+                    'title' => $rec['title'],
+                    'body' => addslashes($rec['body'])
                 )
             );
         }
-        $this->printJSON($output);
+        return $results;
     }
 }
