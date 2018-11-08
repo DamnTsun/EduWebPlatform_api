@@ -7,7 +7,7 @@ ini_set('display_startup_errors', TRUE);
 
 
 // Setup base stuff.
-header("Access-Control-Allow-Origin: http://localhost:4200");
+header("Access-Control-Allow-Origin: *");
 
 require_once 'core/reference.php';
 require_once 'core/Router.php';
