@@ -1,8 +1,8 @@
-Options -MultiViews
+Options -Indexes
 DirectoryIndex index.php
 RewriteEngine On
 
-RewriteBase /api/
+RewriteBase /matheduapp-prototype_api/
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

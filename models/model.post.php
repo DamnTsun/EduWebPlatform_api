@@ -10,8 +10,23 @@ class Model_Post extends Model {
         // Disable performance mode since it converts ints to strings. Re-enable after.
         $this->setPDOPerformanceMode(false);
         return $result = $this->query(
-            'SELECT `title`, `body`, `date` FROM `posts` LIMIT :_count OFFSET :_offset',
-            array(':_count' => $count, ':_offset' => $offset),
+            "SELECT
+                posts.title,
+                posts.body,
+                posts.date,
+                CONCAT (users.forename, ' ', users.surname) AS 'author'
+            FROM
+                posts,
+                users
+            WHERE
+                posts.user_id = users.id
+            ORDER BY
+                posts.date DESC
+            LIMIT :_count OFFSET :_offset",
+            array(
+                ':_count' => $count,
+                ':_offset' => $offset
+            ),
             Model::TYPE_FETCHALL
         );
     }
@@ -21,10 +36,16 @@ class Model_Post extends Model {
     /**
      * Adds a new post with the given title, body, and current timestamp.
      */
-    public function addPost($title, $body) {
+    public function addPost($title, $body, $user_id) {
         $result = $this->query(
-            'INSERT INTO `posts` (`title`, `body`, `date`) VALUES (:title, :body, CURRENT_TIMESTAMP())',
-            array(':title' => $title, ':body' => $body),
+            'INSERT INTO
+                `posts` (`title`, `body`, `date`, `user_id`)
+            VALUES
+                (:title, :body, CURRENT_TIMESTAMP(), :userId)',
+            array(
+                ':title' => $title,
+                ':body' => $body,
+                ':userId' => $user_id),
             Model::TYPE_INSERT
         );
 
