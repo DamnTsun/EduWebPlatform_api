@@ -2,7 +2,7 @@ Options -Indexes
 DirectoryIndex index.php
 RewriteEngine On
 
-RewriteBase /matheduapp-prototype_api/
+RewriteBase /EduWebPlatform_api/
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
