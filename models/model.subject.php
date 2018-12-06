@@ -8,7 +8,9 @@ class Model_Subject extends Model {
             return $results = $this->query(
                 "SELECT
                     subjects.id,
-                    subjects.name
+                    subjects.name,
+                    subjects.description,
+                    subjects.homepageContent
                 FROM
                     subjects
                 ORDER BY
@@ -31,7 +33,9 @@ class Model_Subject extends Model {
             return $results = $this->query(
                 "SELECT
                     subjects.id,
-                    subjects.name
+                    subjects.name,
+                    subjects.description,
+                    subjects.homepageContent
                 FROM
                     subjects
                 WHERE

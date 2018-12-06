@@ -147,7 +147,9 @@ class Subjects extends Controller {
                 $results,
                 array(
                     'id' => (int)$rec['id'],
-                    'name' => $rec['name']
+                    'name' => $rec['name'],
+                    'description' => $rec['description'],
+                    'homepageContent' => $rec['homepageContent']
                 )
             );
         }

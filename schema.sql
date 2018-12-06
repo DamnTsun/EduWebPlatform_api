@@ -15,7 +15,9 @@ CREATE TABLE `users` (
 
 CREATE TABLE `subjects` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(100) NOT NULL UNIQUE
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    `description` VARCHAR(4096),
+    `homepageContent` TEXT
 );
 
 CREATE TABLE `posts` (
@@ -80,9 +82,9 @@ INSERT INTO `users` (`googleId`, `forename`, `surname`, `email`) VALUES
     ('gid05', 'Biggus' ,'Dickus' ,'oldbutgold@googlemail.com'
 );
 
-INSERT INTO `subjects` (`name`) VALUES
-    ('Mathematics'),
-    ('English Language'
+INSERT INTO `subjects` (`name`, `description`, `homepageContent`) VALUES
+    ('Mathematics', 'Subject for Mathematics. Covers topics such as addition, subtracts, multiplication, etc.', ''),
+    ('English Language', 'Subject for English Language. Just a placeholder. Don''t expect any real content...', ''
 );
 
 INSERT INTO `posts` (`title`, `subject_id`, `user_id`) VALUES
