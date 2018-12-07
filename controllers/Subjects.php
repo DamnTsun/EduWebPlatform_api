@@ -74,12 +74,23 @@ class Subjects extends Controller {
         $user = $this->handleSessionUser(true);
 
         // Get POST params.
+        // Name
         if (!isset($_POST['name'])) {
             http_response_code(400);
             $this->printMessage('`name` parameter not given in POST body.');
             return;
         }
         $name = $_POST['name'];
+        // Description
+        $description = '';
+        if (isset($_POST['description'])) {
+            $description = $_POST['description'];
+        }
+        // Home page content
+        $homepageContent = '';
+        if (isset($_POST['homepageContent'])) {
+            $homepageContent = $_POST['homepageContent'];
+        }
 
         // Check subject with name does not exist.
         if ($this->db->checkSubjectExists($name)) {
@@ -89,7 +100,7 @@ class Subjects extends Controller {
         }
 
         // Attempt to create new resource.
-        $result = $this->db->addSubject($name);
+        $result = $this->db->addSubject($name, $description, $homepageContent);
         if (!isset($result)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Unable to add subject.');
