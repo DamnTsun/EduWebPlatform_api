@@ -16,7 +16,7 @@ CREATE TABLE `users` (
 CREATE TABLE `subjects` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL UNIQUE,
-    `description` VARCHAR(4096),
+    `description` VARCHAR(4096) DEFAULT '',
     `homepageContent` TEXT
 );
 
@@ -38,6 +38,7 @@ Topic names may be reused if their subject_id field contains a different value.
 CREATE TABLE `topics` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL UNIQUE,
+    `description` VARCHAR(4096) DEFAULT '',
     `imageUrl` VARCHAR(100) DEFAULT '',
     `subject_id` INT NOT NULL,
     FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -95,13 +96,13 @@ INSERT INTO `posts` (`title`, `subject_id`, `user_id`) VALUES
     ('I couldn''t think up another title.', 1, 5
 );
 
-INSERT INTO `topics` (`name`, `imageUrl`, `subject_id`) VALUES
-    ('Addition', 'public/image/test.png', 1),
-    ('Subtraction', 'public/image/test.png', 1),
-    ('Multiplication', 'public/image/test.png', 1),
-    ('Division', 'public/image/test.png', 1),
-    ('Fractions', 'https://via.placeholder.com/64x64', 1),
-    ('Hw tu spal reel guut', 'https://via.placeholder.com/64x64', 2
+INSERT INTO `topics` (`name`, `description`, `imageUrl`, `subject_id`) VALUES
+    ('Addition', 'How to add numbers together.', 'public/image/test.png', 1),
+    ('Subtraction', 'How to subtract one number from another.', 'public/image/test.png', 1),
+    ('Multiplication', 'How multiple numbers together.', 'public/image/test.png', 1),
+    ('Division', 'How to divide one number by another.', 'public/image/test.png', 1),
+    ('Fractions', 'A new way of representing values!', 'https://via.placeholder.com/64x64', 1),
+    ('Hw tu spal reel guut', 'How to spell `Dolphin`: D O L F I N.', 'https://via.placeholder.com/64x64', 2
 );
 
 INSERT INTO `tests` (`title`, `user_id`, `topic_id`) VALUES

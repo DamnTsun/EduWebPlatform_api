@@ -11,6 +11,8 @@ class Model_Topic extends Model {
                     topics
                 WHERE
                     topics.subject_id = :_subjectID
+                    AND
+                    topics.name = :_name
                 LIMIT 1",
                 array(
                     ':_subjectID' => $subjectId,
@@ -52,6 +54,7 @@ class Model_Topic extends Model {
                 "SELECT
                     topics.id,
                     topics.name,
+                    topics.description,
                     topics.imageUrl,
                     topics.subject_id,
                     (SELECT subjects.name FROM subjects WHERE subjects.id = topics.subject_id LIMIT 1) AS 'subjectName'
@@ -80,6 +83,7 @@ class Model_Topic extends Model {
                 "SELECT
                     topics.id,
                     topics.name,
+                    topics.description,
                     topics.imageUrl
                 FROM
                     topics
@@ -98,19 +102,21 @@ class Model_Topic extends Model {
 
 
     // CREATE
-    public function addTopic($subjectID, $name, $imageUrl) {
+    public function addTopic($subjectID, $name, $description, $imageUrl) {
         try {
             return $result = $this->query(
                 "INSERT INTO
-                    topics (name, imageUrl, subject_id)
+                    topics (name, description, imageUrl, subject_id)
                 VALUES
                     (
                         :_name,
+                        :_desc,
                         :_imageUrl,
                         :_id
                     )", 
                 array(
                     ':_name' => $name,
+                    ':_desc' => $description,
                     ':_imageUrl' => $imageUrl,
                     ':_id' => $subjectID
                 ),

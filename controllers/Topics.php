@@ -65,14 +65,23 @@ class Topics extends Controller {
 
     public function createTopic($subjectID) {
         // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        //$user = $this->handleSessionUser(true);
 
         // Get POST params.
+        $name = '';
+        $description = '';
+        $imageUrl = '';
+        // Name (REQ)
         if (!isset($_POST['name'])) {
             http_response_code(400);
             $this->printMessage('`name` parameter not given in POST body.');
             return;
         }
+        // Description
+        if (isset($_POST['description'])) {
+            $description = $_POST['description'];
+        }
+        // ImageUrl (REQ)
         if (!isset($_POST['imageUrl'])) {
             http_response_code(400);
             $this->printMessage('`imageUrl` parameter not given in POST body.');
@@ -90,14 +99,14 @@ class Topics extends Controller {
             return;
         }
         // Check no topic with name and subject id.
-        if ($this->db->checkTopicExists($id, $name)) {
+        if ($this->db->checkTopicExists($subjectID, $name)) {
             http_response_code(400);
             $this->printMessage('Subject with name `' . $name . '` already exists in the specified subject.');
             return;
         }
 
         // Attempt to create.
-        $result = $this->db->addTopic($subjectID, $name, $imageUrl);
+        $result = $this->db->addTopic($subjectID, $name, $description, $imageUrl);
         if (!isset($result)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Unable to add topic.');
@@ -105,7 +114,7 @@ class Topics extends Controller {
         }
 
         // Get newly created resource and return it.
-        $record = $this->db->getTopicByID($id);
+        $record = $this->db->getTopicByID($result);
         if (!isset($record)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Topic was created, but cannot be retrieved.');
@@ -146,6 +155,7 @@ class Topics extends Controller {
                 array(
                     'id' => (int)$rec['id'],
                     'name' => $rec['name'],
+                    'description' => $rec['description'],
                     'imageUrl' => $rec['imageUrl']
                 )
             );
