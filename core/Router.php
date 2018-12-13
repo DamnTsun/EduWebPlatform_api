@@ -153,6 +153,16 @@ class Router {
                         $controller = new Topics();
                         $controller->deleteTopic($params[3]);
                     }
+                ),
+
+                // Delete lesson record with given id.
+                '/subjects/:subjectid/topics/:topicid/lessons/:lessonid' => array(
+                    'regex' => '/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/',
+                    'method' => function($params) {
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
+                        $controller = new Lessons();
+                        $controller->deleteLesson($params[3], $params[5]); // topic id, lesson id.
+                    }
                 )
             )
         );

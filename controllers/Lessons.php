@@ -77,7 +77,7 @@ class Lessons extends Controller {
      */
     public function createLesson($topicid) {
         // Get session user. They must be admin.
-        //$user = $this->handleSessionUser(true);
+        $user = $this->handleSessionUser(true);
 
         // Get POST params.
         $name = '';
@@ -131,6 +131,36 @@ class Lessons extends Controller {
         }
         $this->printJSON($this->formatRecords($record));
         http_response_code(201);
+    }
+
+
+
+
+
+    /**
+     * Deletes lesson with the given id.
+     */
+    public function deleteLesson($topicid, $id) {
+        // Get session user. They must be admin.
+        $user = $this->handleSessionUser(true);
+
+        // Check lesson exists.
+        $exists = $this->db->checkLessonExistsByID($topicid, $id);
+        if (!isset($exists) || !$exists) {
+            http_response_code(404);
+            $this->printMessage('Specified lesson does not exists.');
+            return;
+        }
+
+        // Attempt to delete.
+        $result = $this->db->deleteLesson($id);
+        if (!$result) {
+            http_response_code(500);
+            $this->printMessage('Something went wrong. Unable to delete lesson.');
+            return;
+        }
+        // Success.
+        http_response_code(200);
     }
 
 

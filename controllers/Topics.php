@@ -92,7 +92,7 @@ class Topics extends Controller {
      */
     public function createTopic($subjectID) {
         // Get session user. They must be admin.
-        //$user = $this->handleSessionUser(true);
+        $user = $this->handleSessionUser(true);
 
         // Get POST params.
         $name = '';
@@ -169,6 +169,7 @@ class Topics extends Controller {
             $this->printMessage('Something went wrong. Unable to delete topic.');
             return;
         }
+        // Success.
         http_response_code(200);
     }
 
