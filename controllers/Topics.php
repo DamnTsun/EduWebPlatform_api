@@ -4,11 +4,29 @@ class Topics extends Controller {
 
     public function __construct() {
         parent::__construct();
-        require_once $_ENV['dir_models'] . 'model.topic.php';
+        require_once $_ENV['dir_models'] . $_ENV['models']['topics'];
         $this->db = new Model_Topic();
     }
 
 
+    /**
+     * Checks whether topic with given id exists.
+     */
+    public function checkTopicExists($id) {
+        $results = $this->db->checkTopicExistsByID($id);
+        if (!isset($results)) {
+            return null;
+        }
+        return $results;
+    }
+
+
+
+
+
+    /**
+     * Gets all topics within the given subject (by subject_id)
+     */
     public function getAllTopicsBySubject($id) {
         // Validate $id.
         if (!isset($id) || !App::stringIsInt($id)) {
@@ -38,6 +56,9 @@ class Topics extends Controller {
     }
 
 
+    /**
+     * Gets topic record with given id.
+     */
     public function getTopicByID($id) {
         // Validate $id.
         if (!isset($id) || !App::stringIsInt($id)) {
@@ -63,6 +84,12 @@ class Topics extends Controller {
     }
 
 
+
+
+
+    /**
+     * Creates new topic record.
+     */
     public function createTopic($subjectID) {
         // Get session user. They must be admin.
         //$user = $this->handleSessionUser(true);
@@ -70,7 +97,6 @@ class Topics extends Controller {
         // Get POST params.
         $name = '';
         $description = '';
-        $imageUrl = '';
         // Name (REQ)
         if (!isset($_POST['name'])) {
             http_response_code(400);
@@ -81,14 +107,7 @@ class Topics extends Controller {
         if (isset($_POST['description'])) {
             $description = $_POST['description'];
         }
-        // ImageUrl (REQ)
-        if (!isset($_POST['imageUrl'])) {
-            http_response_code(400);
-            $this->printMessage('`imageUrl` parameter not given in POST body.');
-            return;
-        }
         $name = $_POST['name'];
-        $imageUrl = $_POST['imageUrl'];
         
         // Check subject exists.
         require_once $_ENV['dir_controllers'] . 'Subjects.php';
@@ -101,12 +120,12 @@ class Topics extends Controller {
         // Check no topic with name and subject id.
         if ($this->db->checkTopicExists($subjectID, $name)) {
             http_response_code(400);
-            $this->printMessage('Subject with name `' . $name . '` already exists in the specified subject.');
+            $this->printMessage('Topic with name `' . $name . '` already exists in the specified subject.');
             return;
         }
 
         // Attempt to create.
-        $result = $this->db->addTopic($subjectID, $name, $description, $imageUrl);
+        $result = $this->db->addTopic($subjectID, $name, $description);
         if (!isset($result)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Unable to add topic.');
@@ -124,6 +143,13 @@ class Topics extends Controller {
         http_response_code(201);
     }
 
+
+
+
+
+    /**
+     * Deletes topic with given id.
+     */
     public function deleteTopic($id) {
         // Get session user. They must be admin.
         $user = $this->handleSessionUser(true);
@@ -147,6 +173,12 @@ class Topics extends Controller {
     }
 
 
+
+
+
+    /**
+     * Formats records so they look better.
+     */
     protected function formatRecords($records) {
         $results = array();
         foreach ($records as $rec) {
@@ -155,8 +187,7 @@ class Topics extends Controller {
                 array(
                     'id' => (int)$rec['id'],
                     'name' => $rec['name'],
-                    'description' => $rec['description'],
-                    'imageUrl' => $rec['imageUrl']
+                    'description' => $rec['description']
                 )
             );
         }

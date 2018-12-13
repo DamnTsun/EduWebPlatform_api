@@ -4,11 +4,14 @@ class Lessons extends Controller {
 
     public function __construct() {
         parent::__construct();
-        require_once $_ENV['dir_models'] . 'model.lesson.php';
+        require_once $_ENV['dir_models'] . $_ENV['models']['lessons'];
         $this->db = new Model_Lesson();
     }
 
 
+    /**
+     * Gets all lessons within the given topic. (by topic_id)
+     */
     public function getAllLessonsByTopic($id) {
         // Validate $id.
         if (!isset($id) || !App::stringIsInt($id)) {
@@ -38,6 +41,9 @@ class Lessons extends Controller {
     }
 
 
+    /**
+     * Gets the lesson with the given id.
+     */
     public function getLessonByID($id) {
         // Validate $id.
         if (!isset($id) || !App::stringIsInt($id)) {
@@ -58,12 +64,82 @@ class Lessons extends Controller {
 
 
         // Format and display results.
-        $output = formatRecords($results);
+        $output = $this->formatRecords($results);
         $this->printJSON($output);
     }
 
 
 
+
+
+    /**
+     * Creates new lesson record.
+     */
+    public function createLesson($topicid) {
+        // Get session user. They must be admin.
+        //$user = $this->handleSessionUser(true);
+
+        // Get POST params.
+        $name = '';
+        $body = '';
+        // Name (REQ)
+        if (!isset($_POST['name'])) {
+            http_response_code(400);
+            $this->printMessage('`name` parameter not given in POST body.');
+            return;
+        }
+        // Body (REQ)
+        if (!isset($_POST['body'])) {
+            http_response_code(400);
+            $this->printMessage('`body` parameter not given in POST body.');
+            return;
+        }
+        // Set values.
+        $name = $_POST['name'];
+        $body = $_POST['body'];
+
+
+        // Check topic exists.
+        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+        $topicController = new Topics();
+        if (!$topicController->checkTopicExists($topicid)) {
+            http_response_code(400);
+            $this->printMessage('Specified topic does not exists.');
+            return;
+        }
+        // Check no lesson with name and topic id.
+        if ($this->db->checkLessonExists($topicid, $name)) {
+            http_response_code(400);
+            $this->printMessage('Lesson with name `' . $name . '` already exists in the specified topic.');
+            return;
+        }
+
+        // Attempt to create.
+        $result = $this->db->addLesson($topicid, $name, $body);
+        if (!isset($result)) {
+            http_response_code(500);
+            $this->printMessage('Something went wrong. Unable to add lesson.');
+            return;
+        }
+
+        // Get newly created lesson and return it.
+        $record = $this->db->getLessonByID($result);
+        if (!isset($record)) {
+            http_response_code(500);
+            $this->printMessage('Something went wrong. Lesson was created, but cannot be retreived.');
+            return;
+        }
+        $this->printJSON($this->formatRecords($record));
+        http_response_code(201);
+    }
+
+
+
+
+
+    /**
+     * Formats records so they look better.
+     */
     protected function formatRecords($records) {
         $results = array();
         foreach ($records as $rec) {
@@ -71,7 +147,7 @@ class Lessons extends Controller {
                 $results,
                 array(
                     'id' => (int)$rec['id'],
-                    'title' => $rec['title'],
+                    'name' => $rec['name'],
                     'body' => addslashes($rec['body'])
                 )
             );

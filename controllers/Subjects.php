@@ -4,11 +4,14 @@ class Subjects extends Controller {
 
     public function __construct() {
         parent::__construct();
-        require_once $_ENV['dir_models'] . 'model.subject.php';
+        require_once $_ENV['dir_models'] . $_ENV['models']['subjects'];
         $this->db = new Model_Subject();
     }
 
 
+    /**
+     * Checks subject exists.
+     */
     public function checkSubjectExists($id) {
         $results = $this->db->checkSubjectExistsByID($id);
         if (!isset($results)) {
@@ -18,6 +21,12 @@ class Subjects extends Controller {
     }
 
 
+
+
+
+    /**
+     * Gets all subjects.
+     */
     public function getAllSubjects() {
         // Get count / offset GET params if given.
         $count = 10; $offset = 0;
@@ -40,7 +49,9 @@ class Subjects extends Controller {
     }
 
 
-
+    /**
+     * Gets subject with given id.
+     */
     public function getSubjectByID($id) {
         // Validate $id.
         if (!isset($id) || !App::stringIsInt($id)) {
@@ -63,6 +74,8 @@ class Subjects extends Controller {
         $output = $this->formatRecords($results);
         $this->printJSON($output);
     }
+
+
 
 
 
@@ -119,6 +132,12 @@ class Subjects extends Controller {
     }
 
 
+
+
+
+    /**
+     * Deletes subject with given id.
+     */
     public function deleteSubject($id) {
         // Get session user. They must be admin.
         $user = $this->handleSessionUser(true);
@@ -147,6 +166,9 @@ class Subjects extends Controller {
         http_response_code(200);
     }
 
+
+
+    
 
     /**
      * Formats array containing record data, for use before encoding as JSON.

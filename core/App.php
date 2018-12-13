@@ -153,7 +153,7 @@ class App {
         }
 
         // Get user controller instance and attempt to get user using googleId.
-        require_once $_ENV['dir_controllers'] . 'Users.php';
+        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $userController = new Users();
         // Create new user if necessary.
         if (!$userController->checkUserExistsByGoogleId($payload['sub'])) {
@@ -192,7 +192,7 @@ class App {
         }
 
         // Get user controller instance and attempt to get user using googleId.
-        require_once $_ENV['dir_controllers'] . 'Users.php';
+        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $userController = new Users();
         $user = $userController->getUserByGoogleId($payload['sub']);
         if (!isset($user) || sizeof($user) == 0) {

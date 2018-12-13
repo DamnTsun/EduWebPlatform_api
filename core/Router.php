@@ -10,7 +10,7 @@ class Router {
                 '/subjects' => array(
                     'regex' => '/^\/subjects\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Subjects.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
                         $controller = new Subjects();
                         $controller->getAllSubjects();
                     }
@@ -18,7 +18,7 @@ class Router {
                 '/subjects/:id' => array(
                     'regex' => '/^\/subjects\/\d+\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Subjects.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
                         $controller = new Subjects();
                         $controller->getSubjectByID($params[1]);
                     }
@@ -28,7 +28,7 @@ class Router {
                 '/subjects/:id/topics' => array(
                     'regex' => '/^\/subjects\/\d+\/topics\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Topics.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
                         $controller = new Topics();
                         $controller->getAllTopicsBySubject($params[1]);
                     }
@@ -36,7 +36,7 @@ class Router {
                 '/subjects/:id/topics/:id' => array(
                     'regex' => '/^\/subjects\/\d+\/topics\/\d+\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Topics.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
                         $controller = new Topics();
                         $controller->getTopicByID($params[3]);
                     }
@@ -46,7 +46,7 @@ class Router {
                 '/subjects/:id/topics/:id/lessons' => array(
                     'regex' => '/^\/subjects\/\d+\/topics\/\d+\/lessons\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Lessons.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
                         $controller = new Lessons();
                         $controller->getAllLessonsByTopic($params[3]);
                     }
@@ -54,7 +54,7 @@ class Router {
                 '/subjects/:id/topics/:id/lessons/:id' => array(
                     'regex' => '/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Lessons.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
                         $controller = new Lessons();
                         $controller->getLessonByID($params[5]);
                     }
@@ -65,7 +65,7 @@ class Router {
                 '/test' => array(
                     'regex' => '/^\/test\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Subjects.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
                         $controller = new Subjects();
                         $bool = $controller->checkSubjectExists(1);
                         echo 'Found it? ';
@@ -74,6 +74,9 @@ class Router {
                     }
                 )
             ),
+
+
+
 
 
             // For authenticating and for adding new resources.
@@ -90,7 +93,7 @@ class Router {
                 '/subjects' => array(
                     'regex' => '/^\/subjects\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Subjects.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
                         $controller = new Subjects();
                         $controller->createSubject();
                     }
@@ -100,18 +103,34 @@ class Router {
                 '/subjects/:id/topics' => array(
                     'regex' => '/^\/subjects\/\d+\/topics\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Topics.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
                         $controller = new Topics();
                         $controller->createTopic($params[1]);
+                    }
+                ),
+
+                // Create a new lesson
+                '/subjects/:subjectid/topics/:topicid/lessons' => array(
+                    'regex' => '/^\/subjects\/\d+\/topics\/\d+\/lessons\/?$/',
+                    'method' => function($params) {
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
+                        $controller = new Lessons();
+                        $controller->createLesson($params[3]);
                     }
                 )
             ),
 
             
+
+
+
             // For updating values of an existing resource.
             'PUT' => array(
                 
             ),
+
+
+
 
 
             // For deleting an existing resource.
@@ -120,7 +139,7 @@ class Router {
                 '/subjects/:id' => array(
                     'regex' => '/^\/subjects\/\d+\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Subjects.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
                         $controller = new Subjects();
                         $controller->deleteSubject($params[1]);
                     }
@@ -130,7 +149,7 @@ class Router {
                 '/subjects/:id/topics/:id' => array(
                     'regex' => '/^\/subjects\/\d+\/topics\/\d+\/?$/',
                     'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . 'Topics.php';
+                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
                         $controller = new Topics();
                         $controller->deleteTopic($params[3]);
                     }
