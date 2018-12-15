@@ -10,14 +10,58 @@ class Lessons extends Controller {
 
 
     /**
-     * Gets all lessons within the given topic. (by topic_id)
+     * Checks whether lesson with given id exists within the given topic, and that the given topic exists within the given subject.
      */
-    public function getAllLessonsByTopic($id) {
-        // Validate $id.
-        if (!isset($id) || !App::stringIsInt($id)) {
+    public function checkLessonExists($subjectid, $topicid, $lessonid) {
+        // Check topic is within given subject.
+        if (!$this->checkTopicExists($subjectid, $topicid)) { return false; }
+        // Check lesson is within subject.
+        $results = $this->db->checkLessonExistsByID($topicid, $lessonid);
+        if (!isset($results)) {
+            return null;
+        }
+        return $results;
+    }
+
+
+    /**
+     * Checks whether topic with given id exists and is within given subject.
+     */
+    public function checkTopicExists($subjectid, $topicid) {
+        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+        $topicsController = new Topics();
+        $results = $topicsController->checkTopicExists($subjectid, $topicid);
+        if (!isset($results)) {
+            return null;
+        }
+        return $results;
+    }
+
+
+
+
+
+    /**
+     * Gets all lessons within the given topic. (checks topic is within given subject.)
+     */
+    public function getAllLessonsByTopic($subjectid, $topicid) {
+        // Validate $subjectid.
+        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
             http_response_code(400); return;
         }
-        $id = (int)$id;
+        $subjectid = (int)$subjectid;
+
+        // Validate $topicid.
+        if (!isset($topicid) || !App::stringIsInt($topicid)) {
+            http_response_code(400); return;
+        }
+        $topicid = (int)$topicid;
+
+        // Check topic exists.
+        if (!$this->checkTopicExists($subjectid, $topicid)) {
+            http_response_code(404); return;
+        }
+
 
         // Get count / offset GET params if given.
         $count = 10; $offset = 0;
@@ -29,7 +73,7 @@ class Lessons extends Controller {
         }
 
         // Attempt query.
-        $results = $this->db->getLessonsByTopic($id);
+        $results = $this->db->getLessonsByTopic($topicid);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -42,17 +86,34 @@ class Lessons extends Controller {
 
 
     /**
-     * Gets the lesson with the given id.
+     * Gets the lesson with the given id in the given topic in the given subject.
      */
-    public function getLessonByID($id) {
-        // Validate $id.
-        if (!isset($id) || !App::stringIsInt($id)) {
+    public function getLessonByID($subjectid, $topicid, $lessonid) {
+        // Validate $subjectid.
+        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
             http_response_code(400); return;
         }
-        $id = (int)$id;
+        $subjectid = (int)$subjectid;
+
+        // Validate $topicid.
+        if (!isset($topicid) || !App::stringIsInt($topicid)) {
+            http_response_code(400); return;
+        }
+        $topicid = (int)$topicid;
+        // Validate $lessonid.
+        if (!isset($lessonid) || !App::stringIsInt($lessonid)) {
+            http_response_code(400); return;
+        }
+        $lessonid = (int)$lessonid;
+
+        // Check lesson exists.
+        if (!$this->checkLessonExists($subjectid, $topicid, $lessonid)) {
+            http_response_code(404); return;
+        }
+
 
         // Attempt query.
-        $results = $this->db->getLessonByID($id);
+        $results = $this->db->getLessonByID($lessonid);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -75,7 +136,7 @@ class Lessons extends Controller {
     /**
      * Creates new lesson record.
      */
-    public function createLesson($topicid) {
+    public function createLesson($subjectid, $topicid) {
         // Get session user. They must be admin.
         $user = $this->handleSessionUser(true);
 
@@ -100,9 +161,7 @@ class Lessons extends Controller {
 
 
         // Check topic exists.
-        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-        $topicController = new Topics();
-        if (!$topicController->checkTopicExists($topicid)) {
+        if (!$this->checkTopicExists($subjectid, $topicid)) {
             http_response_code(400);
             $this->printMessage('Specified topic does not exists.');
             return;
@@ -140,20 +199,19 @@ class Lessons extends Controller {
     /**
      * Deletes lesson with the given id.
      */
-    public function deleteLesson($topicid, $id) {
+    public function deleteLesson($subjectid, $topicid, $lessonid) {
         // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        //$user = $this->handleSessionUser(true);
 
         // Check lesson exists.
-        $exists = $this->db->checkLessonExistsByID($topicid, $id);
-        if (!isset($exists) || !$exists) {
+        if (!$this->checkLessonExists($subjectid, $topicid, $lessonid)) {
             http_response_code(404);
             $this->printMessage('Specified lesson does not exists.');
             return;
         }
 
         // Attempt to delete.
-        $result = $this->db->deleteLesson($id);
+        $result = $this->db->deleteLesson($lessonid);
         if (!$result) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Unable to delete lesson.');

@@ -48,7 +48,7 @@ class Topics extends Controller {
         }
         $id = (int)$id;
 
-        // Check exists.
+        // Check subject exists.
         if (!$this->checkSubjectExists($id)) {
             http_response_code(404); return;
         }
@@ -123,7 +123,7 @@ class Topics extends Controller {
      */
     public function createTopic($subjectID) {
         // Get session user. They must be admin.
-        //$user = $this->handleSessionUser(true);
+        $user = $this->handleSessionUser(true);
 
         // Get POST params.
         $name = '';
