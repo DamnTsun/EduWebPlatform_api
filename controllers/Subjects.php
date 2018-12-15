@@ -4,11 +4,14 @@ class Subjects extends Controller {
 
     public function __construct() {
         parent::__construct();
-        require_once $_ENV['dir_models'] . 'model.subject.php';
+        require_once $_ENV['dir_models'] . $_ENV['models']['subjects'];
         $this->db = new Model_Subject();
     }
 
 
+    /**
+     * Checks subject exists.
+     */
     public function checkSubjectExists($id) {
         $results = $this->db->checkSubjectExistsByID($id);
         if (!isset($results)) {
@@ -18,6 +21,12 @@ class Subjects extends Controller {
     }
 
 
+
+
+
+    /**
+     * Gets all subjects.
+     */
     public function getAllSubjects() {
         // Get count / offset GET params if given.
         $count = 10; $offset = 0;
@@ -40,7 +49,9 @@ class Subjects extends Controller {
     }
 
 
-
+    /**
+     * Gets subject with given id.
+     */
     public function getSubjectByID($id) {
         // Validate $id.
         if (!isset($id) || !App::stringIsInt($id)) {
@@ -66,6 +77,8 @@ class Subjects extends Controller {
 
 
 
+
+
     /**
      * Creates a new subject record if validation is passed. Then returns new record as JSON.
      */
@@ -74,12 +87,23 @@ class Subjects extends Controller {
         $user = $this->handleSessionUser(true);
 
         // Get POST params.
+        // Name
         if (!isset($_POST['name'])) {
             http_response_code(400);
             $this->printMessage('`name` parameter not given in POST body.');
             return;
         }
         $name = $_POST['name'];
+        // Description
+        $description = '';
+        if (isset($_POST['description'])) {
+            $description = $_POST['description'];
+        }
+        // Home page content
+        $homepageContent = '';
+        if (isset($_POST['homepageContent'])) {
+            $homepageContent = $_POST['homepageContent'];
+        }
 
         // Check subject with name does not exist.
         if ($this->db->checkSubjectExists($name)) {
@@ -89,7 +113,7 @@ class Subjects extends Controller {
         }
 
         // Attempt to create new resource.
-        $result = $this->db->addSubject($name);
+        $result = $this->db->addSubject($name, $description, $homepageContent);
         if (!isset($result)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Unable to add subject.');
@@ -108,6 +132,12 @@ class Subjects extends Controller {
     }
 
 
+
+
+
+    /**
+     * Deletes subject with given id.
+     */
     public function deleteSubject($id) {
         // Get session user. They must be admin.
         $user = $this->handleSessionUser(true);
@@ -137,6 +167,9 @@ class Subjects extends Controller {
     }
 
 
+
+    
+
     /**
      * Formats array containing record data, for use before encoding as JSON.
      */
@@ -147,7 +180,9 @@ class Subjects extends Controller {
                 $results,
                 array(
                     'id' => (int)$rec['id'],
-                    'name' => $rec['name']
+                    'name' => $rec['name'],
+                    'description' => $rec['description'],
+                    'homepageContent' => $rec['homepageContent']
                 )
             );
         }

@@ -67,7 +67,7 @@ class App {
     public function __construct() {
         // Create router instance.
         $this->router = new Router();
-
+        
         // Parse url, getting rid of all the bad things...
         $urlFragments = $this->parseUrl();
         // Return BAD REQUEST if url is just base directory.
@@ -99,6 +99,33 @@ class App {
         }
     }
 
+
+
+
+
+    /**
+     * Gets GET parameter corresponding to given value. If GET parameter is not set, the given default value is returned.
+     * @param $paramName - String index of GET parameter in $_GET array.
+     * @param $defaultValue - Value to be returned if $_GET[$paramName] is not set.
+     * @param $isInt - Whether retrieved value should be an integer.
+     */
+    public static function getGETParameter($paramName, $defaultValue, $isInt = false) {
+        // If valid parameter name given, and it is set in $_GET, and the value is an integer
+        if (isset($paramName) &&
+            isset($_GET[$paramName])) {
+                // If value should be an int, check it and return it if it is an int.
+                if ($isInt) {
+                    if (App::stringIsInt($_GET[$paramName])) {
+                        return (int)$_GET[$paramName];
+                    }
+                // Otherwise just return value.
+                } else {
+                    return $_GET[$paramName];
+                }
+        }
+        // Validation failed. Return default value.
+        return $defaultValue;
+    }
 
 
     // Utility functions.
@@ -153,7 +180,7 @@ class App {
         }
 
         // Get user controller instance and attempt to get user using googleId.
-        require_once $_ENV['dir_controllers'] . 'Users.php';
+        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $userController = new Users();
         // Create new user if necessary.
         if (!$userController->checkUserExistsByGoogleId($payload['sub'])) {
@@ -192,7 +219,7 @@ class App {
         }
 
         // Get user controller instance and attempt to get user using googleId.
-        require_once $_ENV['dir_controllers'] . 'Users.php';
+        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $userController = new Users();
         $user = $userController->getUserByGoogleId($payload['sub']);
         if (!isset($user) || sizeof($user) == 0) {

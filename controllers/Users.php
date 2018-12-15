@@ -4,7 +4,7 @@ class Users extends Controller {
 
     public function __construct() {
         parent::__construct();
-        require_once $_ENV['dir_models'] . 'model.user.php';
+        require_once $_ENV['dir_models'] . $_ENV['models']['users'];
         $this->db = new Model_User();
     }
 

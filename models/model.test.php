@@ -1,45 +1,180 @@
 <?php
 
-class Model_Test extends Test {
+class Model_Test extends Model {
 
-    public function getTest($user_id, $test_id) {
-        $result = $this->query(
-            "SELECT
-                tests.title,
-                (SELECT COUNT(questions.id) FROM questions WHERE questions.test_id = test.id) AS 'Questions',
-                (SELECT COUNT(questions.id) FROM questions WHERE questions.test_id = test.id AND questions.userAnswer = questions.answer) AS 'Score',
-                tests.date
-            FROM
-                tests
-            WHERE
-                tests.user_id = :userId AND tests.id = :testId
-            ORDER BY
-                tests.date DESC",
-            array(
-                ':userId' => $user_id,
-                ':testId' => $test_id
-            ),
-            Model::TYPE_FETCH
-        );
-        return $result;
+    /**
+     * Checks if a test exists with the given name and topic_id.
+     * @param $topic_id - topic_id of test being looked for.
+     * @param $name - name of test being looked for.
+     */
+    public function checkTestExists($topic_id, $name) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    tests.id
+                FROM
+                    tests
+                WHERE
+                    tests.topic_id = :_topicid
+                    AND
+                    tests.name = :_name
+                LIMIT 1",
+                array(
+                    ':_topicid' => $topic_id,
+                    ':_name' => $name
+                ),
+                Model::TYPE_BOOL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
     }
 
-    public function getTests($user_id, $count = 10, $offset = 0) {
-        $result = $this->query(
-            "SELECT
-                tests.title,
-                (SELECT COUNT(questions.id) FROM questions WHERE questions.test_id = test.id) AS 'Questions',
-                (SELECT COUNT(questions.id) FROM questions WHERE questions.test_id = test.id AND questions.userAnswer = questions.answer) AS 'Score',
-                tests.date
-            FROM
-                tests
-            WHERE
-                tests.user_id = :userId
-            ORDER BY
-                tests.date DESC",
-            array(':userId' => $user_id),
-            Model::TYPE_FETCHALL
-        );
-        return $result;
+    /**
+     * Checks if a test exists with the given id and topic_id.
+     * @param $topic_id - topic_id of test being looked for.
+     * @param $testid - id of test being looked for.
+     */
+    public function checkTestExistsByID($topic_id, $testid) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    tests.id
+                FROM
+                    tests
+                WHERE
+                    tests.topic_id = :_topicid
+                    AND
+                    tests.id = :_id
+                LIMIT 1",
+                array(
+                    ':_topicid' => $topic_id,
+                    ':_id' => $testid
+                ),
+                Model::TYPE_BOOL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+    
+
+
+
+
+    /**
+     * Gets all tests with the given topic_id.
+     * @param $topicid - topic_id of tests being looked for.
+     * @param $count - Number of records to be returned. - Optional, default 10.
+     * @param $offset - Number of records to skip when getting records. - Optional, default 0.
+     */
+    public function getTestsByTopic($topicid, $count = 10, $offset = 0) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $results = $this->query(
+                "SELECT
+                    tests.id,
+                    tests.name,
+                    tests.description
+                FROM
+                    tests
+                WHERE
+                    tests.topic_id = :_topicid
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_topicid' => $topicid,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets test record with given id.
+     * @param $id - id of test record to be looked for.
+     */
+    public function getTestByID($id) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    tests.id,
+                    tests.name,
+                    tests.description
+                FROM
+                    tests
+                WHERE
+                    tests.id = :_id
+                LIMIT 1",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
+     * Creates a new test record with the given values.
+     * @param $topic_id - value for topic_id field of new record.
+     * @param $name - value for name field of new record.
+     * @param $description - value for description field of new record.
+     */
+    public function addTest($topic_id, $name, $description) {
+        try {
+            return $results = $this->query(
+                "INSERT INTO
+                    tests (name, description, topic_id)
+                VALUES
+                    (
+                        :_name,
+                        :_description,
+                        :_topic_id
+                    )",
+                array(
+                    ':_name' => $name,
+                    ':_description' => $description,
+                    ':_topic_id' => $topic_id
+                ),
+                Model::TYPE_INSERT
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
+     * Delete the test record with the given id.
+     * @param $id - id of record to be deleted.
+     */
+    public function deleteTest($id) {
+        try {
+            return $results = $this->query(
+                "DELETE FROM
+                    tests
+                WHERE
+                    tests.id = :_id
+                LIMIT 1",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_DELETE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
     }
 }

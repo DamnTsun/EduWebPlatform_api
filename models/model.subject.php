@@ -8,7 +8,9 @@ class Model_Subject extends Model {
             return $results = $this->query(
                 "SELECT
                     subjects.id,
-                    subjects.name
+                    subjects.name,
+                    subjects.description,
+                    subjects.homepageContent
                 FROM
                     subjects
                 ORDER BY
@@ -31,7 +33,9 @@ class Model_Subject extends Model {
             return $results = $this->query(
                 "SELECT
                     subjects.id,
-                    subjects.name
+                    subjects.name,
+                    subjects.description,
+                    subjects.homepageContent
                 FROM
                     subjects
                 WHERE
@@ -48,6 +52,35 @@ class Model_Subject extends Model {
     }
 
 
+    /**
+     * Checks a subject exists with the given name.
+     * @param $name - Name of subject being looked for.
+     */
+    public function checkSubjectExists($name) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    subjects.id
+                FROM
+                    subjects
+                WHERE
+                    subjects.name = :_name
+                LIMIT 1",
+                array(
+                    ':_name' => $name
+                ),
+                Model::TYPE_BOOL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Checks a subject exists with the given id.
+     * @param $id - ID of subject being looked for.
+     */
     public function checkSubjectExistsByID($id) {
         try {
             return $results = $this->query(
@@ -69,17 +102,21 @@ class Model_Subject extends Model {
     }
 
 
-    public function addSubject($name) {
+    public function addSubject($name, $description, $homepageContent) {
         try {
             return $results = $this->query(
                 "INSERT INTO
-                    subjects (name)
+                    subjects (name, description, homepageContent)
                 VALUES
                     (
-                        :_name
+                        :_name,
+                        :_desc,
+                        :_hpContent
                     )",
                 array(
-                    ':_name' => $name
+                    ':_name' => $name,
+                    ':_desc' => $description,
+                    ':_hpContent' => $homepageContent
                 ),
                 Model::TYPE_INSERT
             );
