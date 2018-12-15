@@ -101,6 +101,33 @@ class App {
 
 
 
+
+
+    /**
+     * Gets GET parameter corresponding to given value. If GET parameter is not set, the given default value is returned.
+     * @param $paramName - String index of GET parameter in $_GET array.
+     * @param $defaultValue - Value to be returned if $_GET[$paramName] is not set.
+     * @param $isInt - Whether retrieved value should be an integer.
+     */
+    public static function getGETParameter($paramName, $defaultValue, $isInt = false) {
+        // If valid parameter name given, and it is set in $_GET, and the value is an integer
+        if (isset($paramName) &&
+            isset($_GET[$paramName])) {
+                // If value should be an int, check it and return it if it is an int.
+                if ($isInt) {
+                    if (App::stringIsInt($_GET[$paramName])) {
+                        return (int)$_GET[$paramName];
+                    }
+                // Otherwise just return value.
+                } else {
+                    return $_GET[$paramName];
+                }
+        }
+        // Validation failed. Return default value.
+        return $defaultValue;
+    }
+
+
     // Utility functions.
     /**
      * Validates the given Google ID Token.

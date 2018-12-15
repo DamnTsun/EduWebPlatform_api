@@ -1,22 +1,25 @@
 <?php
 
-class Lessons extends Controller {
+class Tests extends Controller {
 
     public function __construct() {
         parent::__construct();
-        require_once $_ENV['dir_models'] . $_ENV['models']['lessons'];
-        $this->db = new Model_Lesson();
+        require_once $_ENV['dir_models'] . $_ENV['models']['tests'];
+        $this->db = new Model_Test();
     }
 
 
     /**
-     * Check whether lesson with given id exists, within the given toic, within the given subject.
+     * Checks whether test with given id exists, within the given topic, within the given subject.
+     * @param $subjectid - id of subject the topic is supposedly in.
+     * @param $topicid - id of topic the test is supposedly in.
+     * @param $testid - id of test being checked.
      */
-    public function checkLessonExists($subjectid, $topicid, $lessonid) {
+    public function checkTestExists($subjectid, $topicid, $testid) {
         // Check topic is within given subject.
         if (!$this->checkTopicExists($subjectid, $topicid)) { return false; }
-        // Check lesson is within the topic.
-        $results = $this->db->checkLessonExistsByID($topicid, $lessonid);
+        // Check test is within the topic.
+        $results = $this->db->checkTestExistsByID($topicid, $testid);
         if (!isset($results)) {
             return null;
         }
@@ -25,7 +28,9 @@ class Lessons extends Controller {
 
 
     /**
-     * Checks whether topic with given id exists and is within given subject.
+     * Checks whether topic with given id exists, within the given subject.
+     * @param $subjectid - id of subject the topic is supposedly in.
+     * @param $topicid - id of topic being checked.
      */
     private function checkTopicExists($subjectid, $topicid) {
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
@@ -42,9 +47,11 @@ class Lessons extends Controller {
 
 
     /**
-     * Gets all lessons within the given topic. (checks topic is within given subject.)
+     * Gets all tests within the given topic.
+     * @param $subjectid - subject that the test is inside of. (via its topic)
+     * @param $topicid - topic that the test is inside of.
      */
-    public function getAllLessonsByTopic($subjectid, $topicid) {
+    public function getAllTestsByTopic($subjectid, $topicid) {
         // Validate id values.
         // subjectid.
         if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
@@ -56,7 +63,7 @@ class Lessons extends Controller {
         }
         $subjectid = (int)$subjectid;
         $topicid = (int)$topicid;
-
+        
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
             http_response_code(404); return;
@@ -68,7 +75,7 @@ class Lessons extends Controller {
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getLessonsByTopic($topicid, $count, $offset);
+        $results = $this->db->getTestsByTopic($topicid, $count, $offset);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -80,35 +87,38 @@ class Lessons extends Controller {
     }
 
 
+
+
+
     /**
-     * Gets the lesson with the given id in the given topic in the given subject.
+     * Gets the lesson with the given id, in the given topic, in the given subject.
      */
-    public function getLessonByID($subjectid, $topicid, $lessonid) {
+    public function getTestByID($subjectid, $topicid, $testid) {
         // Validate id values.
-        // subjectid
+        // subjectid.
         if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
             http_response_code(400); return;
         }
-        // topicid
+        // topicid.
         if (!isset($topicid) || !App::stringIsInt($topicid)) {
             http_response_code(400); return;
         }
-        // lessonid
-        if (!isset($lessonid) || !App::stringIsInt($lessonid)) {
+        // testid
+        if (!isset($testid) || !App::stringIsInt($testid)) {
             http_response_code(400); return;
         }
         $subjectid = (int)$subjectid;
         $topicid = (int)$topicid;
-        $lessonid = (int)$lessonid;
+        $testid = (int)$testid;
 
-        // Check lesson exists.
-        if (!$this->checkLessonExists($subjectid, $topicid, $lessonid)) {
+        // Check test exists.
+        if (!$this->checkTestExists($subjectid, $topicid, $testid)) {
             http_response_code(404); return;
         }
 
 
         // Attempt query.
-        $results = $this->db->getLessonByID($lessonid);
+        $results = $this->db->getTestByID($testid);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -125,30 +135,32 @@ class Lessons extends Controller {
 
 
     /**
-     * Creates new lesson record.
+     * Creates a new test record.
+     * @param $subjectid - id of subject that the test is being added to. (via its topic)
+     * @param $topicid - id of topic that the test is being added to.
      */
-    public function createLesson($subjectid, $topicid) {
+    public function createTest($subjectid, $topicid) {
         // Get session user. They must be admin.
         $user = $this->handleSessionUser(true);
 
         // Get POST params.
         $name = '';
-        $body = '';
+        $description = '';
         // Name (REQ)
         if (!isset($_POST['name'])) {
             http_response_code(400);
             $this->printMessage('`name` parameter not given in POST body.');
             return;
         }
-        // Body (REQ)
-        if (!isset($_POST['body'])) {
+        // Description (REQ)
+        if (!isset($_POST['description'])) {
             http_response_code(400);
-            $this->printMessage('`body` parameter not given in POST body.');
+            $this->printMessage('`description` parameter not given in POST body.');
             return;
         }
         // Set values.
         $name = $_POST['name'];
-        $body = $_POST['body'];
+        $description = $_POST['description'];
 
 
         // Check topic exists.
@@ -157,26 +169,27 @@ class Lessons extends Controller {
             $this->printMessage('Specified topic does not exists.');
             return;
         }
-        // Check no lesson with name and topic id.
-        if ($this->db->checkLessonExists($topicid, $name)) {
+        // Check no test with name and topic id.
+        if ($this->db->checkTestExists($topicid, $name)) {
             http_response_code(400);
-            $this->printMessage('Lesson with name `' . $name . '` already exists in the specified topic.');
+            $this->printMessage('Test with name `' . $name . '` already exists in the specified topic.');
             return;
         }
+
 
         // Attempt to create.
-        $result = $this->db->addLesson($topicid, $name, $body);
-        if (!isset($result)) {
+        $results = $this->db->addTest($topicid, $name, $description);
+        if (!isset($results)) {
             http_response_code(500);
-            $this->printMessage('Something went wrong. Unable to add lesson.');
+            $this->printMessage('Something went wrong. Unable to add test.');
             return;
         }
 
-        // Get newly created lesson and return it.
-        $record = $this->db->getLessonByID($result);
+        // Get newly created test and return it.
+        $record = $this->db->getTestByID($results);
         if (!isset($record)) {
             http_response_code(500);
-            $this->printMessage('Something went wrong. Lesson was created, but cannot be retreived.');
+            $this->printMessage('Something went wrong. Test was created, but cannot be retreived.');
             return;
         }
         $this->printJSON($this->formatRecords($record));
@@ -188,24 +201,27 @@ class Lessons extends Controller {
 
 
     /**
-     * Deletes lesson with the given id.
+     * Deletes test with given id.
+     * @param $subjectid - id of subject that the test is part of. (via its topic)
+     * @param $topicid - id of topic that the test is part of.
+     * @param $testid - id of test being deleted.
      */
-    public function deleteLesson($subjectid, $topicid, $lessonid) {
+    public function deleteTest($subjectid, $topicid, $testid) {
         // Get session user. They must be admin.
         $user = $this->handleSessionUser(true);
 
-        // Check lesson exists.
-        if (!$this->checkLessonExists($subjectid, $topicid, $lessonid)) {
+        // Check test exists.
+        if (!$this->checkTestExists($subjectid, $topicid, $testid)) {
             http_response_code(404);
-            $this->printMessage('Specified lesson does not exists.');
+            $this->printMessage('Specified test does not exists.');
             return;
         }
 
         // Attempt to delete.
-        $result = $this->db->deleteLesson($lessonid);
+        $result = $this->db->deleteTest($testid);
         if (!$result) {
             http_response_code(500);
-            $this->printMessage('Something went wrong. Unable to delete lesson.');
+            $this->printMessage('Something went wrong. Unable to delete test.');
             return;
         }
         // Success.
@@ -217,7 +233,7 @@ class Lessons extends Controller {
 
 
     /**
-     * Formats records so they look better.
+     * Formats record so they look better.
      * @param $records - Records to be formatted.
      */
     protected function formatRecords($records) {
@@ -228,7 +244,7 @@ class Lessons extends Controller {
                 array(
                     'id' => (int)$rec['id'],
                     'name' => $rec['name'],
-                    'body' => addslashes($rec['body'])
+                    'description' => $rec['description']
                 )
             );
         }

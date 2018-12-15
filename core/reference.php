@@ -21,6 +21,7 @@ $_ENV['controllers'] = array(
     'subjects' => 'Subjects.php',
     'topics' => 'Topics.php',
     'lessons' => 'Lessons.php',
+    'tests' => 'Tests.php',
 
     'users' => 'Users.php'
 );
@@ -30,6 +31,7 @@ $_ENV['models'] = array(
     'subjects' => 'model.subject.php',
     'topics' => 'model.topic.php',
     'lessons' => 'model.lesson.php',
+    'tests' => 'model.test.php',
 
     'users' => 'model.user.php'
 );

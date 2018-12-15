@@ -94,6 +94,22 @@ class Router {
             $controller = new Lessons();
             $controller->getLessonByID($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
+
+        // ***************
+        // *** LESSONS ***
+        // ***************
+        // GET all tests.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
+            $controller = new Tests();
+            $controller->getAllTestsByTopic($params[1], $params[3]); // subjectid, topicid
+        });
+        // GET 1 test by id.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
+            $controller = new Tests();
+            $controller->getTestByID($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
+        });
     }
 
 
@@ -132,6 +148,16 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
             $controller = new Lessons();
             $controller->createLesson($params[1], $params[3]); // subjectid, topicid
+        });
+
+        // ***************
+        // *** LESSONS ***
+        // ***************
+        // CREATE new test.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
+            $controller = new Tests();
+            $controller->createTest($params[1], $params[3]); // subjectid, topicid
         });
 
         // *************
@@ -200,6 +226,16 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
             $controller = new Lessons();
             $controller->deleteLesson($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid.
+        });
+
+        // ***************
+        // *** LESSONS ***
+        // ***************
+        // DELETE test.
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
+            $controller = new Tests();
+            $controller->deleteTest($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid.
         });
     }
 

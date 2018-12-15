@@ -61,8 +61,8 @@ class Model_Lesson extends Model {
     /**
      * Gets all lessons with the given topic_id.
      */
-    public function getLessonsByTopic($id) {
-        //$this->setPDOPerformanceMode(false);
+    public function getLessonsByTopic($id, $count = 10, $offset = 0) {
+        $this->setPDOPerformanceMode(false);
         try {
             return $results = $this->query(
                 "SELECT
@@ -72,8 +72,13 @@ class Model_Lesson extends Model {
                 FROM
                     lessons
                 WHERE
-                    lessons.topic_id = :_id",
-                array(':_id' => $id),
+                    lessons.topic_id = :_id
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_id' => $id,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
                 Model::TYPE_FETCHALL
             );
         } catch (PDOException $e) {
@@ -85,7 +90,6 @@ class Model_Lesson extends Model {
      * Gets the lesson with the given id.
      */
     public function getLessonByID($id) {
-        $this->setPDOPerformanceMode(false);
         return $results = $this->query(
             "SELECT
                 lessons.id,
