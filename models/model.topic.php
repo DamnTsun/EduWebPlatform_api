@@ -32,7 +32,7 @@ class Model_Topic extends Model {
     /**
      * Checks topic with given id exists.
      */
-    public function checkTopicExistsByID($id) {
+    public function checkTopicExistsByID($subjectid, $topicid) {
         try {
             return $results = $this->query(
                 "SELECT
@@ -40,10 +40,13 @@ class Model_Topic extends Model {
                 FROM
                     topics
                 WHERE
-                    topics.id = :_id
+                    topics.id = :_topicid
+                    AND
+                    topics.subject_id = :_subjectid
                 LIMIT 1",
                 array(
-                    ':_id' => $id
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid
                 ),
                 Model::TYPE_BOOL
             );

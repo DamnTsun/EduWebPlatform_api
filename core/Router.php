@@ -69,14 +69,14 @@ class Router {
         // GET all topics.
         $this->addGETRoute('/^\/subjects\/\d+\/topics\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-            $controller = new Topics();
-            $controller->getAllTopicsBySubject($params[1]);
+            $topicsController = new Topics();
+            $topicsController->getAllTopicsBySubject($params[1]);
         });
         // GET 1 topic by id.
         $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-            $controller = new Topics();
-            $controller->getTopicByID($params[3]);
+            $topicsController = new Topics();
+            $topicsController->getTopicByID($params[1], $params[3]); // Subjectid, topicid
         });
 
         // ***************
@@ -121,7 +121,7 @@ class Router {
         $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
             $controller = new Topics();
-            $controller->createTopic($params[1]);
+            $controller->createTopic($params[1]); // subject id
         });
 
         // ***************
@@ -185,21 +185,21 @@ class Router {
         // **************
         // *** TOPICS ***
         // **************
-        // DELETE lesson.
-        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/', function($params) {
-            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
-            $controller = new Lessons();
-            $controller->deleteLesson($params[3], $params[5]); // topic id, lesson id.
+        // DELETE topic.
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+            $controller = new Topics();
+            $controller->deleteTopic($params[1], $params[3]);
         });
 
         // ***************
         // *** LESSONS ***
         // ***************
-        // DELETE topic.
-        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/?$/', function($params) {
-            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-            $controller = new Topics();
-            $controller->deleteTopic($params[3]);
+        // DELETE lesson.
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
+            $controller = new Lessons();
+            $controller->deleteLesson($params[3], $params[5]); // topic id, lesson id.
         });
     }
 
