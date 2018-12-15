@@ -67,7 +67,7 @@ class App {
     public function __construct() {
         // Create router instance.
         $this->router = new Router();
-
+        
         // Parse url, getting rid of all the bad things...
         $urlFragments = $this->parseUrl();
         // Return BAD REQUEST if url is just base directory.

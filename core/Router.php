@@ -3,193 +3,292 @@
 class Router {
 
     public function __construct() {
-        $this->routes = array(
-            // For getting data from the database. Some routets require prior authentication.
-            'GET' => array(
-                // Subjects
-                '/subjects' => array(
-                    'regex' => '/^\/subjects\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
-                        $controller = new Subjects();
-                        $controller->getAllSubjects();
-                    }
-                ),
-                '/subjects/:id' => array(
-                    'regex' => '/^\/subjects\/\d+\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
-                        $controller = new Subjects();
-                        $controller->getSubjectByID($params[1]);
-                    }
-                ),
-
-                // Topics
-                '/subjects/:id/topics' => array(
-                    'regex' => '/^\/subjects\/\d+\/topics\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-                        $controller = new Topics();
-                        $controller->getAllTopicsBySubject($params[1]);
-                    }
-                ),
-                '/subjects/:id/topics/:id' => array(
-                    'regex' => '/^\/subjects\/\d+\/topics\/\d+\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-                        $controller = new Topics();
-                        $controller->getTopicByID($params[3]);
-                    }
-                ),
-
-                // Lessons
-                '/subjects/:id/topics/:id/lessons' => array(
-                    'regex' => '/^\/subjects\/\d+\/topics\/\d+\/lessons\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
-                        $controller = new Lessons();
-                        $controller->getAllLessonsByTopic($params[3]);
-                    }
-                ),
-                '/subjects/:id/topics/:id/lessons/:id' => array(
-                    'regex' => '/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
-                        $controller = new Lessons();
-                        $controller->getLessonByID($params[5]);
-                    }
-                ),
-
-
-
-                '/test' => array(
-                    'regex' => '/^\/test\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
-                        $controller = new Subjects();
-                        $bool = $controller->checkSubjectExists(1);
-                        echo 'Found it? ';
-                        var_dump($bool);
-                        $controller->getSubjectByID(1);
-                    }
-                )
-            ),
-
-
-
-
-
-            // For authenticating and for adding new resources.
-            'POST' => array(
-                // Authenticate with the server to use user methods (and if appropriate, admin methods)
-                '/users/auth' => array(
-                    'regex' => '/^\/users\/auth\/?$/',
-                    'method' => function($params) {
-                        App::initSession();
-                    }
-                ),
-
-                // Create a new subject
-                '/subjects' => array(
-                    'regex' => '/^\/subjects\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
-                        $controller = new Subjects();
-                        $controller->createSubject();
-                    }
-                ),
-
-                // Create a new topic
-                '/subjects/:id/topics' => array(
-                    'regex' => '/^\/subjects\/\d+\/topics\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-                        $controller = new Topics();
-                        $controller->createTopic($params[1]);
-                    }
-                ),
-
-                // Create a new lesson
-                '/subjects/:subjectid/topics/:topicid/lessons' => array(
-                    'regex' => '/^\/subjects\/\d+\/topics\/\d+\/lessons\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
-                        $controller = new Lessons();
-                        $controller->createLesson($params[3]);
-                    }
-                )
-            ),
-
-            
-
-
-
-            // For updating values of an existing resource.
-            'PUT' => array(
-                
-            ),
-
-
-
-
-
-            // For deleting an existing resource.
-            'DELETE' => array(
-                // Delete subject record with given id.
-                '/subjects/:id' => array(
-                    'regex' => '/^\/subjects\/\d+\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
-                        $controller = new Subjects();
-                        $controller->deleteSubject($params[1]);
-                    }
-                ),
-
-                // Delete topic record with given id.
-                '/subjects/:id/topics/:id' => array(
-                    'regex' => '/^\/subjects\/\d+\/topics\/\d+\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-                        $controller = new Topics();
-                        $controller->deleteTopic($params[3]);
-                    }
-                ),
-
-                // Delete lesson record with given id.
-                '/subjects/:subjectid/topics/:topicid/lessons/:lessonid' => array(
-                    'regex' => '/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/',
-                    'method' => function($params) {
-                        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
-                        $controller = new Lessons();
-                        $controller->deleteLesson($params[3], $params[5]); // topic id, lesson id.
-                    }
-                )
-            )
-        );
+        $this->setupRoutes();
     }
 
 
+    
+    /**
+     * Sets up routes for the router.
+     */
+    private function setupRoutes() {
+        // This must be run first to setup array.
+        $this->routes = array(
+            'GET' => array(),
+            'POST' => array(),
+            'PUT' => array(),
+            'DELETE' => array()
+        );
+
+        // Call the setup method for each type of content.
+        $this->setupRoutes_Subjects();
+        $this->setupRoutes_Topics();
+        $this->setupRoutes_Lessons();
+    }
+
+
+
+
+
+    // ***********************
+    // ***** USER ROUTES *****
+    // ***********************
+    private function setupRoutes_Users() {
+        // Authenticate with server (POST)
+        $this->addPOSTRoute('/^\/users\/auth\/?$/', function($params) {
+            App::initSession();
+        });
+    }
+
+
+
+
+
+    // **************************
+    // ***** SUBJECT ROUTES *****
+    // **************************
+    private function setupRoutes_Subjects() {
+        // GET all subjects.
+        $this->addGETRoute('/^\/subjects\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
+            $controller = new Subjects();
+            $controller->getAllSubjects();
+        });
+        // GET 1 subject by id.
+        $this->addGETRoute('/^\/subjects\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
+            $controller = new Subjects();
+            $controller->getSubjectByID($params[1]);
+        });
+
+
+
+        // CREATE new subject.
+        $this->addPOSTRoute('/^\/subjects\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
+            $controller = new Subjects();
+            $controller->createSubject();
+        });
+
+
+
+        // DELETE subject.
+        $this->addDELETERoute('/^\/subjects\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
+            $controller = new Subjects();
+            $controller->deleteSubject($params[1]);
+        });
+    }
+
+
+
+
+
+    // ************************
+    // ***** TOPIC ROUTES *****
+    // ************************
+    private function setupRoutes_Topics() {
+        // GET all topics.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+            $controller = new Topics();
+            $controller->getAllTopicsBySubject($params[1]);
+        });
+        // GET 1 topic by id.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+            $controller = new Topics();
+            $controller->getTopicByID($params[3]);
+        });
+
+
+
+        // CREATE new topic.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+            $controller = new Topics();
+            $controller->createTopic($params[1]);
+        });
+
+
+
+        // DELETE topic.
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+            $controller = new Topics();
+            $controller->deleteTopic($params[3]);
+        });
+    }
+
+
+
+
+
+    // *************************
+    // ***** LESSON ROUTES *****
+    // *************************
+    private function setupRoutes_Lessons() {
+        // GET all lessons.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
+            $controller = new Lessons();
+            $controller->getAllLessonsByTopic($params[3]);
+        });
+        // GET 1 lesson by id.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
+            $controller = new Lessons();
+            $controller->getLessonByID($params[5]);
+        });
+
+
+
+        // CREATE new lesson.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
+            $controller = new Lessons();
+            $controller->createLesson($params[3]);
+        });
+
+
+
+        // DELETE lesson.
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
+            $controller = new Lessons();
+            $controller->deleteLesson($params[3], $params[5]); // topic id, lesson id.
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Checks each route, attempting to match the given url.
+     * @param $url - URL to be matched.
+     * @param $params - URL parameters being passed.
+     */
     public function checkRoutes($url = '', $params = []) {
         // Check if accepted request method.
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'GET':
-            case 'POST':
-            case 'PUT':
-            case 'DELETE':
-                // Check against predefined routes for given request method.
-                foreach ($this->routes[$_SERVER['REQUEST_METHOD']] as $route) {
-                    if (preg_match($route['regex'] . 'i', $url)) {
-                        $route['method']($params);
-                        return;
-                    }
+        if ($this->isRequestMethodSupported($_SERVER['REQUEST_METHOD'])) {
+
+            // Check against predefined routes for given request method.
+            foreach ($this->routes[$_SERVER['REQUEST_METHOD']] as $route) {
+                if (preg_match($route->getRegex() . 'i', $url)) {
+                    $route->getMethod()($params);
+                    return;
                 }
-                break;
+            }
+
+        } else {
             // Method not supported.
-            default:
-                http_response_code(405); return;
+            http_response_code(405); return;
         }
 
         // Nothing matched. Return 404.
         http_response_code(404);
     }
+
+    /**
+     * Determines whether the given string is among the HTTP methods supported by this api.
+     */
+    private function isRequestMethodSupported($route) {
+        switch ($route) {
+            case 'GET':
+            case 'POST':
+            case 'PUT':
+            case 'DELETE':
+                return true;
+            default:
+                return false;
+        }
+    }
+
+
+
+
+
+    /**
+     * Adds the given route to the routes list for the specified HTTP method. (GET / POST / PUT / DELETE)
+     */
+    private function addRoute($requestMethod, $route) {
+        if (!$this->isRequestMethodSupported($requestMethod)) {
+            echo 'Attempted to add route for unsupported request method. Please correct.';
+            return;
+        }
+
+        // Push route into area of routes list for the specified HTTP request method.
+        array_push(
+            $this->routes[$requestMethod],
+            $route
+        );
+    }
+
+
+
+    /**
+     * Adds a GET route to the router.
+     * @param $regex - Regular expression for use when matching route.
+     * @param $method - Method to be ran when route is matched.
+     */
+    private function addGETRoute($regex, $method) {
+        $this->addRoute('GET', new Route($regex, $method));
+    }
+    /**
+     * Adds a POST route to the router.
+     * @param $regex - Regular expression for use when matching route.
+     * @param $method - Method to be ran when route is matched.
+     */
+    private function addPOSTRoute($regex, $method) {
+        $this->addRoute('POST', new Route($regex, $method));
+    }
+    /**
+     * Adds a PUT route to the router.
+     * @param $regex - Regular expression for use when matching route.
+     * @param $method - Method to be ran when route is matched.
+     */
+    private function addPUTRoute($regex, $method) {
+        $this->addRoute('PUT', new Route($regex, $method));
+    }
+    /**
+     * Adds a DELETE route to the router.
+     * @param $regex - Regular expression for use when matching route.
+     * @param $method - Method to be ran when route is matched.
+     */
+    private function addDELETERoute($regex, $method) {
+        $this->addRoute('DELETE', new Route($regex, $method));
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+/**
+ * Class for holding route.
+ */
+class Route {
+
+    private $regex;             // Regular expression for route.
+    private $method;            // Method ran when route is matched.
+    
+    public function __construct($regex, $method) {
+        $this->regex = $regex;
+        $this->method = $method;
+    }
+
+    public function getRegex() { return $this->regex; }
+    public function getMethod() { return $this->method; }
 }
