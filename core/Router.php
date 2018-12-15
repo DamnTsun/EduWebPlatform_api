@@ -12,7 +12,7 @@ class Router {
      * Sets up routes for the router.
      */
     private function setupRoutes() {
-        // This must be run first to setup array.
+        // Setup array.
         $this->routes = array(
             'GET' => array(),
             'POST' => array(),
@@ -20,34 +20,36 @@ class Router {
             'DELETE' => array()
         );
 
-        // Call the setup method for each type of content.
-        $this->setupRoutes_Subjects();
-        $this->setupRoutes_Topics();
-        $this->setupRoutes_Lessons();
+        // Call setup method corresponding to the request method in use.
+        switch ($_SERVER['REQUEST_METHOD']) {
+            case 'GET':
+                $this->setupGETRoutes();
+                break;
+            case 'POST':
+                $this->setupPOSTRoutes();
+                break;
+            case 'PUT':
+                $this->setupPUTRoutes();
+                break;
+            case 'DELETE':
+                $this->setupDELETERoutes();
+                break;
+            default:
+                http_response_code(405); exit();
+        }
     }
 
 
 
 
 
-    // ***********************
-    // ***** USER ROUTES *****
-    // ***********************
-    private function setupRoutes_Users() {
-        // Authenticate with server (POST)
-        $this->addPOSTRoute('/^\/users\/auth\/?$/', function($params) {
-            App::initSession();
-        });
-    }
-
-
-
-
-
-    // **************************
-    // ***** SUBJECT ROUTES *****
-    // **************************
-    private function setupRoutes_Subjects() {
+    /**
+     * Sets up routes for GET requests.
+     */
+    private function setupGETRoutes() {
+        // ****************
+        // *** SUBJECTS ***
+        // ****************
         // GET all subjects.
         $this->addGETRoute('/^\/subjects\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
@@ -61,33 +63,9 @@ class Router {
             $controller->getSubjectByID($params[1]);
         });
 
-
-
-        // CREATE new subject.
-        $this->addPOSTRoute('/^\/subjects\/?$/', function($params) {
-            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
-            $controller = new Subjects();
-            $controller->createSubject();
-        });
-
-
-
-        // DELETE subject.
-        $this->addDELETERoute('/^\/subjects\/\d+\/?$/', function($params) {
-            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
-            $controller = new Subjects();
-            $controller->deleteSubject($params[1]);
-        });
-    }
-
-
-
-
-
-    // ************************
-    // ***** TOPIC ROUTES *****
-    // ************************
-    private function setupRoutes_Topics() {
+        // **************
+        // *** TOPICS ***
+        // **************
         // GET all topics.
         $this->addGETRoute('/^\/subjects\/\d+\/topics\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
@@ -101,33 +79,9 @@ class Router {
             $controller->getTopicByID($params[3]);
         });
 
-
-
-        // CREATE new topic.
-        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/?$/', function($params) {
-            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-            $controller = new Topics();
-            $controller->createTopic($params[1]);
-        });
-
-
-
-        // DELETE topic.
-        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/?$/', function($params) {
-            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
-            $controller = new Topics();
-            $controller->deleteTopic($params[3]);
-        });
-    }
-
-
-
-
-
-    // *************************
-    // ***** LESSON ROUTES *****
-    // *************************
-    private function setupRoutes_Lessons() {
+        // ***************
+        // *** LESSONS ***
+        // ***************
         // GET all lessons.
         $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
@@ -140,9 +94,39 @@ class Router {
             $controller = new Lessons();
             $controller->getLessonByID($params[5]);
         });
+    }
 
 
 
+
+
+    /**
+     * Sets up routes for POST requests.
+     */
+    private function setupPOSTRoutes() {
+        // ****************
+        // *** SUBJECTS ***
+        // ****************
+        // CREATE new subject.
+        $this->addPOSTRoute('/^\/subjects\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
+            $controller = new Subjects();
+            $controller->createSubject();
+        });
+
+        // **************
+        // *** TOPICS ***
+        // **************
+        // CREATE new topic.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+            $controller = new Topics();
+            $controller->createTopic($params[1]);
+        });
+
+        // ***************
+        // *** LESSONS ***
+        // ***************
         // CREATE new lesson.
         $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
@@ -150,13 +134,72 @@ class Router {
             $controller->createLesson($params[3]);
         });
 
+        // *************
+        // *** USERS ***
+        // *************
+        // Authenticate with server (POST)
+        $this->addPOSTRoute('/^\/users\/auth\/?$/', function($params) {
+            App::initSession();
+        });
+    }
 
 
+
+
+
+    /**
+     * Sets up routes for PUT requests.
+     */
+    private function setupPUTRoutes() {
+        // ****************
+        // *** SUBJECTS ***
+        // ****************
+
+        // **************
+        // *** TOPICS ***
+        // **************
+
+        // ***************
+        // *** LESSONS ***
+        // ***************
+    }
+
+
+
+
+
+    /**
+     * Sets up routes for DELETE requests.
+     */
+    private function setupDELETERoutes() {
+        // ****************
+        // *** SUBJECTS ***
+        // ****************
+        // DELETE subject
+        $this->addDELETERoute('/^\/subjects\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
+            $controller = new Subjects();
+            $controller->deleteSubject($params[1]);
+        });
+
+        // **************
+        // *** TOPICS ***
+        // **************
         // DELETE lesson.
         $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
             $controller = new Lessons();
             $controller->deleteLesson($params[3], $params[5]); // topic id, lesson id.
+        });
+
+        // ***************
+        // *** LESSONS ***
+        // ***************
+        // DELETE topic.
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+            $controller = new Topics();
+            $controller->deleteTopic($params[3]);
         });
     }
 
