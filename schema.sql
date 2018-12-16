@@ -2,6 +2,9 @@ CREATE DATABASE EduWebApp;
 USE EduWebApp;
 
 
+/*
+ * General content related tables.
+ */
 CREATE TABLE `subjects` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL UNIQUE,
@@ -50,6 +53,46 @@ CREATE TABLE `testQuestions` (
 );
 
 
+
+/*
+ * Users records section.
+ * `users` is the base users table. This holds the internal user records.
+ * other users tables, such as `users_google` handle social media logins.
+ *   - contains user_id. Links to an internal user record.
+ *   - contains <x>_id. Is the id of the social media account, such as a Google account.
+ *   - user_id and <x>_id form a composite primary key.
+ * the intention is that this design will be expandable, making adding support for new social media account types easy.
+ */
+-- Base users table.
+CREATE TABLE `users` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `displayName` VARCHAR(30) NOT NULL DEFAULT 'unnamed user',
+    `admin` BOOLEAN DEFAULT false,
+    `banned` BOOLEAN DEFAULT false
+);
+
+-- Google accounts
+CREATE TABLE `users_google` (
+    `user_id` INT NOT NULL UNIQUE,
+    `google_id` INT NOT NULL UNIQUE,
+    PRIMARY KEY (`user_id`, `google_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+CREATE TABLE `posts` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(1000) NOT NULL,
+    `body` TEXT,
+    `creationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modificationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `subject_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 -- not in use
 /*
 CREATE TABLE `users` (
@@ -63,19 +106,6 @@ CREATE TABLE `users` (
 );
 */
 
--- not in use
-/*
-CREATE TABLE `posts` (
-    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `title` VARCHAR(1000) NOT NULL,
-    `body` VARCHAR(10000),
-    `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `subject_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-*/
 
 
 
