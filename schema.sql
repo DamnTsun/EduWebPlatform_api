@@ -74,8 +74,22 @@ CREATE TABLE `users` (
 -- Google accounts
 CREATE TABLE `users_google` (
     `user_id` INT NOT NULL UNIQUE,
-    `google_id` INT NOT NULL UNIQUE,
+    `google_id` VARCHAR(255) NOT NULL UNIQUE,
     PRIMARY KEY (`user_id`, `google_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+-- Facebook accounts
+CREATE TABLE `users_facebook` (
+    `user_id` INT NOT NULL UNIQUE,
+    `facebook_id` VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY (`user_id`, `facebook_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+-- LinkedIn accounts
+CREATE TABLE `users_linkedin` (
+    `user_id` INT NOT NULL UNIQUE,
+    `linkedin_id` VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY (`user_id`, `linkedin_id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

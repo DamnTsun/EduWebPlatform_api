@@ -41,6 +41,9 @@ $_ENV['models'] = array(
 // Google OAuth API information.
 $_ENV['google_client_id'] = '140771721886-3ht78s72map4d75dd0iletdh6b5lkmsr.apps.googleusercontent.com';
 $_ENV['google_client_secret'] = '2zUMuYz4FIrr1Ikq2oa5dqHP';
+// Facebook OAuth API informatino.
+$_ENV['facebook_client_id'] = '288853295310755';
+$_ENV['facebook_client_secret'] = 'c6c07314f8dd8cc5d265191ebcbd3917';
 
 // Other stuff.
 $_ENV['beautifyJSON'] = false; // Whether to put JSON in pre tag to make it readable.

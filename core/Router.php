@@ -163,9 +163,28 @@ class Router {
         // *************
         // *** USERS ***
         // *************
-        // Authenticate with server (POST)
-        $this->addPOSTRoute('/^\/users\/auth\/?$/', function($params) {
-            App::initSession();
+        // Authenticate with server (Google)
+        $this->addPOSTRoute('/^\/users\/auth\/google\/?$/', function($params) {
+            Auth::initSession_Google();
+        });
+        // Authenticate with server (Facebook) - NOT IMPLEMENTED
+        // Authenticate with server (LinkedIn) - NOT IMPLEMENTED
+
+        // Check authentification status with server (Google)
+        $this->addPOSTRoute('/^\/users\/auth\/google\/validate\/?$/', function($params) {
+            // Check admin if 'checkAdmin' included in GET parameters.
+            $checkAdmin = (isset($_GET['checkAdmin']));
+            $user = Auth::validateSession($checkAdmin);
+            // If user is null (invalid token, user doesn't exist, user banned, user not admin, etc), return 403 - Unauthorized.
+            if (!isset($user)) { http_response_code(401); return; }
+            echo json_encode($user, JSON_HEX_QUOT | JSON_HEX_TAG);
+        });
+        // Check authentification status with server (Facebook) - NOT IMPLEMENTED
+        // Check authentification status with server (LinkedIn) - NOT IMPLEMENTED
+
+        // End session immediately.
+        $this->addPOSTRoute('/^\/users\/auth\/kill\/?$/', function($params) {
+            Auth::endSession();
         });
     }
 

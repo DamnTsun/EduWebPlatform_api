@@ -163,44 +163,6 @@ class App {
     }
 
 
-    public static function initSession() {
-        // Check is POST request.
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405); session_destroy(); return;
-        }
-        // Check id_token given in POST body.
-        if (!isset($_POST['id_token'])) {
-            http_response_code(400); session_destroy(); return;
-        }
-
-        // Attempt to get payload from id_token.
-        $payload = App::validateGoogleIdToken($_POST['id_token']);
-        if (!isset($payload)) {
-            http_response_code(400); session_destroy(); return;
-        }
-
-        // Get user controller instance and attempt to get user using googleId.
-        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
-        $userController = new Users();
-        // Create new user if necessary.
-        if (!$userController->checkUserExistsByGoogleId($payload['sub'])) {
-            $userController->addUser($payload['sub'], $payload['given_name'], $payload['family_name'], $payload['email']);
-        }
-        // Get user record. Check not banned.
-        $user = $userController->getUserByGoogleId($payload['sub']);
-        if (sizeof($user) == 0) {
-            http_response_code(400); return;
-        }
-        if ($user[0]['banned']) {
-            http_response_code(403); session_destroy(); return;
-        }
-
-        // Start session.
-        session_start();
-        $_SESSION['id_token'] = $_POST['id_token'];
-        http_response_code(200);
-    }
-
     public static function validateSession() {
         session_start();
         session_regenerate_id();
