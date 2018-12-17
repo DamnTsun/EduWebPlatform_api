@@ -2,8 +2,11 @@
 
 class Auth {
 
-    // Constants for POST / $_SESSION variable names.
+    // Constants
     private const GOOGLE_TOKEN_NAME = 'google_id_token';
+
+    private const JWT_ISSUER = 'EduWebPlatform backend';
+    private const JWT_AUDIENCE = 'EduWebPlatform frontend';
 
 
 
@@ -103,14 +106,8 @@ class Auth {
         }
 
 
-        // Destroy previous session if exists.
-        Auth::killSession();
-        // Start session and return user record.
-        session_start();
-        $_SESSION[Auth::GOOGLE_TOKEN_NAME] = $_POST[Auth::GOOGLE_TOKEN_NAME];
-        echo json_encode(Auth::formatUserRecord($user), JSON_HEX_QUOT | JSON_HEX_TAG);
-        http_response_code(200);
-        var_dump($_SESSION);
+        // Everything passes. Create and return JWT to user. (Returned as JSON object containing: JWT, expiry)
+        Auth::createJWT($user[0]['id'], ($user[0]['admin'] == 1) ? true : false);
     }
 
     /**
@@ -138,94 +135,95 @@ class Auth {
      * @param checkAdmin - Whether the return user must be an admin.
      */
     public static function validateSession($checkAdmin) {
-        Auth::getSession();
-        if (!isset($_SESSION)) { return null; }
-        $user = null;
+        // Check id token sent as request header.
+        if (!isset($_SERVER['HTTP_IDTOKEN'])) { return null; }
+        
+        // Attempt to get user id based off idToken. (will valid token in the process)
+        $userid = Auth::validateJWT($_SERVER['HTTP_IDTOKEN'], $checkAdmin);
+        if (!isset($userid)) { return null; }
 
-        // Check id_token in $_SESSION corresponds to a supported social media account type.
-        // Google
-        if (isset($_SESSION[Auth::GOOGLE_TOKEN_NAME])) {
-            $user = Auth::validateSession_Google($_SESSION[Auth::GOOGLE_TOKEN_NAME]);
+        // Attempt to get user record with retrieved id.
+        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+        $usersController = new Users();
+        $userRecord = $usersController->getUser($userid);
+        if (!isset($userRecord)) { return null; }
+
+        return Auth::formatUserRecord($userRecord);
+    }
+
+
+
+
+
+    // ***** JWT functions (create, validate, etc) *****
+    /**
+     * Creates a JWT for the given user_id and admin status. JWT is encoded with Sha256 using secret Hmac key.
+     * @param user_id - id of user.
+     * @param admin - admin status of user.
+     */
+    public static function createJWT($user_id, $admin) {
+        require_once $_ENV['dir_vendor'] . 'autoload.php';
+
+        // Create token with sha256 encryption. (1 shared key) and return it.
+        try {
+            $signer = new Lcobucci\JWT\Signer\Hmac\Sha256();
+            $jwt = (new Lcobucci\JWT\Builder())->setIssuer(Auth::JWT_ISSUER)                // Issuer:      Application backend.
+                                                ->setAudience(Auth::JWT_AUDIENCE)           // Audience:    Application frontend.
+                                                ->setIssuedAt(time())                       // Issued at:   Now.
+                                                ->setExpiration(time() + 3600)              // Expires in:  1 hour.
+                                                ->set('user_id', (int)$user_id)             // Store user_id as claim.
+                                                ->set('admin', $admin)                      // Store admin status as claim.
+                                                ->sign($signer, $_ENV['JWT_Hmac_key'])      // Sign using Sha256.
+                                                ->getToken();
+        } catch (Exception $e) {
+            http_response_code(500); return;
         }
-        // Facebook
-        else if (false) {
 
-        }
-        // LinkedIn
-        else if (false) {
+        // Return jwt and expiry as json.
+        echo json_encode(
+            array(
+                'idToken' => (string)$jwt,
+                'expiresAt' => $jwt->getClaim('exp')
+            ),
+            JSON_HEX_QUOT | JSON_HEX_TAG
+        );
+        http_response_code(200);
+    }
 
-        }
 
+    /**
+     * Validates the given jwt. Makes sure it is valid, not been tampered with, has not expired. Also checks admin if specified.
+     * @param jwt - JSON Web Token to be validated.
+     * @param admin - Whether the corresponding user must be an admin.
+     */
+    public static function validateJWT($jwt, $checkAdmin) {
+        require_once $_ENV['dir_vendor'] . 'autoload.php';
 
-        // Check a record was retrieved.
-        if (!isset($user)) {
+        // Attempt to parse jwt.
+        try {
+            $parsed = (new Lcobucci\JWT\Parser())->parse((string)$jwt);
+        } catch (Exception $e) {
             return null;
         }
-        // Check not banned.
-        if (!isset($user['banned']) || $user['banned'] == 1) {
-            return null;
-        }
+
+        // Verify token has not been modified.
+        $signer = new Lcobucci\JWT\Signer\Hmac\Sha256();
+        if (!$parsed->verify($signer, $_ENV['JWT_Hmac_key'])) { return null; }
+
+        // Check issuer / audience / expiry (automatic)
+        $data = new Lcobucci\JWT\ValidationData();
+        $data->setIssuer(Auth::JWT_ISSUER);
+        $data->setAudience(Auth::JWT_AUDIENCE);
+        if (!$parsed->validate($data)) { return null; }
+
         // Check admin if required.
         if ($checkAdmin) {
-            if (!isset($user['admin']) || $user['admin'] == 0) {
-                return null;
-            }
+            if (!$parsed->getClaim('admin')) { return null; }
         }
 
-        return $user;
-    }
 
-
-    /**
-     * Validates a session based on the given google id_token.
-     * @param id_token - id_token being validated.
-     */
-    private static function validateSession_Google($id_token) {
-        // Make sure actually in a session.
-        if (!isset($_SESSION) || !isset($_SESSION[Auth::GOOGLE_TOKEN_NAME])) {
-            return null;
-        }
-
-        // Attempt to get payload from id_token.
-        $payload = Auth::validateIdToken_Google($_SESSION[Auth::GOOGLE_TOKEN_NAME]);
-        if (!isset($payload)) {
-            return null;
-        }
-
-        // Create users controller instance for interacting with users / users_google records.
-        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
-        $userController = new Users();
-
-        // Get users_google record corresponding to googleid.
-        $googleUser = $userController->getGoogleUser($payload['sub']);
-        if (!isset($googleUser) || sizeof($googleUser) == 0) {
-            return null;
-        }
-
-        // Get users record.
-        $user = $userController->getUser($googleUser[0]['user_id']);
-        if (!isset($user) || sizeof($user) == 0) {
-            return null;
-        }
-
-        // Return retreived record.
-        return Auth::formatUserRecord($user);
-    }
-
-    /**
-     * Validates a session based on the given facebook id_token.
-     * @param id_token - id_token being validated.
-     */
-    private static function validateSession_Facebook() {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * Validates a session based on the given linkedin id_token.
-     * @param id_token - id_token being validated.
-     */
-    private static function validateSession_LinkedIn() {
-        throw new NotImplementedException();
+        // Return user id.
+        return $parsed->getClaim('user_id');
     }
 
 
@@ -243,6 +241,47 @@ class Auth {
             'admin' => ($records[0]['admin'] == 1) ? true : false,
             'banned' => ($records[0]['banned'] == 1) ? true : false
         );
+    }
+
+
+
+
+
+
+
+    public static function JWTtest() {
+        require_once $_ENV['dir_vendor'] . 'autoload.php';
+
+        // Create token with sha256 encryption. (1 shared key)
+        $signer = new Lcobucci\JWT\Signer\Hmac\Sha256();
+        $token = (new Lcobucci\JWT\Builder())->setIssuer(Auth::JWT_ISSUER)              // Issuer:      Application backend.
+                                            ->setAudience(Auth::JWT_AUDIENCE)           // Audience:    Application frontend.
+                                            ->setIssuedAt(time())                       // Issued at:   Now.
+                                            ->setExpiration(time() + 3600)              // Expires in:  1 hour.
+                                            ->set('user_id', 1)                         // Store user_id as claim.
+                                            ->set('admin', false)                       // Store admin status as claim.
+                                            ->sign($signer, $_ENV['JWT_Hmac_key'])      // Sign using Sha256.
+                                            ->getToken();
+
+        //echo 'Token:<br/>' . $token . '<br/><br/>';
+
+        //echo 'Verifying with wrong key: ';
+        //echo ($token->verify($signer, 'aaa2')) ? 'Valid' : 'Invalid' . '<br/>';
+        //echo 'Verifying with correct key: ';
+        //echo ($token->verify($signer, $_ENV{'JWT_Hmac_key'})) ? 'Valid' : 'Invalid' . '<br/>';
+        //var_dump($token->getClaims());
+
+        // Attempt to parse jwt.
+        $parsed = (new Lcobucci\JWT\Parser())->parse((string)$token);
+        //echo 'Parsed token is valid? ';
+        //echo ($parsed->verify($signer, $_ENV['JWT_Hmac_key'])) ? 'Valid' : 'Invalid';
+
+        // JSON response to send to client.
+        $response = array(
+            'idToken' => (string)$token,
+            'expiresAt' => $token->getClaim('exp')
+        );
+        echo json_encode($response);
     }
 
 

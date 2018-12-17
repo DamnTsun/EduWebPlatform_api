@@ -37,7 +37,8 @@ $_ENV['models'] = array(
 );
 
 
-
+// JWT Hmac key for Sha256 hashing.
+$_ENV['JWT_Hmac_key'] = '7a832ba7846a987c87ff98d78654da90';
 // Google OAuth API information.
 $_ENV['google_client_id'] = '140771721886-3ht78s72map4d75dd0iletdh6b5lkmsr.apps.googleusercontent.com';
 $_ENV['google_client_secret'] = '2zUMuYz4FIrr1Ikq2oa5dqHP';

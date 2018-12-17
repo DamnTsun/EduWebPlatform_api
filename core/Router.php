@@ -186,6 +186,11 @@ class Router {
         $this->addPOSTRoute('/^\/users\/auth\/kill\/?$/', function($params) {
             Auth::endSession();
         });
+
+
+        $this->addPOSTRoute('/^\/jwttest\/?$/' , function($params) {
+            Auth::JWTtest();
+        });
     }
 
 
