@@ -131,26 +131,24 @@ class Lessons extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
 
-        // Get POST params.
-        $name = '';
-        $body = '';
-        // Name (REQ)
-        if (!isset($_POST['name'])) {
+        // Check JSON sent as POST param.
+        if (!isset($_POST['content'])) {
             http_response_code(400);
-            $this->printMessage('`name` parameter not given in POST body.');
+            $this->printMessage('`content` parameter not given in POST body.');
             return;
         }
-        // Body (REQ)
-        if (!isset($_POST['body'])) {
-            http_response_code(400);
-            $this->printMessage('`body` parameter not given in POST body.');
+
+        // Validate JSON.
+        $json = $this->validateJSON($_POST['content']);
+        if (!isset($json)) {
+            $this->printMessage('`content` parameter is invalid or does not contain required fields.');
             return;
         }
+
         // Set values.
-        $name = $_POST['name'];
-        $body = $_POST['body'];
-
-
+        $name =                     $json['name']; // Required.
+        $body =                     $json['body']; // Required.
+        
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
             http_response_code(400);
@@ -233,5 +231,27 @@ class Lessons extends Controller {
             );
         }
         return $results;
+    }
+
+
+    /**
+     * Validates incoming JSON (for create / modify resource) so that it contains all necessary fields.
+     * @param json - the json of the object.
+     */
+    protected function validateJSON($json) {
+        // Try to parse.
+        try {
+            $object = json_decode($json, true);
+        } catch (Exception $e) {
+            return null;
+        }
+
+        // Check if has required fields.
+        if (!isset($object) ||
+            !isset($object['name']) ||
+            !isset($object['body'])) {
+            return null;
+        }
+        return $object;
     }
 }

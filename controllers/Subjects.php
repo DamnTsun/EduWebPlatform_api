@@ -86,24 +86,24 @@ class Subjects extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
 
-        // Get POST params.
-        // Name
-        if (!isset($_POST['name'])) {
+        // Check JSON sent as POST param.
+        if (!isset($_POST['content'])) {
             http_response_code(400);
-            $this->printMessage('`name` parameter not given in POST body.');
+            $this->printMessage('`content` parameter not given in POST body.');
             return;
         }
-        $name = $_POST['name'];
-        // Description
-        $description = '';
-        if (isset($_POST['description'])) {
-            $description = $_POST['description'];
+
+        // Validate JSON.
+        $json = $this->validateJSON($_POST['content']);
+        if (!isset($json)) {
+            $this->printMessage('`content` parameter is invalid or does not contain required fields.');
+            return;
         }
-        // Home page content
-        $homepageContent = '';
-        if (isset($_POST['homepageContent'])) {
-            $homepageContent = $_POST['homepageContent'];
-        }
+
+        // Set values.
+        $name =                         $json['name']; // Required
+        $description =                  (isset($json['description'])) ? $json['description'] : '';
+        $homepageContent =              (isset($json['homepageContent'])) ? $json['homepageContent'] : '';
 
         // Check subject with name does not exist.
         if ($this->db->checkSubjectExists($name)) {
@@ -189,4 +189,23 @@ class Subjects extends Controller {
         return $results;
     }
 
+    /**
+     * Validates incoming JSON (for create / modify resource) so that it contains all necessary fields.
+     * @param json - the json of the object.
+     */
+    protected function validateJSON($json) {
+        // Try to parse.
+        try {
+            $object = json_decode($json, true);
+        } catch (Exception $e) {
+            return null;
+        }
+
+        // Check if has required fields.
+        if (!isset($object) ||
+            !isset($object['name'])) {
+            return null;
+        }
+        return $object;
+    }
 }

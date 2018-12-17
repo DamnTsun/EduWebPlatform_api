@@ -179,6 +179,17 @@ class Users extends Controller {
         return $results;
     }
 
+    /**
+     * Validates incoming JSON (for create / modify resource) so that it contains all necessary fields.
+     * @param json - the json of the object.
+     */
+    protected function validateJSON($json) {
+        // Not currently needed. Update later.
+        throw new NotImplementedException();
+    }
+
+
+
 
 
     // OLD METHODS
