@@ -83,8 +83,8 @@ class Subjects extends Controller {
      * Creates a new subject record if validation is passed. Then returns new record as JSON.
      */
     public function createSubject() {
-        // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
 
         // Get POST params.
         // Name
@@ -188,4 +188,5 @@ class Subjects extends Controller {
         }
         return $results;
     }
+
 }

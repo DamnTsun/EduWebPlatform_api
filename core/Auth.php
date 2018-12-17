@@ -8,7 +8,12 @@ class Auth {
 
 
 
+
     // *** TOKEN VALIDATION ***
+    /**
+     * Validates given google id_token.
+     * @param id_token - id_token to be validated.
+     */
     private static function validateIdToken_Google($id_token) {
         // Load in Google API.
         require_once $_ENV['dir_vendor'] . 'autoload.php';
@@ -22,6 +27,24 @@ class Auth {
             return null;
         }
     }
+
+    /**
+     * Validates given facebook id_token.
+     * @param id_token - id_token to be validated.
+     */
+    private static function validateIdToken_Facebook($id_token) {
+        throw new NotImplementedException();
+    }
+
+    /**
+     * Validates given linkedin id_token.
+     * @param id_token - id_token to be validated.
+     */
+    private static function validateIdToken_LinkedIn($id_token) {
+        throw new NotImplementedException();
+    }
+
+
 
 
 
@@ -112,6 +135,7 @@ class Auth {
      * Validates users session based on id_token in session.
      * Checks it is in $_SESSION, valid, etc.
      * Checks if corresponding user is admin if specified.
+     * @param checkAdmin - Whether the return user must be an admin.
      */
     public static function validateSession($checkAdmin) {
         Auth::getSession();
@@ -151,6 +175,11 @@ class Auth {
         return $user;
     }
 
+
+    /**
+     * Validates a session based on the given google id_token.
+     * @param id_token - id_token being validated.
+     */
     private static function validateSession_Google($id_token) {
         // Make sure actually in a session.
         if (!isset($_SESSION) || !isset($_SESSION[Auth::GOOGLE_TOKEN_NAME])) {
@@ -183,10 +212,18 @@ class Auth {
         return Auth::formatUserRecord($user);
     }
 
+    /**
+     * Validates a session based on the given facebook id_token.
+     * @param id_token - id_token being validated.
+     */
     private static function validateSession_Facebook() {
         throw new NotImplementedException();
     }
 
+    /**
+     * Validates a session based on the given linkedin id_token.
+     * @param id_token - id_token being validated.
+     */
     private static function validateSession_LinkedIn() {
         throw new NotImplementedException();
     }

@@ -122,8 +122,8 @@ class Topics extends Controller {
      * Creates new topic record.
      */
     public function createTopic($subjectID) {
-        // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
 
         // Get POST params.
         $name = '';

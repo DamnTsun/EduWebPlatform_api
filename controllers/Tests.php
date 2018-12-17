@@ -140,8 +140,8 @@ class Tests extends Controller {
      * @param $topicid - id of topic that the test is being added to.
      */
     public function createTest($subjectid, $topicid) {
-        // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
 
         // Get POST params.
         $name = '';

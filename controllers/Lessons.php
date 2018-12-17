@@ -128,8 +128,8 @@ class Lessons extends Controller {
      * Creates new lesson record.
      */
     public function createLesson($subjectid, $topicid) {
-        // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
 
         // Get POST params.
         $name = '';
