@@ -187,14 +187,20 @@ class Router {
         });
 
 
-        // ***************
-        // *** LESSONS ***
-        // ***************
+        // *************
+        // *** TESTS ***
+        // *************
         // CREATE new test.
         $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
             $controller = new Tests();
             $controller->createTest($params[1], $params[3]); // subjectid, topicid
+        });
+        // MODIFY existing test.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
+            $controller = new Tests();
+            $controller->modifyTest($params[1], $params[3], $params[5]); // subjectid, topicid, testid
         });
 
 

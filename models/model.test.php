@@ -157,6 +157,46 @@ class Model_Test extends Model {
 
 
     /**
+     * Modifies values of existing test.
+     * @param id - id of test.
+     * @param name - name for test. Is ignored if null.
+     * @param description - description for test. Is ignored if null.
+     */
+    public function modifyTest($id, $name, $description) {
+        // Build string with variable number of fields.
+        $queryString = "UPDATE tests SET ";
+        $queryParams = array();
+        // name
+        if (isset($name)) {
+            $queryString = $queryString . "tests.name = :_name";
+            $queryParams[':_name'] = $name;
+        }
+        // description
+        if (isset($description)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "tests.description = :_desc";
+            $queryParams[':_desc'] = $description;
+        }
+        // end query string.
+        $queryString = $queryString . " WHERE tests.id = :_id LIMIT 1";
+        $queryParams[':_id'] = $id;
+        try {
+            return $result = $this->query(
+                $queryString,
+                $queryParams,
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
      * Delete the test record with the given id.
      * @param $id - id of record to be deleted.
      */
