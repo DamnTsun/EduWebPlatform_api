@@ -16,7 +16,6 @@ class Router {
         $this->routes = array(
             'GET' => array(),
             'POST' => array(),
-            'PUT' => array(),
             'DELETE' => array()
         );
 
@@ -27,9 +26,6 @@ class Router {
                 break;
             case 'POST':
                 $this->setupPOSTRoutes();
-                break;
-            case 'PUT':
-                $this->setupPUTRoutes();
                 break;
             case 'DELETE':
                 $this->setupDELETERoutes();
@@ -63,6 +59,7 @@ class Router {
             $controller->getSubjectByID($params[1]); // subjectid
         });
 
+
         // **************
         // *** TOPICS ***
         // **************
@@ -78,6 +75,7 @@ class Router {
             $topicsController = new Topics();
             $topicsController->getTopicByID($params[1], $params[3]); // subjectid, topicid
         });
+
 
         // ***************
         // *** LESSONS ***
@@ -95,6 +93,7 @@ class Router {
             $controller->getLessonByID($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
 
+
         // ***************
         // *** LESSONS ***
         // ***************
@@ -110,6 +109,7 @@ class Router {
             $controller = new Tests();
             $controller->getTestByID($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
+
 
         // *************
         // *** POSTS ***
@@ -146,6 +146,7 @@ class Router {
             $controller->createSubject();
         });
 
+
         // **************
         // *** TOPICS ***
         // **************
@@ -155,6 +156,7 @@ class Router {
             $controller = new Topics();
             $controller->createTopic($params[1]); // subject id
         });
+
 
         // ***************
         // *** LESSONS ***
@@ -166,6 +168,7 @@ class Router {
             $controller->createLesson($params[1], $params[3]); // subjectid, topicid
         });
 
+
         // ***************
         // *** LESSONS ***
         // ***************
@@ -176,6 +179,7 @@ class Router {
             $controller->createTest($params[1], $params[3]); // subjectid, topicid
         });
 
+
         // *************
         // *** POSTS ***
         // *************
@@ -185,6 +189,13 @@ class Router {
             $controller = new Posts();
             $controller->createPost($params[1]); // subjectid
         });
+        // MODIFY existing temp
+        $this->addPOSTRoute('/^\/subjects\/\d+\/posts\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
+            $controller = new Posts();
+            $controller->modifyPost($params[1], $params[3]); // subjectid, postid
+        });
+
 
         // *************
         // *** USERS ***
@@ -195,6 +206,11 @@ class Router {
         });
         // Authenticate with server (Facebook) - NOT IMPLEMENTED
         // Authenticate with server (LinkedIn) - NOT IMPLEMENTED
+
+        // End session immediately.
+        $this->addPOSTRoute('/^\/users\/auth\/kill\/?$/', function($params) {
+            Auth::endSession();
+        });
 
         // Check authentification status with server (Google)
         $this->addPOSTRoute('/^\/users\/auth\/google\/validate\/?$/', function($params) {
@@ -207,42 +223,12 @@ class Router {
         });
         // Check authentification status with server (Facebook) - NOT IMPLEMENTED
         // Check authentification status with server (LinkedIn) - NOT IMPLEMENTED
-
-        // End session immediately.
-        $this->addPOSTRoute('/^\/users\/auth\/kill\/?$/', function($params) {
-            Auth::endSession();
-        });
-
-
-
-
-
-        // test route
-        $this->addPOSTRoute('/^\/test\/?$/' , function($params) {
-            Auth::JWTtest();
-        });
     }
 
 
 
 
 
-    /**
-     * Sets up routes for PUT requests.
-     */
-    private function setupPUTRoutes() {
-        // ****************
-        // *** SUBJECTS ***
-        // ****************
-
-        // **************
-        // *** TOPICS ***
-        // **************
-
-        // ***************
-        // *** LESSONS ***
-        // ***************
-    }
 
 
 
@@ -262,6 +248,7 @@ class Router {
             $controller->deleteSubject($params[1]); // subjectid
         });
 
+
         // **************
         // *** TOPICS ***
         // **************
@@ -271,6 +258,7 @@ class Router {
             $controller = new Topics();
             $controller->deleteTopic($params[1], $params[3]); // subjectid, topicid
         });
+
 
         // ***************
         // *** LESSONS ***
@@ -282,6 +270,7 @@ class Router {
             $controller->deleteLesson($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
 
+
         // ***************
         // *** LESSONS ***
         // ***************
@@ -292,6 +281,7 @@ class Router {
             $controller->deleteTest($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
 
+        
         // *************
         // *** POSTS ***
         // *************
@@ -345,7 +335,6 @@ class Router {
         switch ($route) {
             case 'GET':
             case 'POST':
-            case 'PUT':
             case 'DELETE':
                 return true;
             default:
@@ -390,14 +379,6 @@ class Router {
      */
     private function addPOSTRoute($regex, $method) {
         $this->addRoute('POST', new Route($regex, $method));
-    }
-    /**
-     * Adds a PUT route to the router.
-     * @param $regex - Regular expression for use when matching route.
-     * @param $method - Method to be ran when route is matched.
-     */
-    private function addPUTRoute($regex, $method) {
-        $this->addRoute('PUT', new Route($regex, $method));
     }
     /**
      * Adds a DELETE route to the router.

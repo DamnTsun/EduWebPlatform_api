@@ -247,47 +247,6 @@ class Auth {
 
 
 
-
-
-    public static function JWTtest() {
-        require_once $_ENV['dir_vendor'] . 'autoload.php';
-
-        // Create token with sha256 encryption. (1 shared key)
-        $signer = new Lcobucci\JWT\Signer\Hmac\Sha256();
-        $token = (new Lcobucci\JWT\Builder())->setIssuer(Auth::JWT_ISSUER)              // Issuer:      Application backend.
-                                            ->setAudience(Auth::JWT_AUDIENCE)           // Audience:    Application frontend.
-                                            ->setIssuedAt(time())                       // Issued at:   Now.
-                                            ->setExpiration(time() + 3600)              // Expires in:  1 hour.
-                                            ->set('user_id', 1)                         // Store user_id as claim.
-                                            ->set('admin', false)                       // Store admin status as claim.
-                                            ->sign($signer, $_ENV['JWT_Hmac_key'])      // Sign using Sha256.
-                                            ->getToken();
-
-        //echo 'Token:<br/>' . $token . '<br/><br/>';
-
-        //echo 'Verifying with wrong key: ';
-        //echo ($token->verify($signer, 'aaa2')) ? 'Valid' : 'Invalid' . '<br/>';
-        //echo 'Verifying with correct key: ';
-        //echo ($token->verify($signer, $_ENV{'JWT_Hmac_key'})) ? 'Valid' : 'Invalid' . '<br/>';
-        //var_dump($token->getClaims());
-
-        // Attempt to parse jwt.
-        $parsed = (new Lcobucci\JWT\Parser())->parse((string)$token);
-        //echo 'Parsed token is valid? ';
-        //echo ($parsed->verify($signer, $_ENV['JWT_Hmac_key'])) ? 'Valid' : 'Invalid';
-
-        // JSON response to send to client.
-        $response = array(
-            'idToken' => (string)$token,
-            'expiresAt' => $token->getClaim('exp')
-        );
-        echo json_encode($response);
-    }
-
-
-
-
-
     /**
      * Destroys the current session immediately.
      */

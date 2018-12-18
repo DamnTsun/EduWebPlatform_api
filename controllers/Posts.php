@@ -167,6 +167,76 @@ class Posts extends Controller {
 
 
     /**
+     * Modifies existing post.
+     * @param subjectid - subject_id of post.
+     * @param postid - id of post.
+     */
+    public function modifyPost($subjectid, $postid) {
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check post exists.
+        if (!$this->checkPostExists($subjectid, $postid)) {
+            $this->printMessage('Specified post does not exist.');
+            http_response_code(404); return;
+        }
+
+        // Check JSON sent as POST param.
+        if (!isset($_POST['content'])) {
+            $this->printMessage('`content` parameter not given in POST body.');
+            http_response_code(400); return;
+        }
+
+        // Check JSON is valid.
+        $invalid = false;
+        try {
+            $json = json_decode($_POST['content'], true);
+            if (!isset($json)) { $invalid = true; }
+        } catch (Exception $e) {
+            $invalid = true;
+        }
+        if ($invalid) {
+            $this->printMessage('`content` parameter is invalid.');
+            http_response_code(400); return;
+        }
+
+        // Set values.
+        $title =                (isset($json['title'])) ? $json['title'] : null;
+        $body =                 (isset($json['body'])) ? $json['body'] : null;
+        // Ensure a value is actually being changed.
+        if (!isset($title) &&
+            !isset($body)) {
+            $this->printMessage('No fields specified to update.');
+            http_response_code(400); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->modifyPost($postid, $user['id'], $title, $body);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to update post.');
+            http_response_code(500);return;
+        }
+
+        // Get updated resource and return it.
+        $record = $this->db->getPostByID($postid);
+        if (!isset($record)) {
+            $this->printMessage('Something went wrong. Post was updated, but cannot be retrieved.');
+            http_response_code(500); return;
+        }
+
+        $this->printJSON($this->formatRecords($record));
+        http_response_code(200);
+    }
+
+
+
+
+
+    /**
      * Delets post with given subject_id and id.
      * @param subjectid - subject_id of post.
      * @param postid - id of post.
@@ -234,8 +304,7 @@ class Posts extends Controller {
 
         // Check if has required fields. Also check type if necessary.
         if (!isset($object) ||
-            !isset($object['title']) ||
-            !isset($object['body'])) {
+            !isset($object['title'])) {
             return null;
         }
         return $object;
