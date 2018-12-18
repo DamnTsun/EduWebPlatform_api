@@ -183,7 +183,9 @@ class Topics extends Controller {
 
 
     /**
-     * 
+     * Modifies existing topic.
+     * @param subjectid - subject the topic is within.
+     * @param topicid - id of topic.
      */
     public function modifyTopic($subjectid, $topicid) {
         // Check user signed into a session. Require that they be an admin.

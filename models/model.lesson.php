@@ -140,6 +140,46 @@ class Model_Lesson extends Model {
 
 
     /**
+     * Modifies values of existing lesson.
+     * @param id - id of lesson.
+     * @param name - name for lesson. Is ignored if null.
+     * @param body - body for lesson. Is ignored if null.
+     */
+    public function modifyLesson($id, $name, $body) {
+        // Build string with variable number of fields.
+        $queryString = "UPDATE lessons SET ";
+        $queryParams = array();
+        // name
+        if (isset($name)) {
+            $queryString = $queryString . "lessons.name = :_name";
+            $queryParams[':_name'] = $name;
+        }
+        // description
+        if (isset($body)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "lessons.body = :_body";
+            $queryParams[':_body'] = $body;
+        }
+        // end query string.
+        $queryString = $queryString . " WHERE lessons.id = :_id LIMIT 1";
+        $queryParams[':_id'] = $id;
+        try {
+            return $result = $this->query(
+                $queryString,
+                $queryParams,
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
      * Delete the lesson record with the given id.
      */
     public function deleteLesson($id) {

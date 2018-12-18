@@ -176,10 +176,8 @@ class Subjects extends Controller {
         $name =                     (isset($json['name'])) ? $json['name'] : null;
         $description =              (isset($json['description'])) ? $json['description'] : null;
         $homepageContent =          (isset($json['homepageContent'])) ? $json['homepageContent'] : null;
-        // Ensure a value is actually being changed.
-        if (!isset($name) &&
-            !isset($description) &&
-            !isset($homepageContent)) {
+        // Ensure a value is actually being changed. (max is only null if all array items are null)
+        if (max( array($name, $description, $homepageContent) ) == null) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }

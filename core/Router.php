@@ -166,7 +166,7 @@ class Router {
         $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
             $controller = new Topics();
-            $controller->modifyTopic($params[1], $params[3]); // subject id
+            $controller->modifyTopic($params[1], $params[3]); // subject id, topicid
         });
 
 
@@ -178,6 +178,12 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
             $controller = new Lessons();
             $controller->createLesson($params[1], $params[3]); // subjectid, topicid
+        });
+        // MODIFY existing lesson.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
+            $controller = new Lessons();
+            $controller->modifyLesson($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
 
 

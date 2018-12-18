@@ -168,7 +168,7 @@ class Posts extends Controller {
 
     /**
      * Modifies existing post.
-     * @param subjectid - subject_id of post.
+     * @param subjectid - subject the post is within.
      * @param postid - id of post.
      */
     public function modifyPost($subjectid, $postid) {
@@ -206,9 +206,8 @@ class Posts extends Controller {
         // Set values.
         $title =                (isset($json['title'])) ? $json['title'] : null;
         $body =                 (isset($json['body'])) ? $json['body'] : null;
-        // Ensure a value is actually being changed.
-        if (!isset($title) &&
-            !isset($body)) {
+        // Ensure a value is actually being changed. (max is only null if all array items are null)
+        if (max( array($title, $body) ) == null) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }
