@@ -145,6 +145,12 @@ class Router {
             $controller = new Subjects();
             $controller->createSubject();
         });
+        // MODIFY existing subject.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
+            $controller = new Subjects();
+            $controller->modifySubject($params[1]); // subjectid
+        });
 
 
         // **************
@@ -189,7 +195,7 @@ class Router {
             $controller = new Posts();
             $controller->createPost($params[1]); // subjectid
         });
-        // MODIFY existing temp
+        // MODIFY existing post.
         $this->addPOSTRoute('/^\/subjects\/\d+\/posts\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
             $controller = new Posts();
@@ -281,7 +287,7 @@ class Router {
             $controller->deleteTest($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
 
-        
+
         // *************
         // *** POSTS ***
         // *************

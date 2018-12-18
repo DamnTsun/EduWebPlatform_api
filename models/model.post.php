@@ -162,6 +162,7 @@ class Model_Post extends Model {
             $queryString = $queryString . ", posts.body = :_body";
             $queryParams[':_body'] = $body;
         }
+        
         // end query string.
         $queryString = $queryString . " WHERE posts.id = :_id LIMIT 1";
         $queryParams[':_id'] = $id;;
