@@ -5,6 +5,7 @@ class Model {
     const TYPE_ROWCOUNT = 'rowcount';
     const TYPE_BOOL = 'boolean';
     const TYPE_INSERT = 'insert';
+    const TYPE_UPDATE = 'update';
     const TYPE_DELETE = 'delete';
 
     private $conn;
@@ -28,6 +29,7 @@ class Model {
                     return $stmt->fetchAll();
                     break;
                 case $this::TYPE_ROWCOUNT:
+                case $this::TYPE_UPDATE:
                     // Return rowcoiunt.
                     return $stmt->rowcount();
                     break;

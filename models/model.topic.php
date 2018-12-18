@@ -146,7 +146,47 @@ class Model_Topic extends Model {
     }
 
 
-    
+
+
+
+    /**
+     * Modifies values of existing topic.
+     * @param topicid - id of topic.
+     * @param name - name for topic. Is ignored if null.
+     * @param description - description for topic. Is ignored if null.
+     */
+    public function modifyTopic($topicid, $name, $description) {
+        // Build string with variable number of fields.
+        $queryString = "UPDATE topics SET ";
+        $queryParams = array();
+        // name
+        if (isset($name)) {
+            $queryString = $queryString . "topics.name = :_name";
+            $queryParams[':_name'] = $name;
+        }
+        // description
+        if (isset($description)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "topics.description = :_desc";
+            $queryParams[':_desc'] = $description;
+        }
+        // end query string.
+        $queryString = $queryString . " WHERE topics.id = :_id LIMIT 1";
+        $queryParams[':_id'] = $topicid;
+        try {
+            return $result = $this->query(
+                $queryString,
+                $queryParams,
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
 
 
     /**

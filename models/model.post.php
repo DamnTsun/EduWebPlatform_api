@@ -138,6 +138,50 @@ class Model_Post extends Model {
 
 
     /**
+     * Modifies values of existing post.
+     * @param id - id of post.
+     * @param user_id - user_id for post. (this holds the most recent user to modify post)
+     * @param title - title for post. Is ignored if null.
+     * @param body - body for post. Is ignored if null.
+     */
+    public function modifyPost($id, $user_id, $title, $body) {
+        // Build string with variable number of fields changing.
+        $queryString = "UPDATE posts SET ";
+        $queryParams = array();
+        // user_id (required)
+        if (!isset($user_id)) { return null; }
+        $queryString = $queryString . "posts.user_id = :_userid";
+        $queryParams[':_userid'] = $user_id;
+        // title
+        if (isset($title)) {
+            $queryString = $queryString . ", posts.title = :_title";
+            $queryParams[':_title'] = $title;
+        }
+        // body
+        if (isset($body)) {
+            $queryString = $queryString . ", posts.body = :_body";
+            $queryParams[':_body'] = $body;
+        }
+        
+        // end query string.
+        $queryString = $queryString . " WHERE posts.id = :_id LIMIT 1";
+        $queryParams[':_id'] = $id;;
+        try {
+            return $result = $this->query(
+                $queryString,
+                $queryParams,
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
      * Deletes post with given id.
      * @param id - id of post.
      */

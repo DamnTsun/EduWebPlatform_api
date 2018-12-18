@@ -60,7 +60,7 @@ class Subjects extends Controller {
         $id = (int)$id;
 
         // Attempt query.
-        $results = $this->db->getSubject($id);
+        $results = $this->db->getSubjectByID($id);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -124,7 +124,7 @@ class Subjects extends Controller {
         }
 
         // Get newly create resource and return it.
-        $record = $this->db->getSubject($result);
+        $record = $this->db->getSubjectByID($result);
         if (!isset($record)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Subject was created, but cannot be retrieved.');
@@ -132,6 +132,73 @@ class Subjects extends Controller {
         }
         $this->printJSON($this->formatRecords($record));
         http_response_code(201);
+    }
+
+
+
+
+    /**
+     * 
+     */
+    public function modifySubject($subjectid) {
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check subject exists.
+        if (!$this->checkSubjectExists($subjectid)) {
+            $this->printMessage('Specified subject does not exist.');
+            http_response_code(404); return;
+        }
+
+        // Check JSON sent as POST param.
+        if (!isset($_POST['content'])) {
+            $this->printMessage('`content` parameter not given in POST body.');
+            http_response_code(400); return;
+        }
+
+        // Check JSON is valid.
+        $invalid = false;
+        try {
+            $json = json_decode($_POST['content'], true);
+            if (!isset($json)) { $invalid = true; }
+        } catch (Exception $e) {
+            $invalid = true;
+        }
+        if ($invalid) {
+            $this->printMessage('`content` parameter is invalid.');
+            http_response_code(400); return;
+        }
+
+        // Set values.
+        $name =                     (isset($json['name'])) ? $json['name'] : null;
+        $description =              (isset($json['description'])) ? $json['description'] : null;
+        $homepageContent =          (isset($json['homepageContent'])) ? $json['homepageContent'] : null;
+        // Ensure a value is actually being changed. (max is only null if all array items are null)
+        if (max( array($name, $description, $homepageContent) ) == null) {
+            $this->printMessage('No fields specified to update.');
+            http_response_code(400); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->modifySubject($subjectid, $name, $description, $homepageContent);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to update subject.');
+            http_response_code(500); return;
+        }
+
+        // Get updated resource and return it.
+        $record = $this->db->getSubjectByID($subjectid);
+        if (!isset($record)) {
+            $this->printMessage('Something went wrong. Subject was updated, but cannot be retrieved.');
+            http_response_code(500); return;
+        }
+
+        $this->printJSON($this->formatRecords($record));
+        http_response_code(200);
     }
 
 

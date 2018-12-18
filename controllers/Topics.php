@@ -183,6 +183,75 @@ class Topics extends Controller {
 
 
     /**
+     * Modifies existing topic.
+     * @param subjectid - subject the topic is within.
+     * @param topicid - id of topic.
+     */
+    public function modifyTopic($subjectid, $topicid) {
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check topic exists.
+        if (!$this->checkTopicExists($subjectid, $topicid)) {
+            $this->printMessage('Specified topic does not exist.');
+            http_response_code(404); return;
+        }
+
+        // Check JSON sent as POST param.
+        if (!isset($_POST['content'])) {
+            $this->printMessage('`content` parameter not given in POST body.');
+            http_response_code(400); return;
+        }
+
+        // Check JSON is valid.
+        $invalid = false;
+        try {
+            $json = json_decode($_POST['content'], true);
+            if (!isset($json)) { $invalid = true; }
+        } catch (Exception $e) {
+            $invalid = true;
+        }
+        if ($invalid) {
+            $this->printMessage('`content` parameter is invalid.');
+            http_response_code(400); return;
+        }
+
+        // Set values.
+        $name =                 (isset($json['name'])) ? $json['name'] : null;
+        $description =          (isset($json['description'])) ? $json['description'] : null;
+        // Ensure a value is actually being changed. (max is only null if all array items are null)
+        if (max( array($name, $description) ) == null) {
+            $this->printMessage('No fields specified to update.');
+            http_response_code(400); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->modifyTopic($topicid, $name, $description);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to update topic.');
+            http_response_code(500); return;
+        }
+
+        // Get updated resource and return it.
+        $record = $this->db->getTopicByID($topicid);
+        if (!isset($record)) {
+            $this->printMessage('Something went wrong. Topic was updated, but cannot be retrieved.');
+            http_response_code(500); return;
+        }
+
+        $this->printJSON($this->formatRecords($record));
+        http_response_code(200);
+    }
+
+
+
+
+
+    /**
      * Deletes topic with given id and subject_id.
      */
     public function deleteTopic($subjectid, $topicid) {

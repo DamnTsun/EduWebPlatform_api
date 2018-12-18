@@ -2,56 +2,6 @@
 
 class Model_Subject extends Model {
 
-    public function getAllSubjects($count, $offset) {
-        $this->setPDOPerformanceMode(false);
-        try {
-            return $results = $this->query(
-                "SELECT
-                    subjects.id,
-                    subjects.name,
-                    subjects.description,
-                    subjects.homepageContent
-                FROM
-                    subjects
-                ORDER BY
-                    subjects.name
-                LIMIT :_count OFFSET :_offset",
-                array(
-                    ':_count' => $count,
-                    ':_offset' => $offset
-                ),
-                Model::TYPE_FETCHALL
-            );
-        } catch (PDOException $e) {
-            return null;
-        }
-    }
-
-
-    public function getSubject($id) {
-        try {
-            return $results = $this->query(
-                "SELECT
-                    subjects.id,
-                    subjects.name,
-                    subjects.description,
-                    subjects.homepageContent
-                FROM
-                    subjects
-                WHERE
-                    subjects.id = :_id
-                LIMIT 1",
-                array(
-                    ':_id' => $id
-                ),
-                Model::TYPE_FETCHALL
-            );
-        } catch (PDOException $e) {
-            return false;
-        }
-    }
-
-
     /**
      * Checks a subject exists with the given name.
      * @param $name - Name of subject being looked for.
@@ -102,6 +52,62 @@ class Model_Subject extends Model {
     }
 
 
+
+
+
+    public function getAllSubjects($count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $results = $this->query(
+                "SELECT
+                    subjects.id,
+                    subjects.name,
+                    subjects.description,
+                    subjects.homepageContent
+                FROM
+                    subjects
+                ORDER BY
+                    subjects.name
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+    public function getSubjectByID($id) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    subjects.id,
+                    subjects.name,
+                    subjects.description,
+                    subjects.homepageContent
+                FROM
+                    subjects
+                WHERE
+                    subjects.id = :_id
+                LIMIT 1",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+
+
+
+
     public function addSubject($name, $description, $homepageContent) {
         try {
             return $results = $this->query(
@@ -125,7 +131,59 @@ class Model_Subject extends Model {
         }
     }
 
-    
+
+
+
+
+    /**
+     * Modifies values of existing subject.
+     * @param id - id of subject.
+     * @param name - name for subject. Is ignored if null.
+     * @param description - description for subject. Is ignored if null.
+     * @param homepageContent - homepageContent for subject. Is ignored if null.
+     */
+    public function modifySubject($id, $name, $description, $homepageContent) {
+        // Build string with variable number of fields.
+        $queryString = "UPDATE subjects SET ";
+        $queryParams = array();
+        // name
+        if (isset($name)) {
+            $queryString = $queryString . "subjects.name = :_name";
+            $queryParams[':_name'] = $name;
+        }
+        // description
+        if (isset($description)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "subjects.description = :_desc";
+            $queryParams[':_desc'] = $description;
+        }
+        // homepageContent
+        if (isset($homepageContent)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "subjects.homepageContent = :_hpContent";
+            $queryParams[':_hpContent'] = $homepageContent;
+        }
+
+        // end query string.
+        $queryString = $queryString . " WHERE subjects.id = :_id LIMIT 1";
+        $queryParams[':_id'] = $id;
+        try {
+            return $result = $this->query(
+                $queryString,
+                $queryParams,
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
     public function deleteSubject($id) {
         try {
             return $results = $this->query(
