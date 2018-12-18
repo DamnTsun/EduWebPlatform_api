@@ -110,6 +110,22 @@ class Router {
             $controller = new Tests();
             $controller->getTestByID($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
+
+        // *************
+        // *** POSTS ***
+        // *************
+        // GET all posts.
+        $this->addGETRoute('/^\/subjects\/\d+\/posts\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
+            $controller = new Posts();
+            $controller->getAllPostsBySubject($params[1]); // subjectid
+        });
+        // GET 1 post by id.
+        $this->addGETRoute('/^\/subjects\/\d+\/posts\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
+            $controller = new Posts();
+            $controller->getPostByID($params[1], $params[3]); // subjectid, postid
+        });
     }
 
 

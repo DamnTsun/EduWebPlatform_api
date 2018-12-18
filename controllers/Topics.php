@@ -23,6 +23,7 @@ class Topics extends Controller {
 
     /**
      * Checks whether the subject with given id exists.
+     * @param subjectid - id of subject.
      */
     public function checkSubjectExists($subjectid) {
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
@@ -84,11 +85,11 @@ class Topics extends Controller {
         if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
             http_response_code(400); return;
         }
-        $subjectid = (int)$subjectid;
         // Validate $topicid.
         if (!isset($topicid) || !App::stringIsInt($topicid)) {
             http_response_code(400); return;
         }
+        $subjectid = (int)$subjectid;
         $topicid = (int)$topicid;
 
         // Check topic exists.
@@ -209,7 +210,8 @@ class Topics extends Controller {
 
 
     /**
-     * Formats records so they look better.
+     * Formats records for output.
+     * @param records - records to be formatted.
      */
     protected function formatRecords($records) {
         $results = array();

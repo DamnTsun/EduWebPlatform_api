@@ -69,9 +69,7 @@ class Model_Topic extends Model {
                 "SELECT
                     topics.id,
                     topics.name,
-                    topics.description,
-                    topics.subject_id,
-                    (SELECT subjects.name FROM subjects WHERE subjects.id = topics.subject_id LIMIT 1) AS 'subjectName'
+                    topics.description
                 FROM
                     topics
                 WHERE
