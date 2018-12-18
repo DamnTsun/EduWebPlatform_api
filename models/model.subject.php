@@ -176,7 +176,6 @@ class Model_Subject extends Model {
                 Model::TYPE_UPDATE
             );
         } catch (PDOException $e) {
-            echo $e;
             return null;
         }
     }

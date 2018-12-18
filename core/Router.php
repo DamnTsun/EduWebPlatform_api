@@ -162,6 +162,12 @@ class Router {
             $controller = new Topics();
             $controller->createTopic($params[1]); // subject id
         });
+        // MODIFY existing topic
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
+            $controller = new Topics();
+            $controller->modifyTopic($params[1], $params[3]); // subject id
+        });
 
 
         // ***************
