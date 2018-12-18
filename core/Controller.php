@@ -44,5 +44,14 @@ abstract class Controller {
         return $user;
     }
 
+    /**
+     * Formats records for output.
+     * @param records - records to be formatted.
+     */
     protected abstract function formatRecords($records);
+    /**
+     * Validates incoming JSON (for create / modify resource) so that it contains all necessary fields.
+     * @param json - the json of the object.
+     */
+    protected abstract function validateJSON($json);
 }

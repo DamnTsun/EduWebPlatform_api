@@ -110,6 +110,22 @@ class Router {
             $controller = new Tests();
             $controller->getTestByID($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
+
+        // *************
+        // *** POSTS ***
+        // *************
+        // GET all posts.
+        $this->addGETRoute('/^\/subjects\/\d+\/posts\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
+            $controller = new Posts();
+            $controller->getAllPostsBySubject($params[1]); // subjectid
+        });
+        // GET 1 post by id.
+        $this->addGETRoute('/^\/subjects\/\d+\/posts\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
+            $controller = new Posts();
+            $controller->getPostByID($params[1], $params[3]); // subjectid, postid
+        });
     }
 
 
@@ -161,11 +177,49 @@ class Router {
         });
 
         // *************
+        // *** POSTS ***
+        // *************
+        // CREATE new post.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/posts\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
+            $controller = new Posts();
+            $controller->createPost($params[1]); // subjectid
+        });
+
+        // *************
         // *** USERS ***
         // *************
-        // Authenticate with server (POST)
-        $this->addPOSTRoute('/^\/users\/auth\/?$/', function($params) {
-            App::initSession();
+        // Authenticate with server (Google)
+        $this->addPOSTRoute('/^\/users\/auth\/google\/?$/', function($params) {
+            Auth::initSession_Google();
+        });
+        // Authenticate with server (Facebook) - NOT IMPLEMENTED
+        // Authenticate with server (LinkedIn) - NOT IMPLEMENTED
+
+        // Check authentification status with server (Google)
+        $this->addPOSTRoute('/^\/users\/auth\/google\/validate\/?$/', function($params) {
+            // Check admin if 'checkAdmin' included in GET parameters.
+            $checkAdmin = (isset($_GET['checkAdmin']));
+            $user = Auth::validateSession($checkAdmin);
+            // If user is null (invalid token, user doesn't exist, user banned, user not admin, etc), return 403 - Unauthorized.
+            if (!isset($user)) { http_response_code(401); return; }
+            echo json_encode($user, JSON_HEX_QUOT | JSON_HEX_TAG);
+        });
+        // Check authentification status with server (Facebook) - NOT IMPLEMENTED
+        // Check authentification status with server (LinkedIn) - NOT IMPLEMENTED
+
+        // End session immediately.
+        $this->addPOSTRoute('/^\/users\/auth\/kill\/?$/', function($params) {
+            Auth::endSession();
+        });
+
+
+
+
+
+        // test route
+        $this->addPOSTRoute('/^\/test\/?$/' , function($params) {
+            Auth::JWTtest();
         });
     }
 
@@ -225,7 +279,7 @@ class Router {
         $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
             $controller = new Lessons();
-            $controller->deleteLesson($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid.
+            $controller->deleteLesson($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
 
         // ***************
@@ -235,7 +289,17 @@ class Router {
         $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
             $controller = new Tests();
-            $controller->deleteTest($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid.
+            $controller->deleteTest($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
+        });
+
+        // *************
+        // *** POSTS ***
+        // *************
+        // DELETE post.
+        $this->addDELETERoute('/^\/subjects\/\d+\/posts\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
+            $controller = new Posts();
+            $controller->deletePost($params[1], $params[3]); // subjectid, postid
         });
     }
 

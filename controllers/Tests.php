@@ -140,28 +140,29 @@ class Tests extends Controller {
      * @param $topicid - id of topic that the test is being added to.
      */
     public function createTest($subjectid, $topicid) {
-        // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
 
-        // Get POST params.
-        $name = '';
-        $description = '';
-        // Name (REQ)
-        if (!isset($_POST['name'])) {
+        // Check JSON sent as POST param.
+        if (!isset($_POST['content'])) {
             http_response_code(400);
-            $this->printMessage('`name` parameter not given in POST body.');
+            $this->printMessage('`content` parameter not given in POST body.');
             return;
         }
-        // Description (REQ)
-        if (!isset($_POST['description'])) {
-            http_response_code(400);
-            $this->printMessage('`description` parameter not given in POST body.');
+
+        // Validate JSON.
+        $json = $this->validateJSON($_POST['content']);
+        if (!isset($json)) {
+            $this->printMessage('`content` parameter is invalid or does not contain required fields.');
             return;
         }
+
         // Set values.
-        $name = $_POST['name'];
-        $description = $_POST['description'];
-
+        $name =                         $json['name']; // Required
+        $description =                  $json['description']; // Required.
 
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
@@ -207,8 +208,11 @@ class Tests extends Controller {
      * @param $testid - id of test being deleted.
      */
     public function deleteTest($subjectid, $topicid, $testid) {
-        // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
 
         // Check test exists.
         if (!$this->checkTestExists($subjectid, $topicid, $testid)) {
@@ -249,5 +253,27 @@ class Tests extends Controller {
             );
         }
         return $results;
+    }
+
+
+    /**
+     * Validates incoming JSON (for create / modify resource) so that it contains all necessary fields.
+     * @param json - the json of the object.
+     */
+    protected function validateJSON($json) {
+        // Try to parse.
+        try {
+            $object = json_decode($json, true);
+        } catch (Exception $e) {
+            return null;
+        }
+
+        // Check if has required fields.
+        if (!isset($object) ||
+            !isset($object['name']) ||
+            !isset($object['description'])) {
+            return null;
+        }
+        return $object;
     }
 }

@@ -1,25 +1,26 @@
 <?php
 
-class Topics extends Controller {
+class Posts extends Controller {
 
     public function __construct() {
         parent::__construct();
-        require_once $_ENV['dir_models'] . $_ENV['models']['topics'];
-        $this->db = new Model_Topic();
+        require_once $_ENV['dir_models'] . $_ENV['models']['posts'];
+        $this->db = new Model_Post();
     }
 
 
     /**
-     * Checks whether topic with given id exists within the subject with the given id.
+     * Check whether post with given subject_id and id exists.
+     * @param subjectid - subject_id of record.
+     * @param postid - id of record.
      */
-    public function checkTopicExists($subjectid, $topicid) {
-        $results = $this->db->checkTopicExistsByID($subjectid, $topicid);
+    public function checkPostExists($subjectid, $postid) {
+        $results = $this->db->checkPostExistsByID($subjectid, $postid);
         if (!isset($results)) {
             return null;
         }
         return $results;
     }
-
 
     /**
      * Checks whether the subject with given id exists.
@@ -40,66 +41,57 @@ class Topics extends Controller {
 
 
     /**
-     * Gets all topics within the given subject (by subject_id)
+     * Gets all posts within the given subject.
+     * @param subjectid - id of subject.
      */
-    public function getAllTopicsBySubject($id) {
-        // Validate $id.
-        if (!isset($id) || !App::stringIsInt($id)) {
+    public function getAllPostsBySubject($subjectid) {
+        // Validate id.
+        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
             http_response_code(400); return;
         }
-        $id = (int)$id;
+        $subjectid = (int)$subjectid;
 
         // Check subject exists.
-        if (!$this->checkSubjectExists($id)) {
+        if (!$this->checkSubjectExists($subjectid)) {
             http_response_code(404); return;
         }
 
-
-        // Get count / offset GET params if given.
-        $count = 10; $offset = 0;
-        if (isset($_GET['count']) && App::stringIsInt($_GET['count'])) {
-            $count = (int)$_GET['count'];
-        }
-        if (isset($_GET['offset']) && App::stringIsInt($_GET['offset'])) {
-            $offset = (int)$_GET['offset'];
-        }
+        // Get count / offset.
+        $count = App::getGETParameter('count', 10);
+        $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getTopicsBySubject($id, $count, $offset);
-        // Check successful.
+        $results = $this->db->getPostsBySubject($subjectid, $count, $offset);
         if (!isset($results)) {
             http_response_code(400); return;
         }
-        
+
         // Format and display results.
         $output = $this->formatRecords($results);
         $this->printJSON($output);
     }
 
-
     /**
-     * Gets topic record with given id and given subject_id.
+     * Gets post with given subject_id and id.
+     * @param subjectid - subject_id of record.
+     * @param postid - id of record.
      */
-    public function getTopicByID($subjectid, $topicid) {
-        // Validate $subjectid.
-        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
-            http_response_code(400); return;
-        }
-        // Validate $topicid.
-        if (!isset($topicid) || !App::stringIsInt($topicid)) {
+    public function getPostByID($subjectid, $postid) {
+        // Validate ids.
+        if (!isset($subjectid) || !App::stringIsInt($subjectid) ||
+            !isset($postid) || !App::stringIsInt($postid)) {
             http_response_code(400); return;
         }
         $subjectid = (int)$subjectid;
-        $topicid = (int)$topicid;
+        $postid = (int)$postid;
 
-        // Check topic exists.
-        if (!$this->checkTopicExists($subjectid, $topicid)) {
-            http_response_code(404);
-            $this->printMessage('Specified topic does not exist.'); return;
+        // Check post exists.
+        if (!$this->checkPostExists($subjectid, $postid)) {
+            http_response_code(404); return;
         }
 
         // Attempt query.
-        $results = $this->db->getTopicByID($topicid);
+        $results = $this->db->getPostByID($postid);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -120,9 +112,10 @@ class Topics extends Controller {
 
 
     /**
-     * Creates new topic record.
+     * Creates a new post.
+     * @param subjectid - subject_id for post.
      */
-    public function createTopic($subjectID) {
+    public function createPost($subjectid) {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
@@ -143,36 +136,27 @@ class Topics extends Controller {
         }
 
         // Set values.
-        $name =                         $json['name'];
-        $description =                  (isset($json['description'])) ? $json['description'] : '';
-        
+        $title =                $json['title'];
+        $body =                 (isset($json['body'])) ? $json['body'] : '';
+
         // Check subject exists.
-        if (!$this->checkSubjectExists($subjectID)) {
-            http_response_code(400);
-            $this->printMessage('Specified subject does not exist.');
-            return;
-        }
-        // Check no topic with name and subject id.
-        if ($this->db->checkTopicExists($subjectID, $name)) {
-            http_response_code(400);
-            $this->printMessage('Topic with name `' . $name . '` already exists in the specified subject.');
-            return;
+        if (!$this->checkSubjectExists($subjectid)) {
+            $this->printMessage('Specified subject does not exists.');
+            http_response_code(404); return;
         }
 
         // Attempt to create.
-        $result = $this->db->addTopic($subjectID, $name, $description);
+        $result = $this->db->addPost($subjectid, $user['id'], $title, $body);
         if (!isset($result)) {
-            http_response_code(500);
-            $this->printMessage('Something went wrong. Unable to add topic.');
-            return;
+            $this->printMessage('Something went wrong. Unable to add post.');
+            http_response_code(500); return;
         }
 
-        // Get newly created resource and return it.
-        $record = $this->db->getTopicByID($result);
+        // Get newly create resource and return it.
+        $record = $this->db->getPostByID($result);
         if (!isset($record)) {
-            http_response_code(500);
-            $this->printMessage('Something went wrong. Topic was created, but cannot be retrieved.');
-            return;
+            $this->printMessage('Something went wrong. Post was created, but cannot be retrieved.');
+            http_response_code(500); return;
         }
         $this->printJSON($this->formatRecords($record));
         http_response_code(201);
@@ -183,28 +167,28 @@ class Topics extends Controller {
 
 
     /**
-     * Deletes topic with given id and subject_id.
+     * Delets post with given subject_id and id.
+     * @param subjectid - subject_id of post.
+     * @param postid - id of post.
      */
-    public function deleteTopic($subjectid, $topicid) {
+    public function deletePost($subjectid, $postid) {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
             http_response_code(401); return;
         }
 
-        // Check topic exists.
-        if (!$this->checkTopicExists($subjectid, $topicid)) {
-            http_response_code(404);
-            $this->printMessage('Specified topic does not exist.');
-            return;
+        // Check post exists.
+        if (!$this->checkPostExists($subjectid, $postid)) {
+            $this->printMessage('Specified post does not exists.');
+            http_response_code(404); return;
         }
 
         // Attempt to delete.
-        $result = $this->db->deleteTopic($topicid);
+        $result = $this->db->deletePost($postid);
         if (!$result) {
-            http_response_code(500);
-            $this->printMessage('Something went wrong. Unable to delete topic.');
-            return;
+            $this->printMessage('Something went wrong. Unable to delete post.');
+            http_response_code(500); return;
         }
         // Success.
         http_response_code(200);
@@ -225,8 +209,10 @@ class Topics extends Controller {
                 $results,
                 array(
                     'id' => (int)$rec['id'],
-                    'name' => $rec['name'],
-                    'description' => $rec['description']
+                    'title' => $rec['title'],
+                    'body' => $rec['body'],
+                    'creationDate' => $rec['creationDate'],
+                    'modificationDate' => $rec['modificationDate']
                 )
             );
         }
@@ -246,9 +232,10 @@ class Topics extends Controller {
             return null;
         }
 
-        // Check if has required fields.
+        // Check if has required fields. Also check type if necessary.
         if (!isset($object) ||
-            !isset($object['name'])) {
+            !isset($object['title']) ||
+            !isset($object['body'])) {
             return null;
         }
         return $object;
