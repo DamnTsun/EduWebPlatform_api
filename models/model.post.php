@@ -95,11 +95,67 @@ class Model_Post extends Model {
         }
     }
 
-    public function addPost($subjectid, $title, $body, $user_id) {
 
+
+
+
+    /**
+     * Creates a new post in the given subject, by the given user, with the given title and body.
+     * @param subject_id - subject_id of post.
+     * @param user_id - user_id of post.
+     * @param title - title of post.
+     * @param body - body of post.
+     */
+    public function addPost($subject_id, $user_id, $title, $body) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $result = $this->query(
+                "INSERT INTO
+                    posts (title, body, subject_id, `user_id`)
+                VALUES
+                    (
+                        :_title,
+                        :_body,
+                        :_subjectid,
+                        :_userid
+                    )",
+                array(
+                    ':_title' => $title,
+                    ':_body' => $body,
+                    ':_subjectid' => $subject_id,
+                    ':_userid' => $user_id
+                ),
+                Model::TYPE_INSERT
+            );
+        } catch (PDOException $e) {
+            echo $e;
+            return null;
+        }
     }
 
-    public function deletePost($id) {
 
+
+
+
+    /**
+     * Deletes post with given id.
+     * @param id - id of post.
+     */
+    public function deletePost($id) {
+        try {
+            return $results = $this->query(
+                "DELETE FROM
+                    posts
+                WHERE
+                    posts.id = :_id
+                LIMIT 1",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_DELETE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
     }
 }

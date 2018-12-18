@@ -158,7 +158,8 @@ class Model_Topic extends Model {
                 "DELETE FROM
                     topics
                 WHERE
-                    topics.id = :_id",
+                    topics.id = :_id
+                LIMIT 1",
                 array(
                     ':_id' => $id
                 ),

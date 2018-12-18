@@ -130,6 +130,9 @@ class Lessons extends Controller {
     public function createLesson($subjectid, $topicid) {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
 
         // Check JSON sent as POST param.
         if (!isset($_POST['content'])) {
@@ -189,8 +192,11 @@ class Lessons extends Controller {
      * Deletes lesson with the given id.
      */
     public function deleteLesson($subjectid, $topicid, $lessonid) {
-        // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
 
         // Check lesson exists.
         if (!$this->checkLessonExists($subjectid, $topicid, $lessonid)) {

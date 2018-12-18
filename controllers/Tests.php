@@ -142,6 +142,9 @@ class Tests extends Controller {
     public function createTest($subjectid, $topicid) {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
 
         // Check JSON sent as POST param.
         if (!isset($_POST['content'])) {
@@ -205,8 +208,11 @@ class Tests extends Controller {
      * @param $testid - id of test being deleted.
      */
     public function deleteTest($subjectid, $topicid, $testid) {
-        // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
 
         // Check test exists.
         if (!$this->checkTestExists($subjectid, $topicid, $testid)) {

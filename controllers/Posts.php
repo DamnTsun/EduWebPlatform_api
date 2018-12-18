@@ -112,6 +112,93 @@ class Posts extends Controller {
 
 
     /**
+     * Creates a new post.
+     * @param subjectid - subject_id for post.
+     */
+    public function createPost($subjectid) {
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check JSON sent as POST param.
+        if (!isset($_POST['content'])) {
+            $this->printMessage('`content` parameter not given in POST body.');
+            http_response_code(400); return;
+        }
+
+        // Validate JSON.
+        $json = $this->validateJSON($_POST['content']);
+        if (!isset($json)) {
+            $this->printMessage('`content` parameter is invalid or does not contain required fields.');
+            http_response_code(400); return;
+        }
+
+        // Set values.
+        $title =                $json['title'];
+        $body =                 (isset($json['body'])) ? $json['body'] : '';
+
+        // Check subject exists.
+        if (!$this->checkSubjectExists($subjectid)) {
+            $this->printMessage('Specified subject does not exists.');
+            http_response_code(404); return;
+        }
+
+        // Attempt to create.
+        $result = $this->db->addPost($subjectid, $user['id'], $title, $body);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to add post.');
+            http_response_code(500); return;
+        }
+
+        // Get newly create resource and return it.
+        $record = $this->db->getPostByID($result);
+        if (!isset($record)) {
+            $this->printMessage('Something went wrong. Post was created, but cannot be retrieved.');
+            http_response_code(500); return;
+        }
+        $this->printJSON($this->formatRecords($record));
+        http_response_code(201);
+    }
+
+
+
+
+
+    /**
+     * Delets post with given subject_id and id.
+     * @param subjectid - subject_id of post.
+     * @param postid - id of post.
+     */
+    public function deletePost($subjectid, $postid) {
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check post exists.
+        if (!$this->checkPostExists($subjectid, $postid)) {
+            $this->printMessage('Specified post does not exists.');
+            http_response_code(404); return;
+        }
+
+        // Attempt to delete.
+        $result = $this->db->deletePost($postid);
+        if (!$result) {
+            $this->printMessage('Something went wrong. Unable to delete post.');
+            http_response_code(500); return;
+        }
+        // Success.
+        http_response_code(200);
+    }
+
+
+
+
+
+    /**
      * Formats records for output.
      * @param records - records to be formatted.
      */
@@ -148,9 +235,7 @@ class Posts extends Controller {
         // Check if has required fields. Also check type if necessary.
         if (!isset($object) ||
             !isset($object['title']) ||
-            !isset($object['body']) ||
-            !isset($object['subject_id'])||
-            !isset($object['user_id'])) {
+            !isset($object['body'])) {
             return null;
         }
         return $object;

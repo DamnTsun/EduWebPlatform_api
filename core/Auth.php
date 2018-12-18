@@ -139,14 +139,20 @@ class Auth {
         if (!isset($_SERVER['HTTP_IDTOKEN'])) { return null; }
         
         // Attempt to get user id based off idToken. (will valid token in the process)
-        $userid = Auth::validateJWT($_SERVER['HTTP_IDTOKEN'], $checkAdmin);
+        $userid = Auth::validateJWT($_SERVER['HTTP_IDTOKEN']);
         if (!isset($userid)) { return null; }
 
         // Attempt to get user record with retrieved id.
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $usersController = new Users();
         $userRecord = $usersController->getUser($userid);
-        if (!isset($userRecord)) { return null; }
+        if (!isset($userRecord) || sizeof($userRecord) == 0) { return null; }
+        // Check admin if necessary.
+        if ($checkAdmin) {
+            if (!($userRecord[0]['admin'] == 1)) {
+                return null;
+            }
+        }
 
         return Auth::formatUserRecord($userRecord);
     }
@@ -196,7 +202,7 @@ class Auth {
      * @param jwt - JSON Web Token to be validated.
      * @param admin - Whether the corresponding user must be an admin.
      */
-    public static function validateJWT($jwt, $checkAdmin) {
+    public static function validateJWT($jwt) {
         require_once $_ENV['dir_vendor'] . 'autoload.php';
 
         // Attempt to parse jwt.
@@ -215,12 +221,6 @@ class Auth {
         $data->setIssuer(Auth::JWT_ISSUER);
         $data->setAudience(Auth::JWT_AUDIENCE);
         if (!$parsed->validate($data)) { return null; }
-
-        // Check admin if required.
-        if ($checkAdmin) {
-            if (!$parsed->getClaim('admin')) { return null; }
-        }
-
 
         // Return user id.
         return $parsed->getClaim('user_id');

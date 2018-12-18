@@ -177,6 +177,16 @@ class Router {
         });
 
         // *************
+        // *** POSTS ***
+        // *************
+        // CREATE new post.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/posts\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
+            $controller = new Posts();
+            $controller->createPost($params[1]); // subjectid
+        });
+
+        // *************
         // *** USERS ***
         // *************
         // Authenticate with server (Google)
@@ -204,7 +214,11 @@ class Router {
         });
 
 
-        $this->addPOSTRoute('/^\/jwttest\/?$/' , function($params) {
+
+
+
+        // test route
+        $this->addPOSTRoute('/^\/test\/?$/' , function($params) {
             Auth::JWTtest();
         });
     }
@@ -265,7 +279,7 @@ class Router {
         $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/lessons\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['lessons'];
             $controller = new Lessons();
-            $controller->deleteLesson($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid.
+            $controller->deleteLesson($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
         });
 
         // ***************
@@ -275,7 +289,17 @@ class Router {
         $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
             $controller = new Tests();
-            $controller->deleteTest($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid.
+            $controller->deleteTest($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
+        });
+
+        // *************
+        // *** POSTS ***
+        // *************
+        // DELETE post.
+        $this->addDELETERoute('/^\/subjects\/\d+\/posts\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
+            $controller = new Posts();
+            $controller->deletePost($params[1], $params[3]); // subjectid, postid
         });
     }
 

@@ -85,6 +85,9 @@ class Subjects extends Controller {
     public function createSubject() {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
 
         // Check JSON sent as POST param.
         if (!isset($_POST['content'])) {
@@ -139,8 +142,11 @@ class Subjects extends Controller {
      * Deletes subject with given id.
      */
     public function deleteSubject($id) {
-        // Get session user. They must be admin.
-        $user = $this->handleSessionUser(true);
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
 
         if (!App::stringIsInt($id)) {
             http_response_code(400);
