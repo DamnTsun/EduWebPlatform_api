@@ -226,6 +226,72 @@ class TestQuestions extends Controller {
 
 
 
+    /**
+     * 
+     */
+    public function modifyTestQuestion($subjectid, $topicid, $testid, $testquestionid) {
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check test exists.
+        if (!$this->checkTestQuestionExists($subjectid, $topicid, $testid, $testquestionid)) {
+            $this->printMessage('Specified test question does not exist.');
+            http_response_code(404); return;
+        }
+
+        // Check JSON sent as POST param.
+        if (!isset($_POST['content'])) {
+            $this->printMessage('`content` parameter not given in POST body.');
+            http_response_code(400); return;
+        }
+
+        // Check JSON is valid.
+        $invalid = false;
+        try {
+            $json = json_decode($_POST['content'], true);
+            if (!isset($json)) { $invalid = true; }
+        } catch (Exception $e) {
+            $invalid = true;
+        }
+        if ($invalid) {
+            $this->printMessage('`content` parameter is invalid.');
+            http_response_code(400); return;
+        }
+
+        // Set values.
+        $question =             (isset($json['question'])) ? $json['question'] : null;
+        $answer =               (isset($json['answer'])) ? $json['answer'] : null;
+        $imageUrl =             (isset($json['imageUrl'])) ? $json['imageUrl'] : null;
+        // Ensure a value is actually being changed. (max is only null if all array items are null)
+        if (max( array($question, $answer, $imageUrl) ) == null) {
+            $this->printMessage('No fields specified to update.');
+            http_response_code(400); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->modifyTestQuestion($testquestionid, $question, $answer, $imageUrl);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to update test question.');
+            http_response_code(500); return;
+        }
+
+        // Get updated resource and return it.
+        $record = $this->db->getTestQuestionByID($testquestionid);
+        if (!isset($record)) {
+            $this->printMessage('Something went wrong. Test question was updated, but cannot be retrieved.');
+            http_response_code(500); return;
+        }
+        $this->printJSON($this->formatRecords($record));
+        http_response_code(200);
+    }
+
+
+
+
 
     /**
      * Formats record so they look better.

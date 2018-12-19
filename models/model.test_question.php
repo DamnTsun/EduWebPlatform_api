@@ -132,4 +132,52 @@ class Model_TestQuestion extends Model {
             return null;
         }
     }
+
+
+
+
+
+    /**
+     * Modifies values of existing test question.
+     * @param id - id of test question.
+     * @param question - question for test question.
+     * @param answer - answer for test question.
+     * @param imageUrl - imageUrl for test question.
+     */
+    public function modifyTestQuestion($id, $question, $answer, $imageUrl) {
+        // Build string with variable number of fields.
+        $queryString = "UPDATE testQuestions SET ";
+        $queryParams = array();
+        // question
+        if (isset($question)) {
+            $queryString = $queryString . "testQuestions.question = :_question";
+            $queryParams[':_question'] = $question;
+        }
+        // answer
+        if (isset($answer)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "testQuestions.answer = :_answer";
+            $queryParams[':_answer'] = $answer;
+        }
+        // imageUrl
+        if (isset($imageUrl)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "testQuestions.imageUrl = :_imageUrl";
+            $queryParams[':_imageUrl'] = $imageUrl;
+        }
+        // end query string.
+        $queryString = $queryString . " WHERE testQuestions.id = :_id LIMIT 1";
+        $queryParams[':_id'] = $id;
+        try {
+            return $result = $this->query(
+                $queryString,
+                $queryParams,
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }
