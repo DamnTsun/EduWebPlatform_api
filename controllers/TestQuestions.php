@@ -109,7 +109,11 @@ class TestQuestions extends Controller {
 
 
     /**
-     * 
+     * Gets the test question with the given id, in the given test, in the given topic, in the given subject.
+     * @param subjectid - subject test question is in. (via topic)
+     * @param topicid - topic test question is in. (via test)
+     * @param testid - test test question is in.
+     * @param testquestionid - id of test question.
      */
     public function getTestQuestionByID($subjectid, $topicid, $testid, $testquestionid) {
         // Check user signed into a session. Require that they be an admin.
@@ -164,6 +168,66 @@ class TestQuestions extends Controller {
 
 
     /**
+     * Creates a new test question record.
+     * @param subjectid - id of subject that the test question is being added to. (via topic)
+     * @param topicid - id of topic that the test question is being added to. (via test)
+     * @param testid - id of test that the test question is being added to.
+     */
+    public function createTestQuestion($subjectid, $topicid, $testid) {
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check JSON sent as POST param.
+        if (!isset($_POST['content'])) {
+            http_response_code(400);
+            $this->printMessage('`content` parameter not given in POST body.');
+            return;
+        }
+
+        // Validate JSON.
+        $json = $this->validateJSON($_POST['content']);
+        if (!isset($json)) {
+            $this->printMessage('`content` parameter is invalid or does not contain required fields.');
+            return;
+        }
+
+        // Set values.
+        $question =         $json['question']; // Required.
+        $answer =           $json['answer']; // Required.
+        $imageUrl =         (isset($json['imageUrl'])) ? $json['imageUrl'] : '';
+
+        // Check test exists.
+        if (!$this->checkTestExists($subjectid, $topicid, $testid)) {
+            $this->printMessage('Specified test does not exists.');
+            http_response_code(400); return;
+        }
+        
+
+        // Attempt to create.
+        $results = $this->db->addTestQuestion($testid, $question, $answer, $imageUrl);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to add test.');
+            http_response_code(500); return;
+        }
+
+        // Get newly created test question and return it.
+        $record = $this->db->getTestQuestionByID($results);
+        if (!isset($record)) {
+            $this->printMessage('something went wrong. Test question was created, but cannot be retrieved.');
+            http_response_code(500); return;
+        }
+        $this->printJSON($this->formatRecords($record));
+        http_response_code(201);
+    }
+
+
+
+
+
+    /**
      * Formats record so they look better.
      * @param records - Records to be formatted.
      */
@@ -174,7 +238,7 @@ class TestQuestions extends Controller {
                 $results,
                 array(
                     'id' => (int)$rec['id'],
-                    'question' => $rec['content'],
+                    'question' => $rec['question'],
                     'answer' => $rec['answer'],
                     'imageUrl' => $rec['imageUrl']
                 )
@@ -198,7 +262,7 @@ class TestQuestions extends Controller {
 
         // Check if has required fields.
         if (!isset($object) ||
-            !isset($object['content']) ||
+            !isset($object['question']) ||
             !isset($object['answer'])) {
             return null;
         }

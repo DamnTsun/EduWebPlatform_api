@@ -227,6 +227,17 @@ class Router {
         });
 
 
+        // **********************
+        // *** TEST QUESTIONS ***
+        // **********************
+        // CREATE new test question.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/questions\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['test_questions'];
+            $controller = new TestQuestions();
+            $controller->createTestQuestion($params[1], $params[3], $params[5]); // subjectid, topicid, testid
+        });
+
+
         // *************
         // *** POSTS ***
         // *************

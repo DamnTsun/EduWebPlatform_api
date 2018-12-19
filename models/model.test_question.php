@@ -46,7 +46,7 @@ class Model_TestQuestion extends Model {
             return $results = $this->query(
                 "SELECT
                     testQuestions.id,
-                    testQuestions.content,
+                    testQuestions.question,
                     testQuestions.answer,
                     testQuestions.imageUrl
                 FROM
@@ -79,7 +79,7 @@ class Model_TestQuestion extends Model {
             return $results = $this->query(
                 "SELECT
                     testQuestions.id,
-                    testQuestions.content,
+                    testQuestions.question,
                     testQuestions.answer,
                     testQuestions.imageUrl
                 FROM
@@ -91,6 +91,42 @@ class Model_TestQuestion extends Model {
                     ':_id' => $id
                 ),
                 Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
+     * Creates a new test question record with given values.
+     * @param test_id - test_id for test question.
+     * @param question - question for test question.
+     * @param answer - answer for test question.
+     * @param imageUrl - imageUrl for test question.
+     */
+    public function addTestQuestion($test_id, $question, $answer, $imageUrl) {
+        try {
+            return $results = $this->query(
+                "INSERT INTO
+                    testQuestions (question, answer, imageUrl, test_id)
+                VALUES
+                    (
+                        :_question,
+                        :_answer,
+                        :_imageUrl,
+                        :_testid
+                    )",
+                array(
+                    ':_question' => $question,
+                    ':_answer' => $answer,
+                    ':_imageUrl' => $imageUrl,
+                    ':_testid' => $test_id
+                ),
+                Model::TYPE_INSERT
             );
         } catch (PDOException $e) {
             return null;
