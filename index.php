@@ -12,9 +12,10 @@ ini_set('session.use_trans_sid', 0);        // Prevents sessionid appearing in p
 ini_set('session.cookie_httponly', 1);      // Prevents clientside JavaScript from accessing the session cookie.
 ini_set('session.cookie_secure', 0);        // HTTPS only. (should be 0 when using localhost)
 
-// Setup base stuff.
+// Setup headers.
 header("Access-Control-Allow-Origin: *");
 
+// Require in base files.
 require_once 'core/reference.php';
 require_once 'core/Auth.php';
 require_once 'core/Router.php';
@@ -24,4 +25,5 @@ require_once 'core/Model.php';
 require_once 'core/App.php';
 
 
+// Start app.
 new App();

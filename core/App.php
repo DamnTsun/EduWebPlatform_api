@@ -2,22 +2,8 @@
 
 class App {
 
-    const ADD_KEYWORD = 'add';
-    const DELETE_KEYWORD = 'delete';
-
-    /*
-    Param 1 is controller.
-    Param 2 is value, such as subjectName / userID.
-    Param 3 is method for controller.
-    Only param 1 is required, though params 2 / 3 are necessary for most functionality.
-    */
+    // Router instance.
     private $router;
-    protected $controller;
-    protected $controllerValue;
-    protected $method = 'index';
-    protected $methodValue;
-    protected $params = [];
-
 
     /**
      * Entry point for app once all pre-init stuff has happened in index.php.
@@ -42,6 +28,7 @@ class App {
         // Attempt to match a route.
         $this->router->checkRoutes($url, $urlFragments);
     }
+
 
     /**
      * Parses url get parameter. Parameter is provided by URL writing in .htaccess.
