@@ -2,10 +2,15 @@
 
 class Router {
 
+    /**
+     * Initializes new instance of Router. Automatically sets up pre-defined routes.
+     */
     public function __construct() {
         $this->setupRoutes();
     }
 
+
+    
 
     
     /**
@@ -253,11 +258,6 @@ class Router {
 
 
 
-
-
-
-
-
     /**
      * Sets up routes for DELETE requests.
      */
@@ -328,8 +328,8 @@ class Router {
 
     /**
      * Checks each route, attempting to match the given url.
-     * @param $url - URL to be matched.
-     * @param $params - URL parameters being passed.
+     * @param url - URL to be matched.
+     * @param params - URL parameters being passed.
      */
     public function checkRoutes($url = '', $params = []) {
         // Check if accepted request method.
@@ -354,6 +354,7 @@ class Router {
 
     /**
      * Determines whether the given string is among the HTTP methods supported by this api.
+     * @param route - HTTP request method.
      */
     private function isRequestMethodSupported($route) {
         switch ($route) {
@@ -372,6 +373,9 @@ class Router {
 
     /**
      * Adds the given route to the routes list for the specified HTTP method. (GET / POST / PUT / DELETE)
+     * Do not called directly. Use addGETRoute / addPOSTRoute / addDELETERoute depending on route type.
+     * @param requestMethod - HTTP request method route will cover.
+     * @param route - route object.
      */
     private function addRoute($requestMethod, $route) {
         if (!$this->isRequestMethodSupported($requestMethod)) {
@@ -390,24 +394,24 @@ class Router {
 
     /**
      * Adds a GET route to the router.
-     * @param $regex - Regular expression for use when matching route.
-     * @param $method - Method to be ran when route is matched.
+     * @param regex - Regular expression for use when matching route.
+     * @param method - Method to be ran when route is matched.
      */
     private function addGETRoute($regex, $method) {
         $this->addRoute('GET', new Route($regex, $method));
     }
     /**
      * Adds a POST route to the router.
-     * @param $regex - Regular expression for use when matching route.
-     * @param $method - Method to be ran when route is matched.
+     * @param regex - Regular expression for use when matching route.
+     * @param method - Method to be ran when route is matched.
      */
     private function addPOSTRoute($regex, $method) {
         $this->addRoute('POST', new Route($regex, $method));
     }
     /**
      * Adds a DELETE route to the router.
-     * @param $regex - Regular expression for use when matching route.
-     * @param $method - Method to be ran when route is matched.
+     * @param regex - Regular expression for use when matching route.
+     * @param method - Method to be ran when route is matched.
      */
     private function addDELETERoute($regex, $method) {
         $this->addRoute('DELETE', new Route($regex, $method));
@@ -432,11 +436,22 @@ class Route {
     private $regex;             // Regular expression for route.
     private $method;            // Method ran when route is matched.
     
+    /**
+     * Initializes new instance of Route.
+     * @param regex - regular expression for route.
+     * @param method - method to be ran when route is matched.
+     */
     public function __construct($regex, $method) {
         $this->regex = $regex;
         $this->method = $method;
     }
 
+    /**
+     * Gets route regular expression.
+     */
     public function getRegex() { return $this->regex; }
+    /**
+     * Gets route method.
+     */
     public function getMethod() { return $this->method; }
 }

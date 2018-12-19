@@ -4,8 +4,8 @@ class Model_Test extends Model {
 
     /**
      * Checks if a test exists with the given name and topic_id.
-     * @param $topic_id - topic_id of test being looked for.
-     * @param $name - name of test being looked for.
+     * @param topic_id - topic_id of test being looked for.
+     * @param name - name of test being looked for.
      */
     public function checkTestExists($topic_id, $name) {
         try {
@@ -32,8 +32,8 @@ class Model_Test extends Model {
 
     /**
      * Checks if a test exists with the given id and topic_id.
-     * @param $topic_id - topic_id of test being looked for.
-     * @param $testid - id of test being looked for.
+     * @param topic_id - topic_id of test being looked for.
+     * @param testid - id of test being looked for.
      */
     public function checkTestExistsByID($topic_id, $testid) {
         try {
@@ -64,9 +64,9 @@ class Model_Test extends Model {
 
     /**
      * Gets all tests with the given topic_id.
-     * @param $topicid - topic_id of tests being looked for.
-     * @param $count - Number of records to be returned. - Optional, default 10.
-     * @param $offset - Number of records to skip when getting records. - Optional, default 0.
+     * @param topicid - topic_id of tests being looked for.
+     * @param count - Number of records to be returned. - Optional, default 10.
+     * @param offset - Number of records to skip when getting records. - Optional, default 0.
      */
     public function getTestsByTopic($topicid, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
@@ -95,7 +95,7 @@ class Model_Test extends Model {
 
     /**
      * Gets test record with given id.
-     * @param $id - id of test record to be looked for.
+     * @param id - id of test record to be looked for.
      */
     public function getTestByID($id) {
         try {
@@ -125,9 +125,9 @@ class Model_Test extends Model {
 
     /**
      * Creates a new test record with the given values.
-     * @param $topic_id - value for topic_id field of new record.
-     * @param $name - value for name field of new record.
-     * @param $description - value for description field of new record.
+     * @param topic_id - value for topic_id field of new record.
+     * @param name - value for name field of new record.
+     * @param description - value for description field of new record.
      */
     public function addTest($topic_id, $name, $description) {
         try {
@@ -198,7 +198,7 @@ class Model_Test extends Model {
 
     /**
      * Delete the test record with the given id.
-     * @param $id - id of record to be deleted.
+     * @param id - id of record to be deleted.
      */
     public function deleteTest($id) {
         try {

@@ -1,49 +1,32 @@
 <?php
 
-abstract class Controller {
-    // Model class
+abstract class Controller {    
+    // Holder instance of model class for controller.
     protected $db;
-    // User model class
-    protected $userDb;
 
-    public function __construct() {
-        require_once $_ENV['dir_models'] . 'model.user.php';
-        $this->userDb = new Model_User();
-    }
 
-    protected function model($model) {
-        if (file_exists($_ENV['dir_models'].$model.'.php')) {
-            require_once '../app/models/'.$model.'.php';
-            return new $model();
+    /**
+     * Encodes the given object as JSON and prints it to output.
+     * @param value - object to be encoded as JSON.
+     */
+    protected function printJSON($value) {
+        try {
+            echo json_encode($value, JSON_HEX_QUOT | JSON_HEX_TAG);
+        } catch (Exception $e) {
+            return null;
         }
     }
-
-    protected function printJSON($object) {
-        echo json_encode($object, JSON_HEX_QUOT | JSON_HEX_TAG);
-    }
     
+    /**
+     * Outputs the given string as a JSON string, with 1 attribute: 'message'.
+     * @param message - message to be output.
+     */
     protected function printMessage($message) {
         $this->printJSON(array('message' => $message));
     }
 
-    protected function handleSessionUser($requiresAdmin) {
-        // Get user.
-        $user = App::validateSession();
-        // Check successful.
-        if (!isset($user)) {
-            http_response_code(401);
-            $this->printMessage('You are not signed in.');
-            exit();
-        }
-        // If required, check user is admin.
-        if ($requiresAdmin && !$user['admin']) {
-            http_response_code(401);
-            $this->printMessage('You are not an admin.');
-            exit();
-        }
-        return $user;
-    }
 
+    // Abstract methods.
     /**
      * Formats records for output.
      * @param records - records to be formatted.

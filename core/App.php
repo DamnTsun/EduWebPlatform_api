@@ -1,49 +1,5 @@
 <?php
 
-// urls
-//  - /subject
-//      GET - Gets all subjects.
-//      POST [Requires id_token in POST body] - Creates new subject. (Requires admin)
-//      DELETE [Requires id_token in POST body] - Deletes an existing subject. (Requires admin)
-
-//  - /subject/<subjectName>/topic
-//      GET - Gets all topics for a given subject.
-//      POST [Requires id_token in POST body] - Creates a new topic for a given subject. (Requires admin)
-//      DELETE [Requires id_token in POST body] - Deletes an existing topic for a given subject. (Requires admin)
-
-//  - /subject/<subjectName>/topic/<topicName>/lesson
-//      GET - Gets all lessons for a given topic for a given subject.
-//      POST [Requires id_token in POST body] - Creates a new lesson for a given topic for a given subject. (Requires admin)
-//      DELETE [Requires id_token in POST body] - Deletes an existing lesson for a given topic for a given subject. (Requires admin)
-
-//  - /subject/<subjectName>/post
-//      GET - Gets all posts for a given subject.
-//      POST [Requires id_token, postTitle, postBody in POST body] - Creates a new post for a given subject. (Requires admin)
-
-//  - /subject/<subjectName>/post/<postID>
-//      DELETE [Requires id_token in POST body] - Delete an existing post for a given subject. (Requires admin)
-
-
-//  - /user
-//      POST [Requires id_token in POST body] - Gets user record corresponding to given id_token. Returns id, isAdmin, isBanned.
-//          If no user account exists for id_token, a new account is created. Then does above.
-
-//  - /user/get/all
-//      POST [Requires id_token in POST body] - Gets all user records. Returns id, isAdmin, isBanned. (Requires admin)
-
-//  - /user/get/admin
-//      POST [Requires id_token in POST body] - Gets user records of admins. Returns id, isAdmin, isBanned. (Requires admin)
-
-//  - /user/get/banned
-//      POST [Requires id_token in POST body] - Gets user records of banned users. Returns id, isAdmin, isBanned. (Requires admin)
-
-//  - /user/<userID>/ban?setTo[true | false]
-//      POST [Requires id_token in POST body] - Gets user record for given userID. Sets isBanned to setTo. (Requires admin)
-
-//  - /user/<userID>/admin?setTo[true | false]
-//      POST [Requires id_token in POST body] - Gets user record for given userID. Sets isAdmin to setTo. (Requires admin)
-
-
 class App {
 
     const ADD_KEYWORD = 'add';
@@ -63,7 +19,9 @@ class App {
     protected $params = [];
 
 
-
+    /**
+     * Entry point for app once all pre-init stuff has happened in index.php.
+     */
     public function __construct() {
         // Create router instance.
         $this->router = new Router();
@@ -85,6 +43,9 @@ class App {
         $this->router->checkRoutes($url, $urlFragments);
     }
 
+    /**
+     * Parses url get parameter. Parameter is provided by URL writing in .htaccess.
+     */
     protected function parseUrl() {
         if (isset($_GET['url'])) {
             // Replace spaces with '+' since FILTER_SANITIZE_URL would remove them.
@@ -105,9 +66,9 @@ class App {
 
     /**
      * Gets GET parameter corresponding to given value. If GET parameter is not set, the given default value is returned.
-     * @param $paramName - String index of GET parameter in $_GET array.
-     * @param $defaultValue - Value to be returned if $_GET[$paramName] is not set.
-     * @param $isInt - Whether retrieved value should be an integer.
+     * @param paramName - String index of GET parameter in $_GET array.
+     * @param defaultValue - Value to be returned if $_GET[$paramName] is not set.
+     * @param isInt - Whether retrieved value should be an integer.
      */
     public static function getGETParameter($paramName, $defaultValue, $isInt = false) {
         // If valid parameter name given, and it is set in $_GET, and the value is an integer
@@ -128,83 +89,23 @@ class App {
     }
 
 
-    // Utility functions.
-    /**
-     * Validates the given Google ID Token.
-     */
-    public static function validateGoogleIdToken($id_token) {
-        // Load in Google API.
-        require_once $_ENV['dir_vendor'] . 'autoload.php';
 
-        $client = new Google_Client([ 'client_id' => $_ENV['google_client_id'] ]);
 
-        // Verify id_token. Return JWT payload if successful, otherwise null.
-        $payload = $client->verifyIdToken($id_token);
-        if ($payload) {
-            return $payload;
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Returns whether the given string is an integer.
      * Returns true is a int is given.
      * Returns false if non-string given.
      * Returns false if the given value is numeric but has decimal places.
+     * @param value - input string.
      */
-    public static function stringIsInt($string) {
+    public static function stringIsInt($value) {
         // Check if already an int.
-        if (is_integer($string)) { return true; }
+        if (is_integer($value)) { return true; }
         // Check it is a string.
-        if (!is_string($string)) { return false; }
+        if (!is_string($value)) { return false; }
         // Check it only contains numbers. (0 - 9)
-        return preg_match('/^[0123456789]+$/', $string) == 1;
+        return preg_match('/^[0123456789]+$/', $value) == 1;
     }
 
-
-    public static function validateSession() {
-        session_start();
-        session_regenerate_id();
-        
-        // Check already in session and that id_token is set.
-        if (!isset($_SESSION) || !isset($_SESSION['id_token'])) {
-            session_destroy();
-            return null;
-        }
-
-        // Attempt to get payload from id_token.
-        $payload = App::validateGoogleIdToken($_SESSION['id_token']);
-        if (!isset($payload)) {
-            session_destroy();
-            return null;
-        }
-
-        // Get user controller instance and attempt to get user using googleId.
-        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
-        $userController = new Users();
-        $user = $userController->getUserByGoogleId($payload['sub']);
-        if (!isset($user) || sizeof($user) == 0) {
-            session_destroy();
-            return null;
-        }
-        if ($user[0]['banned']) {
-            http_response_code(403); return null;
-        }
-        return $user[0];
-    }
-
-
-    public static function getPutParameters() {
-        // Return empty if not PUT request.
-        if ($_SERVER['REQUEST_METHOD'] != 'PUT') { return array(); }
-        // Get PUT data and parse it into array.
-        parse_str(file_get_contents('php://input'), $_PUT);
-        foreach ($_PUT as $key => $value) {
-            unset($_PUT[$key]);
-            $_PUT[str_replace('amp;', '', $key)] = $value;
-        }
-
-        return $_PUT;
-    }
 }

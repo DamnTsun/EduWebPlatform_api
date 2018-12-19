@@ -4,6 +4,8 @@ class Model_Topic extends Model {
 
     /**
      * Checks topic with given name exists within the specified subject.
+     * @param subjectid - id of subject topic is in.
+     * @param name - name of topic.
      */
     public function checkTopicExists($subjectId, $name) {
         try {
@@ -31,6 +33,8 @@ class Model_Topic extends Model {
 
     /**
      * Checks topic with given id exists.
+     * @param subjectid - id of subject topic is in.
+     * @param topicid - id of topic.
      */
     public function checkTopicExistsByID($subjectid, $topicid) {
         try {
@@ -61,6 +65,9 @@ class Model_Topic extends Model {
 
     /**
      * Gets all topics within the given subject.
+     * @param subjectID - id of subject.
+     * @param count - how many records to get. Optional, default 10.
+     * @param offset - how many records to skip. Optional, default 0.
      */
     public function getTopicsBySubject($subjectID, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
@@ -92,6 +99,7 @@ class Model_Topic extends Model {
 
     /**
      * Gets topic with the given id.
+     * @param id - id of topic.
      */
     public function getTopicByID($id) {
         try {
@@ -121,6 +129,9 @@ class Model_Topic extends Model {
 
     /**
      * Creates a new topic in the given subject with the given name and description.
+     * @param subjectID - id of subject.
+     * @param name - name for topic.
+     * @param description - description for topic.
      */
     public function addTopic($subjectID, $name, $description) {
         try {
@@ -191,6 +202,7 @@ class Model_Topic extends Model {
 
     /**
      * Deletes topic with given id.
+     * @param id - id of topic.
      */
     public function deleteTopic($id) {
         try {

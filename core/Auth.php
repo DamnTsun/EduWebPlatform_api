@@ -132,6 +132,7 @@ class Auth {
      * Validates users session based on id_token in session.
      * Checks it is in $_SESSION, valid, etc.
      * Checks if corresponding user is admin if specified.
+     * Returns user record if validation passed, null otherwise.
      * @param checkAdmin - Whether the return user must be an admin.
      */
     public static function validateSession($checkAdmin) {
@@ -247,6 +248,7 @@ class Auth {
 
 
 
+    // Api plans to use JWT instead of sessions. Review this and delete code if appropriate.
     /**
      * Destroys the current session immediately.
      */

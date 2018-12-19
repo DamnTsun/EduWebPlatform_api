@@ -2,8 +2,11 @@
 
 class Subjects extends Controller {
 
+    /**
+     * Initializes new instace on Subjects controllers.
+     * Automatically gets instance of subjects model.
+     */
     public function __construct() {
-        parent::__construct();
         require_once $_ENV['dir_models'] . $_ENV['models']['subjects'];
         $this->db = new Model_Subject();
     }
@@ -11,6 +14,7 @@ class Subjects extends Controller {
 
     /**
      * Checks subject exists.
+     * @param id - id of subject.
      */
     public function checkSubjectExists($id) {
         $results = $this->db->checkSubjectExistsByID($id);
@@ -51,6 +55,7 @@ class Subjects extends Controller {
 
     /**
      * Gets subject with given id.
+     * @param id - id of subject.
      */
     public function getSubjectByID($id) {
         // Validate $id.
@@ -138,7 +143,8 @@ class Subjects extends Controller {
 
 
     /**
-     * 
+     * Modifies existing subject.
+     * @param subjectid - id of subject.
      */
     public function modifySubject($subjectid) {
         // Check user signed into a session. Require that they be an admin.
@@ -207,6 +213,7 @@ class Subjects extends Controller {
 
     /**
      * Deletes subject with given id.
+     * @param id - id of subject.
      */
     public function deleteSubject($id) {
         // Check user signed into a session. Require that they be an admin.
@@ -244,7 +251,8 @@ class Subjects extends Controller {
     
 
     /**
-     * Formats array containing record data, for use before encoding as JSON.
+     * Formats records so they look better.
+     * @param records - Records to be formatted.
      */
     protected function formatRecords($records) {
         $results = array();

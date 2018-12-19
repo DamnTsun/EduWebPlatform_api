@@ -4,7 +4,7 @@ class Model_Subject extends Model {
 
     /**
      * Checks a subject exists with the given name.
-     * @param $name - Name of subject being looked for.
+     * @param name - Name of subject being looked for.
      */
     public function checkSubjectExists($name) {
         try {
@@ -29,7 +29,7 @@ class Model_Subject extends Model {
 
     /**
      * Checks a subject exists with the given id.
-     * @param $id - ID of subject being looked for.
+     * @param id - ID of subject being looked for.
      */
     public function checkSubjectExistsByID($id) {
         try {
@@ -55,7 +55,12 @@ class Model_Subject extends Model {
 
 
 
-    public function getAllSubjects($count, $offset) {
+    /**
+     * Gets all subjects.
+     * @param count - how many records to get. Optional, default 10.
+     * @param offset - how many records to skip. Optional, default 0.
+     */
+    public function getAllSubjects($count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
         try {
             return $results = $this->query(
@@ -81,6 +86,10 @@ class Model_Subject extends Model {
     }
 
 
+    /**
+     * Gets subject with given id.
+     * @param id - id of subject.
+     */
     public function getSubjectByID($id) {
         try {
             return $results = $this->query(
@@ -108,6 +117,12 @@ class Model_Subject extends Model {
 
 
 
+    /**
+     * Creates new subject record with given name / description / homepageContent.
+     * @param name - name of subject.
+     * @param description - description of subject.
+     * @param homepageContent - homepageContent of subject.
+     */
     public function addSubject($name, $description, $homepageContent) {
         try {
             return $results = $this->query(
@@ -184,6 +199,10 @@ class Model_Subject extends Model {
 
 
 
+    /**
+     * Deletes an existing subject.
+     * @param id - id of subject.
+     */
     public function deleteSubject($id) {
         try {
             return $results = $this->query(

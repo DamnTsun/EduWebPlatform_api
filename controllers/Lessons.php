@@ -2,8 +2,11 @@
 
 class Lessons extends Controller {
 
+    /**
+     * Initializes new instace on Lessons controllers.
+     * Automatically gets instance of lessons model.
+     */
     public function __construct() {
-        parent::__construct();
         require_once $_ENV['dir_models'] . $_ENV['models']['lessons'];
         $this->db = new Model_Lesson();
     }
@@ -11,6 +14,9 @@ class Lessons extends Controller {
 
     /**
      * Check whether lesson with given id exists, within the given toic, within the given subject.
+     * @param subjectid - subject lesson is in. (via topic)
+     * @param topicid - topic lesson is in.
+     * @param lessonid - id of lesson.
      */
     public function checkLessonExists($subjectid, $topicid, $lessonid) {
         // Check topic is within given subject.
@@ -26,6 +32,8 @@ class Lessons extends Controller {
 
     /**
      * Checks whether topic with given id exists and is within given subject.
+     * @param subjectid - subject topic is in.
+     * @param topicid - id of topic.
      */
     private function checkTopicExists($subjectid, $topicid) {
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
@@ -43,6 +51,8 @@ class Lessons extends Controller {
 
     /**
      * Gets all lessons within the given topic. (checks topic is within given subject.)
+     * @param subjectid - subject topic is in.
+     * @param topicid - id of topic.
      */
     public function getAllLessonsByTopic($subjectid, $topicid) {
         // Validate id values.
@@ -82,6 +92,9 @@ class Lessons extends Controller {
 
     /**
      * Gets the lesson with the given id in the given topic in the given subject.
+     * @param subjectid - subject lesson is in. (via topic)
+     * @param topicid - topic lesson is in.
+     * @param lessonid - id of lesson.
      */
     public function getLessonByID($subjectid, $topicid, $lessonid) {
         // Validate id values.
@@ -125,7 +138,9 @@ class Lessons extends Controller {
 
 
     /**
-     * Creates new lesson record.
+     * Creates new lesson record inside the given topic.
+     * @param subject - subject topic is within.
+     * @param topicid - id of topic.
      */
     public function createLesson($subjectid, $topicid) {
         // Check user signed into a session. Require that they be an admin.
@@ -260,6 +275,9 @@ class Lessons extends Controller {
 
     /**
      * Deletes lesson with the given id.
+     * @param subjectid - subject lesson is in. (via topic)
+     * @param topicid - topic lesson is in.
+     * @param lessonid - id of lesson.
      */
     public function deleteLesson($subjectid, $topicid, $lessonid) {
         // Check user signed into a session. Require that they be an admin.
@@ -292,7 +310,7 @@ class Lessons extends Controller {
 
     /**
      * Formats records so they look better.
-     * @param $records - Records to be formatted.
+     * @param records - Records to be formatted.
      */
     protected function formatRecords($records) {
         $results = array();

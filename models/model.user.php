@@ -4,7 +4,7 @@ class Model_User extends Model {
 
     /**
      * Checks whether user with given id exists.
-     * @param $id - id of record.
+     * @param id - id of record.
      */
     public function checkUserExistsByID($id) {
         try {
@@ -74,7 +74,7 @@ class Model_User extends Model {
 
     /**
      * Gets user record with given id.
-     * @param $id - id of record.
+     * @param id - id of record.
      */
     public function getUser($id) {
         try {
@@ -100,7 +100,7 @@ class Model_User extends Model {
 
     /**
      * Gets users_google record with given googleid.
-     * @param $googleid - google_id of record.
+     * @param googleid - google_id of record.
      */
     public function getGoogleUser($googleid) {
         try {
@@ -125,7 +125,7 @@ class Model_User extends Model {
 
     /**
      * Gets users_facebook record with given facebookid.
-     * @param $facebookid - facebook_id of record.
+     * @param facebookid - facebook_id of record.
      */
     public function getFacebookUser($facebookid) {
         throw new NotImplementedException();
@@ -133,7 +133,7 @@ class Model_User extends Model {
 
     /**
      * Gets users_linkedin record with given linkedinid.
-     * @param $linkedinid - linkedin_id of record.
+     * @param linkedinid - linkedin_id of record.
      */
     public function getLinkedInUser($linkedinid) {
         throw new NotImplementedException();
@@ -168,8 +168,8 @@ class Model_User extends Model {
 
     /**
      * Creates a new users_google record. Links a internal users record with a google id.
-     * @param $userid - id of users record to be associated with googleid.
-     * @param $googleid - googleid to be associated with users record.
+     * @param userid - id of users record to be associated with googleid.
+     * @param googleid - googleid to be associated with users record.
      */
     public function createGoogleUser($userid, $googleid) {
         try {
@@ -194,8 +194,8 @@ class Model_User extends Model {
 
     /**
      * Creates a new users_facebook record. Links a internal users record with a facebook id.
-     * @param $userid - id of users record to be associated with facebookid.
-     * @param $facebookid - facebookid to be associated with users record.
+     * @param userid - id of users record to be associated with facebookid.
+     * @param facebookid - facebookid to be associated with users record.
      */
     public function createFacebookUser($userid, $facebookid) {
         throw new NotImplementedException();
@@ -203,8 +203,8 @@ class Model_User extends Model {
 
     /**
      * Creates a new users_linkedin record. Links a internal users record with a linkedin id.
-     * @param $userid - id of users record to be associated with linkedinid.
-     * @param $linkedinid - linkedinid to be associated with users record.
+     * @param userid - id of users record to be associated with linkedinid.
+     * @param linkedinid - linkedinid to be associated with users record.
      */
     public function createLinkedInUser($userid, $linkedinid) {
         throw new NotImplementedException();

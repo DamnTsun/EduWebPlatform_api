@@ -2,8 +2,11 @@
 
 class Posts extends Controller {
 
+    /**
+     * Initializes new instace on Posts controllers.
+     * Automatically gets instance of posts model.
+     */
     public function __construct() {
-        parent::__construct();
         require_once $_ENV['dir_models'] . $_ENV['models']['posts'];
         $this->db = new Model_Post();
     }

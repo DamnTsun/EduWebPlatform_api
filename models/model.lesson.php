@@ -4,6 +4,8 @@ class Model_Lesson extends Model {
 
     /**
      * Check if a lesson exists with the given name and topic_id.
+     * @param topic_id - id of topic.
+     * @param name - name of lesson.
      */
     public function checkLessonExists($topic_id, $name) {
         try {
@@ -30,6 +32,8 @@ class Model_Lesson extends Model {
 
     /**
      * Check if a lesson exists with the given id and topic_id.
+     * @param topic_id - id of topic.
+     * @param id - id of lesson.
      */
     public function checkLessonExistsByID($topic_id, $id) {
         try {
@@ -60,6 +64,9 @@ class Model_Lesson extends Model {
 
     /**
      * Gets all lessons with the given topic_id.
+     * @param id - id of topic.
+     * @param count - how many records to get. Optional, default 10.
+     * @param offset - how many records to skip. Optional, default 0.
      */
     public function getLessonsByTopic($id, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
@@ -88,6 +95,7 @@ class Model_Lesson extends Model {
 
     /**
      * Gets the lesson with the given id.
+     * @param id - id of lesson.
      */
     public function getLessonByID($id) {
         return $results = $this->query(
@@ -111,6 +119,9 @@ class Model_Lesson extends Model {
 
     /**
      * Creates a new lesson record with the given values.
+     * @param topic_id - id of topic.
+     * @param name - name of lesson.
+     * @param body - body of lesson.
      */
     public function addLesson($topic_id, $name, $body) {
         try {
@@ -181,6 +192,7 @@ class Model_Lesson extends Model {
 
     /**
      * Delete the lesson record with the given id.
+     * @param id - id of lesson.
      */
     public function deleteLesson($id) {
         try {

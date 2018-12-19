@@ -2,8 +2,11 @@
 
 class Topics extends Controller {
 
+    /**
+     * Initializes new instace on Topics controllers.
+     * Automatically gets instance of topics model.
+     */
     public function __construct() {
-        parent::__construct();
         require_once $_ENV['dir_models'] . $_ENV['models']['topics'];
         $this->db = new Model_Topic();
     }
@@ -11,6 +14,8 @@ class Topics extends Controller {
 
     /**
      * Checks whether topic with given id exists within the subject with the given id.
+     * @param subjectid - subject topic is in.
+     * @param topicid - id of topic.
      */
     public function checkTopicExists($subjectid, $topicid) {
         $results = $this->db->checkTopicExistsByID($subjectid, $topicid);
@@ -41,6 +46,7 @@ class Topics extends Controller {
 
     /**
      * Gets all topics within the given subject (by subject_id)
+     * @param id - id of subject.
      */
     public function getAllTopicsBySubject($id) {
         // Validate $id.
@@ -79,6 +85,8 @@ class Topics extends Controller {
 
     /**
      * Gets topic record with given id and given subject_id.
+     * @param subjectid - subject topic is in.
+     * @param topicid - id of topic.
      */
     public function getTopicByID($subjectid, $topicid) {
         // Validate $subjectid.
@@ -121,6 +129,7 @@ class Topics extends Controller {
 
     /**
      * Creates new topic record.
+     * @param subjectID - id of subject.
      */
     public function createTopic($subjectID) {
         // Check user signed into a session. Require that they be an admin.
@@ -253,6 +262,8 @@ class Topics extends Controller {
 
     /**
      * Deletes topic with given id and subject_id.
+     * @param subjectid - subject topic is in.
+     * @param topicid - id of topic.
      */
     public function deleteTopic($subjectid, $topicid) {
         // Check user signed into a session. Require that they be an admin.

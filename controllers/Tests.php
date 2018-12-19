@@ -2,8 +2,11 @@
 
 class Tests extends Controller {
 
+    /**
+     * Initializes new instace on Tests controllers.
+     * Automatically gets instance of tests model.
+     */
     public function __construct() {
-        parent::__construct();
         require_once $_ENV['dir_models'] . $_ENV['models']['tests'];
         $this->db = new Model_Test();
     }
@@ -11,9 +14,9 @@ class Tests extends Controller {
 
     /**
      * Checks whether test with given id exists, within the given topic, within the given subject.
-     * @param $subjectid - id of subject the topic is supposedly in.
-     * @param $topicid - id of topic the test is supposedly in.
-     * @param $testid - id of test being checked.
+     * @param subjectid - id of subject the topic is supposedly in.
+     * @param topicid - id of topic the test is supposedly in.
+     * @param testid - id of test being checked.
      */
     public function checkTestExists($subjectid, $topicid, $testid) {
         // Check topic is within given subject.
@@ -29,8 +32,8 @@ class Tests extends Controller {
 
     /**
      * Checks whether topic with given id exists, within the given subject.
-     * @param $subjectid - id of subject the topic is supposedly in.
-     * @param $topicid - id of topic being checked.
+     * @param subjectid - id of subject the topic is supposedly in.
+     * @param topicid - id of topic being checked.
      */
     private function checkTopicExists($subjectid, $topicid) {
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['topics'];
@@ -48,8 +51,8 @@ class Tests extends Controller {
 
     /**
      * Gets all tests within the given topic.
-     * @param $subjectid - subject that the test is inside of. (via its topic)
-     * @param $topicid - topic that the test is inside of.
+     * @param subjectid - subject that the test is inside of. (via its topic)
+     * @param topicid - topic that the test is inside of.
      */
     public function getAllTestsByTopic($subjectid, $topicid) {
         // Validate id values.
@@ -92,6 +95,9 @@ class Tests extends Controller {
 
     /**
      * Gets the lesson with the given id, in the given topic, in the given subject.
+     * @param subjectid - subject test is in. (via topic)
+     * @param topicid - topic test is in.
+     * @param testid - id of test.
      */
     public function getTestByID($subjectid, $topicid, $testid) {
         // Validate id values.
@@ -136,8 +142,8 @@ class Tests extends Controller {
 
     /**
      * Creates a new test record.
-     * @param $subjectid - id of subject that the test is being added to. (via its topic)
-     * @param $topicid - id of topic that the test is being added to.
+     * @param subjectid - id of subject that the test is being added to. (via its topic)
+     * @param topicid - id of topic that the test is being added to.
      */
     public function createTest($subjectid, $topicid) {
         // Check user signed into a session. Require that they be an admin.
@@ -273,9 +279,9 @@ class Tests extends Controller {
 
     /**
      * Deletes test with given id.
-     * @param $subjectid - id of subject that the test is part of. (via its topic)
-     * @param $topicid - id of topic that the test is part of.
-     * @param $testid - id of test being deleted.
+     * @param subjectid - id of subject that the test is part of. (via its topic)
+     * @param topicid - id of topic that the test is part of.
+     * @param testid - id of test being deleted.
      */
     public function deleteTest($subjectid, $topicid, $testid) {
         // Check user signed into a session. Require that they be an admin.
@@ -308,7 +314,7 @@ class Tests extends Controller {
 
     /**
      * Formats record so they look better.
-     * @param $records - Records to be formatted.
+     * @param records - Records to be formatted.
      */
     protected function formatRecords($records) {
         $results = array();
