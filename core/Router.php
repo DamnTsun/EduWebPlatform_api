@@ -99,9 +99,9 @@ class Router {
         });
 
 
-        // ***************
-        // *** LESSONS ***
-        // ***************
+        // *************
+        // *** TESTS ***
+        // *************
         // GET all tests.
         $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
@@ -113,6 +113,24 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
             $controller = new Tests();
             $controller->getTestByID($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
+        });
+
+
+        // **********************
+        // *** TEST QUESTIONS ***
+        // **********************
+        // GET all test questions.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/questions\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['test_questions'];
+            $controller = new TestQuestions();
+            $controller->getAllTestQuestionsByTest($params[1], $params[3], $params[5]); // subjectid, topicid, testid
+        });
+        // GET 1 test question by id.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/questions\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['test_questions'];
+            $controller = new TestQuestions();
+            // subjectid, topicid, testid, testquestionid
+            $controller->getTestQuestionByID($params[1], $params[3], $params[5], $params[7]);
         });
 
 
@@ -209,6 +227,24 @@ class Router {
         });
 
 
+        // **********************
+        // *** TEST QUESTIONS ***
+        // **********************
+        // CREATE new test question.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/questions\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['test_questions'];
+            $controller = new TestQuestions();
+            $controller->createTestQuestion($params[1], $params[3], $params[5]); // subjectid, topicid, testid
+        });
+        // MODIFY existing test question.
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/questions\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['test_questions'];
+            $controller = new TestQuestions();
+            // subjectid, topicid, testid, testquestionid
+            $controller->modifyTestQuestion($params[1], $params[3], $params[5], $params[7]);
+        });
+
+
         // *************
         // *** POSTS ***
         // *************
@@ -295,14 +331,26 @@ class Router {
         });
 
 
-        // ***************
-        // *** LESSONS ***
-        // ***************
+        // *************
+        // *** TESTS ***
+        // *************
         // DELETE test.
         $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
             $controller = new Tests();
             $controller->deleteTest($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
+        });
+
+
+        // **********************
+        // *** TEST QUESTIONS ***
+        // **********************
+        // DELETE test question.
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/questions\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['test_questions'];
+            $controller = new TestQuestions();
+            // subjectid, topicid, testid, testquestionid
+            $controller->deleteTestQuestion($params[1], $params[3], $params[5], $params[7]);
         });
 
 
@@ -315,6 +363,7 @@ class Router {
             $controller = new Posts();
             $controller->deletePost($params[1], $params[3]); // subjectid, postid
         });
+
     }
 
 

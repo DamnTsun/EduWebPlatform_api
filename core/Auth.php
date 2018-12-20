@@ -148,6 +148,10 @@ class Auth {
         $usersController = new Users();
         $userRecord = $usersController->getUser($userid);
         if (!isset($userRecord) || sizeof($userRecord) == 0) { return null; }
+        // Check user not banned.
+        if ($userRecord[0]['banned'] == 1) {
+            return null;
+        }
         // Check admin if necessary.
         if ($checkAdmin) {
             if (!($userRecord[0]['admin'] == 1)) {

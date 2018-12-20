@@ -16,23 +16,25 @@ $_ENV['dir_subcontrollers'] = 'controllers/subcontrollers/';
 $_ENV['dir_models'] = 'models/';
 $_ENV['dir_vendor'] = 'vendor/';
 
-// Controller paths.
+// Controller filenames.
 $_ENV['controllers'] = array(
     'subjects' => 'Subjects.php',
     'topics' => 'Topics.php',
     'lessons' => 'Lessons.php',
     'tests' => 'Tests.php',
+    'test_questions' => 'TestQuestions.php',
     'posts' => 'Posts.php',
 
     'users' => 'Users.php'
 );
 
-// Model paths.
+// Model filenames.
 $_ENV['models'] = array(
     'subjects' => 'model.subject.php',
     'topics' => 'model.topic.php',
     'lessons' => 'model.lesson.php',
     'tests' => 'model.test.php',
+    'test_questions' => 'model.test_question.php',
     'posts' => 'model.post.php',
 
     'users' => 'model.user.php'

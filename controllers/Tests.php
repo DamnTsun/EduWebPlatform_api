@@ -3,7 +3,7 @@
 class Tests extends Controller {
 
     /**
-     * Initializes new instace on Tests controllers.
+     * Initializes new instance of Tests controller.
      * Automatically gets instance of tests model.
      */
     public function __construct() {

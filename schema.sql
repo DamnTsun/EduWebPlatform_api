@@ -45,7 +45,7 @@ CREATE TABLE `tests` (
 
 CREATE TABLE `testQuestions` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `content` VARCHAR(255) NOT NULL,
+    `question` VARCHAR(255) NOT NULL,
     `answer` VARCHAR(255) NOT NULL,
     `imageUrl` VARCHAR(255) DEFAULT '',
     `test_id` INT NOT NULL,
