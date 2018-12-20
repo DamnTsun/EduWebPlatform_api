@@ -180,4 +180,29 @@ class Model_TestQuestion extends Model {
             return null;
         }
     }
+
+
+
+
+    /**
+     * Delete the test question record with given id.
+     * @param id - id of record to be deleted.
+     */
+    public function deleteTestQuestion($id) {
+        try {
+            return $results = $this->query(
+                "DELETE FROM
+                    testQuestions
+                WHERE
+                    testQuestions.id = :_id
+                LIMIT 1",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_DELETE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }

@@ -342,6 +342,18 @@ class Router {
         });
 
 
+        // **********************
+        // *** TEST QUESTIONS ***
+        // **********************
+        // DELETE test question.
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/questions\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['test_questions'];
+            $controller = new TestQuestions();
+            // subjectid, topicid, testid, testquestionid
+            $controller->deleteTestQuestion($params[1], $params[3], $params[5], $params[7]);
+        });
+
+
         // *************
         // *** POSTS ***
         // *************
@@ -351,6 +363,7 @@ class Router {
             $controller = new Posts();
             $controller->deletePost($params[1], $params[3]); // subjectid, postid
         });
+
     }
 
 

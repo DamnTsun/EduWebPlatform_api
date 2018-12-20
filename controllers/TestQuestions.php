@@ -294,6 +294,40 @@ class TestQuestions extends Controller {
 
 
     /**
+     * Deletes test question with given id.
+     * @param subjectid - id of subject that the test question is in. (via topic)
+     * @param topcid - id of topic that the test question is in. (via test)
+     * @param testid - id of test that the test question is in.
+     * @param testquestionid - id of test question being deleted.
+     */
+    public function deleteTestQuestion($subjectid, $topicid, $testid, $testquestionid) {
+        // Check user signed into a session. Require that they be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check test exists.
+        if (!$this->checkTestQuestionExists($subjectid, $topicid, $testid, $testquestionid)) {
+            $this->printMessage('Specified test question does not exists.');
+            http_response_code(404); return;
+        }
+
+        // Attempt to delete.
+        $result = $this->db->deleteTestQuestion($testquestionid);
+        if (!$result) {
+            $this->printMessage('Something went wrong. Unable to delete test.');
+            http_response_code(500); return;
+        }
+        // Success.
+        http_response_code(200);
+    }
+
+
+
+
+
+    /**
      * Formats record so they look better.
      * @param records - Records to be formatted.
      */
