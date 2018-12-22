@@ -8,6 +8,12 @@ class Auth {
     private const JWT_ISSUER = 'EduWebPlatform backend';
     private const JWT_AUDIENCE = 'EduWebPlatform frontend';
 
+    // Translates privilege level into the specific value of the 'level' field of records in the privilegeLevels table.
+    private const PRIVILEGE_LEVELS = array(
+        'normal' => 'Normal',
+        'admin' => 'Admin',
+        'banned' => 'Banned'
+    );
 
 
 
@@ -56,24 +62,44 @@ class Auth {
      * Initiates a new session. Checks and validates a google id_token. (given via POST)
      */
     public static function initSession_Google() {
-        session_start();
-        session_regenerate_id();
-
         // Check id_token given in POST body.
         if (!isset($_POST[Auth::GOOGLE_TOKEN_NAME])) {
-            http_response_code(400); Auth::killSession(); return;
+            http_response_code(400); return '`google_id_token` not given in POST body.';
         }
 
         // Attempt to get payload from id_token.
         $payload = Auth::validateIdToken_Google($_POST[Auth::GOOGLE_TOKEN_NAME]);
         if (!isset($payload)) {
-            http_response_code(400); Auth::killSession(); return;
+            http_response_code(400); return '`google_id_token` is not valid.';
         }
 
         // Create users controller instance for interacting with users / users_google records.
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $userController = new Users();
 
+
+        // $payload['sub'] is the subject - aka the user's google id.
+        // Check is user exists where socialMediaID = $payload['sub'] and social media type of Google.
+        if (!$userController->checkUserExistsBySocialMediaID($payload['sub'], 'google')) {
+            echo 'not found'; return;
+        }
+
+        // Get user record using socialMediaID ($payload['sub']) and socialMediaProvider name (google).
+        $user = $userController->getUserBySocialMediaID($payload['sub'], 'google');
+        if (!isset($user) || sizeof($user) == 0) {
+            http_response_code(500); return 'Something went wrong. Your user record exists, but could not be retrieved.';
+        }
+
+        // Check user not banned.
+        if ($user[0]['level'] == Auth::PRIVILEGE_LEVELS['banned']) {
+            http_response_code(401); return 'You are banned.';
+        }
+
+        var_dump($user);
+
+        return null;
+        // OLD code. Rework.
+        /*
         // Check if users_google record exists for googleid.
         if (!$userController->checkGoogleUserExists($payload['sub'])) {
             // Create new user record. Note down id.
@@ -108,6 +134,8 @@ class Auth {
 
         // Everything passes. Create and return JWT to user. (Returned as JSON object containing: JWT, expiry)
         Auth::createJWT($user[0]['id'], ($user[0]['admin'] == 1) ? true : false);
+        return null;
+        */
     }
 
     /**
@@ -146,7 +174,7 @@ class Auth {
         // Attempt to get user record with retrieved id.
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $usersController = new Users();
-        $userRecord = $usersController->getUser($userid);
+        $userRecord = $usersController->getUserByID($userid);
         if (!isset($userRecord) || sizeof($userRecord) == 0) { return null; }
         // Check user not banned.
         if ($userRecord[0]['banned'] == 1) {
@@ -248,33 +276,4 @@ class Auth {
         );
     }
 
-
-
-
-
-    // Api plans to use JWT instead of sessions. Review this and delete code if appropriate.
-    /**
-     * Destroys the current session immediately.
-     */
-    public static function endSession() {
-        // Start / resume the session. Kill the session.
-        Auth::getSession();
-        Auth::killSession();
-    }
-
-    /**
-     * Starts / resumes a session. Exists for maintainability.
-     */
-    private static function getSession() {
-        session_start();
-        session_regenerate_id();
-    }
-    /**
-     * Destroys session if it is set.
-     */
-    private static function killSession() {
-        if (isset($_SESSION)) {
-            session_destroy();
-        }
-    }
 }

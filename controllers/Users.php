@@ -12,6 +12,9 @@ class Users extends Controller {
     }
 
 
+
+
+
     /**
      * Checks whether user exists with given id.
      * @param id - id of user record.
@@ -26,31 +29,16 @@ class Users extends Controller {
 
 
     /**
-     * Check whether google user exists with given googleid.
-     * @param googleid - googleid of google user.
+     * Checks whether a user exists with the given socialMediaID and the given socialMediaProvider_id.
+     * @param socialMediaID - id of the social media account the user is signed in with.
+     * @param socialMediaProviderName - name of socialMediaProvider. Should match the unique 'name' field of a socialMediaProviders record.
      */
-    public function checkGoogleUserExists($googleid) {
-        $results = $this->db->checkGoogleUserExistsByGoogleID($googleid);
+    public function checkUserExistsBySocialMediaID($socialMediaID, $socialMediaProviderName) {
+        $results = $this->db->checkUserExistsBySocialMediaID($socialMediaID, $socialMediaProviderName);
         if (!isset($results)) {
             return null;
         }
         return $results;
-    }
-
-    /**
-     * Checks users_facebook record exists with given facebook_id.
-     * @param facebookid - facebook_id of record.
-     */
-    public function checkFacebookUserExists($facebookid) {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * Checks users_linkedin record exists with given linkedin_id.
-     * @param linkedinid - linkedin_id of record.
-     */
-    public function checkLinkedInUserExists($linkedinid) {
-        throw new NotImplementedException();
     }
 
 
@@ -61,9 +49,9 @@ class Users extends Controller {
      * Gets users record with given id.
      * @param id - id of record.
      */
-    public function getUser($id) {
+    public function getUserByID($id) {
         // Attempt query.
-        $results = $this->db->getUser((int)$id);
+        $results = $this->db->getUserByID((int)$id);
         if (!isset($results) || sizeof($results) == 0) {
             return null;
         }
@@ -72,38 +60,28 @@ class Users extends Controller {
 
 
     /**
-     * Gets users_google record with given google_id.
-     * @param googleid - google_id of record.
+     * Gets user record with given socialMediaID, that is associated with a specified social media provider.
+     * @param socialMediaID - socialMediaID of record.
+     * @param socialMediaProviderName - name field of a socialMediaProviders record. Used to get records id.
      */
-    public function getGoogleUser($googleid) {
+    public function getUserBySocialMediaID($socialMediaID, $socialMediaProviderName) {
         // Attempt query.
-        $results = $this->db->getGoogleUser($googleid);
+        $results = $this->db->getUserBySocialMediaID($socialMediaID, $socialMediaProviderName);
         if (!isset($results) || sizeof($results) == 0) {
             return null;
         }
         return $results;
     }
 
-    /**
-     * Gets users_facebook record with given facebook_id.
-     * @param facebookid - facebook_id of record.
-     */
-    public function getFacebookUser($facebookid) {
-
-    }
-
-    /**
-     * Gets users_linkedin record with given linkedin_id.
-     * @param linkedinid - linkedin_id of record.
-     */
-    public function getLinkedInUser($linkedinid) {
-
-    }
 
 
 
 
 
+
+
+
+    // OLD
     /**
      * Creates new user record with default values.
      */

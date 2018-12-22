@@ -28,44 +28,37 @@ class Model_User extends Model {
 
 
     /**
-     * Checks users_google record exists with given google_id.
-     * @param googleid - google_id of record.
+     * Checks whether user with given socialMediaID, associated with a specific social media provider, exists.
+     * @param socialMediaID - socialMediaID of record.
+     * @param socialMediaProviderName - name of socialMediaProviders record. This will be used to get it's id field.
      */
-    public function checkGoogleUserExistsByGoogleID($googleid) {
+    public function checkUserExistsBySocialMediaID($socialMediaID, $socialMediaProviderName) {
         try {
-            return $results = $this->query(
+            return $this->query(
                 "SELECT
-                    users_google.user_id
+                    users.id
                 FROM
-                    users_google
+                    users
                 WHERE
-                    users_google.google_id = :_googleid
-                LIMIT 1",
+                    users.socialMediaID = :_smid
+                    AND
+                    users.socialMediaProvider_id = (
+                        SELECT
+                            socialMediaProviders.id
+                        FROM
+                            socialMediaProviders
+                        WHERE
+                            socialMediaProviders.name = :_name
+                    )",
                 array(
-                    ':_googleid' => $googleid
+                    ':_smid' => $socialMediaID,
+                    ':_name' => $socialMediaProviderName
                 ),
                 Model::TYPE_BOOL
             );
         } catch (PDOException $e) {
-            echo $e;
             return null;
         }
-    }
-
-    /**
-     * Checks users_facebook record exists with given facebook_id.
-     * @param googleid - facebook_id of record.
-     */
-    public function checkFacebookUserExistsByFacebookID($facebookid) {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * Checks users_linkedin record exists with given linkedin_id.
-     * @param linkedinid - linkedin_id of record.
-     */
-    public function checkLinkedInUserExistsByLinkedInID($linkedinid) {
-        throw new NotImplementedException();
     }
 
 
@@ -76,7 +69,7 @@ class Model_User extends Model {
      * Gets user record with given id.
      * @param id - id of record.
      */
-    public function getUser($id) {
+    public function getUserByID($id) {
         try {
             return $results = $this->query(
                 "SELECT
@@ -98,45 +91,44 @@ class Model_User extends Model {
         }
     }
 
+
     /**
-     * Gets users_google record with given googleid.
-     * @param googleid - google_id of record.
+     * Get user with given socialMediaID, associated with a specific social media provider, exists.
+     * @param socialMediaID - socialMediaID of record.
+     * @param socialMediaProviderName - name of socialMediaProviders record. This will be used to get it's id field.
      */
-    public function getGoogleUser($googleid) {
+    public function getUserBySocialMediaID($socialMediaID, $socialMediaProviderName) {
         try {
-            return $results = $this->query(
+            return $this->query(
                 "SELECT
-                    users_google.user_id,
-                    users_google.google_id
+                    users.id,
+                    users.displayName,
+                    privilegeLevels.level
                 FROM
-                    users_google
+                    users,
+                    privilegeLevels
                 WHERE
-                    users_google.google_id = :_googleid
-                LIMIT 1",
+                    users.socialMediaID = :_smid
+                    AND
+                    users.socialMediaProvider_id = (
+                        SELECT
+                            socialMediaProviders.id
+                        FROM
+                            socialMediaProviders
+                        WHERE
+                            socialMediaProviders.name = :_name
+                    )
+                    AND
+                    privilegeLevels.id = users.privilegeLevel_id",
                 array(
-                    ':_googleid' => $googleid
+                    ':_smid' => $socialMediaID,
+                    ':_name' => $socialMediaProviderName
                 ),
                 Model::TYPE_FETCHALL
             );
         } catch (PDOException $e) {
             return null;
         }
-    }
-
-    /**
-     * Gets users_facebook record with given facebookid.
-     * @param facebookid - facebook_id of record.
-     */
-    public function getFacebookUser($facebookid) {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * Gets users_linkedin record with given linkedinid.
-     * @param linkedinid - linkedin_id of record.
-     */
-    public function getLinkedInUser($linkedinid) {
-        throw new NotImplementedException();
     }
 
 
