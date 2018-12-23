@@ -64,11 +64,11 @@ INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('2 + 4',
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('7 + 0', '7', '', 1);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('10 + 6', '16', '', 1);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('0 + 1', '1', '', 1);
-INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('0 + 1', '1', '', 1);
+INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('0 + 2', '2', '', 1);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('9 + 6', '15', '', 1);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('3 + 8', '11', '', 1);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('6 + 1', '7', '', 1);
-INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('10 + 6', '16', '', 1);
+INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('10 + 7', '17', '', 1);
 
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('82 + 60', '142', '', 2);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('61 + 17', '78', '', 2);
@@ -102,7 +102,7 @@ INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('3 - 2',
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('10 - 9', '1', '', 4);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('7 - 5', '2', '', 4);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('7 - 0', '7', '', 4);
-INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('5 - 0', '5', '', 4);
+INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('5 - 1', '4', '', 4);
 
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('52 - 30', '22', '', 5);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('28 - 23', '5', '', 5);
@@ -139,4 +139,6 @@ INSERT INTO socialMediaProviders (name) VALUES ('Facebook');
 INSERT INTO socialMediaProviders (name) VALUES ('LinkedIn');
 
 -- Users
-INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott', '102562326633765021134', 1, 1); -- name, smid, google account, normal privileges.
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the normie', '102562326633765021134', 1, 1); -- Google account, normal.
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the admin', '117929523951432123072', 1, 2); -- Google account, admin.
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the banned', '111865521247464378466', 1, 3); -- Google account, banned.

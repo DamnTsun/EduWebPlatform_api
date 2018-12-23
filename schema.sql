@@ -48,7 +48,8 @@ CREATE TABLE `testQuestions` (
     `answer` VARCHAR(255) NOT NULL,
     `imageUrl` VARCHAR(255) DEFAULT '',
     `test_id` INT NOT NULL,
-    FOREIGN KEY (`test_id`) REFERENCES `tests`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (`test_id`) REFERENCES `tests`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE KEY `testQuestion_test` (`test_id`, `question`)
 );
 /* END OF GENERAL CONTENT RELATED */
 
