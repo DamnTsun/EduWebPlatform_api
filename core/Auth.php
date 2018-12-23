@@ -8,12 +8,14 @@ class Auth {
     private const JWT_ISSUER = 'EduWebPlatform backend';
     private const JWT_AUDIENCE = 'EduWebPlatform frontend';
 
-    // Translates privilege level into the specific value of the 'level' field of records in the privilegeLevels table.
+    // Specific database values for maintainability.
+    // Stores value of privilege levels. (the exact casesensitive values of records)
     private const PRIVILEGE_LEVELS = array(
         'normal' => 'Normal',
         'admin' => 'Admin',
         'banned' => 'Banned'
     );
+
 
 
 
@@ -81,7 +83,11 @@ class Auth {
         // $payload['sub'] is the subject - aka the user's google id.
         // Check is user exists where socialMediaID = $payload['sub'] and social media type of Google.
         if (!$userController->checkUserExistsBySocialMediaID($payload['sub'], 'google')) {
-            echo 'not found'; return;
+            // Attempt to create user account for user, using google, with normal privilege level.
+            $result = $userController->createUser($payload['sub'], 'google', 'normal');
+            if (!isset($result)) {
+                http_response_code(500); return 'Something went wrong. Unable to create new internal user record.';
+            }
         }
 
         // Get user record using socialMediaID ($payload['sub']) and socialMediaProvider name (google).
@@ -95,47 +101,9 @@ class Auth {
             http_response_code(401); return 'You are banned.';
         }
 
-        var_dump($user);
 
-        return null;
-        // OLD code. Rework.
-        /*
-        // Check if users_google record exists for googleid.
-        if (!$userController->checkGoogleUserExists($payload['sub'])) {
-            // Create new user record. Note down id.
-            $user_id = $userController->createUser();
-            if (!isset($user_id)) {
-                http_response_code(500); Auth::killSession(); return;
-            }
-            // Create new users_google record using user_id and google_id.
-            $result = $userController->createGoogleUser($user_id, $payload['sub']);
-            if (!isset($result)) {
-                http_response_code(500); Auth::killSession(); return;
-            }
-        }
-
-        // Get users_google record corresponding to googleid.
-        $googleUser = $userController->getGoogleUser($payload['sub']);
-        if (!isset($googleUser) || sizeof($googleUser) == 0) {
-            http_response_code(400); Auth::killSession(); return;
-        }
-
-        // Get users record.
-        $user = $userController->getUser($googleUser[0]['user_id']);
-        if (!isset($user) || sizeof($user) == 0) {
-            http_response_code(400); Auth::killSession(); return;
-        }
-
-        // Check not banned.
-        if ($user[0]['banned']) {
-            http_response_code(403); Auth::killSession(); return;
-        }
-
-
-        // Everything passes. Create and return JWT to user. (Returned as JSON object containing: JWT, expiry)
-        Auth::createJWT($user[0]['id'], ($user[0]['admin'] == 1) ? true : false);
-        return null;
-        */
+        // Create and return JWT to user.
+        Auth::createJWT($user[0]['id']);
     }
 
     /**
@@ -176,15 +144,21 @@ class Auth {
         $usersController = new Users();
         $userRecord = $usersController->getUserByID($userid);
         if (!isset($userRecord) || sizeof($userRecord) == 0) { return null; }
-        // Check user not banned.
-        if ($userRecord[0]['banned'] == 1) {
-            return null;
-        }
-        // Check admin if necessary.
-        if ($checkAdmin) {
-            if (!($userRecord[0]['admin'] == 1)) {
+        
+        // Check user privilege level.
+        switch ($userRecord[0]['level']) {
+            // Exclude admin from default case.
+            case Auth::PRIVILEGE_LEVELS['admin']:
+                break;
+            // Check if user banned.
+            case Auth::PRIVILEGE_LEVELS['banned']:
                 return null;
-            }
+
+            // Any other privilege level.
+            default:
+                // Check admin is required.
+                if ($checkAdmin) { return null; }
+                break;
         }
 
         return Auth::formatUserRecord($userRecord);
@@ -196,11 +170,10 @@ class Auth {
 
     // ***** JWT functions (create, validate, etc) *****
     /**
-     * Creates a JWT for the given user_id and admin status. JWT is encoded with Sha256 using secret Hmac key.
+     * Creates a JWT for the given user_id. JWT is encoded with Sha256 using secret Hmac key.
      * @param user_id - id of user.
-     * @param admin - admin status of user.
      */
-    public static function createJWT($user_id, $admin) {
+    public static function createJWT($user_id) {
         require_once $_ENV['dir_vendor'] . 'autoload.php';
 
         // Create token with sha256 encryption. (1 shared key) and return it.
@@ -211,7 +184,6 @@ class Auth {
                                                 ->setIssuedAt(time())                       // Issued at:   Now.
                                                 ->setExpiration(time() + 3600)              // Expires in:  1 hour.
                                                 ->set('user_id', (int)$user_id)             // Store user_id as claim.
-                                                ->set('admin', $admin)                      // Store admin status as claim.
                                                 ->sign($signer, $_ENV['JWT_Hmac_key'])      // Sign using Sha256.
                                                 ->getToken();
         } catch (Exception $e) {
@@ -271,8 +243,8 @@ class Auth {
         if (!isset($records) || sizeof($records) == 0) { return null; }
         return array(
             'id' => (int)$records[0]['id'],
-            'admin' => ($records[0]['admin'] == 1) ? true : false,
-            'banned' => ($records[0]['banned'] == 1) ? true : false
+            'displayName' => $records[0]['displayName'],
+            'privilegeLevel' => $records[0]['level']
         );
     }
 

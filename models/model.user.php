@@ -74,12 +74,15 @@ class Model_User extends Model {
             return $results = $this->query(
                 "SELECT
                     users.id,
-                    users.admin,
-                    users.banned
+                    users.displayName,
+                    privilegeLevels.level
                 FROM
-                    users
+                    users,
+                    privilegeLevels
                 WHERE
                     users.id = :_id
+                    AND
+                    privilegeLevels.id = users.privilegeLevel_id
                 LIMIT 1",
                 array(
                     ':_id' => $id
@@ -136,46 +139,42 @@ class Model_User extends Model {
 
 
     /**
-     * Creates a new user record with default values. (displayName: 'unnamed user', admin: false, banned: false)
+     * Creates new user with given socialMediaID, id of socialMediaProviders record with given name,
+     *  id of privilegeLevels record with given level.
+     * @param socialMediaID - socialMediaID for record.
+     * @param socialMediaProviderName - name of socialMediaProviders record.
+     * @param privilegeLevel - level of privilgeLevels record.
      */
-    public function createUser() {
+    public function createUser($socialMediaID, $socialMediaProviderName, $privilegeLevelName) {
         try {
-            return $results = $this->query(
+            return $this->query(
                 "INSERT INTO
-                    users (displayName, admin, banned)
+                    users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id)
                 VALUES
                     (
                         DEFAULT,
-                        DEFAULT,
-                        DEFAULT
-                    )",
-                array(),
-                Model::TYPE_INSERT
-            );
-        } catch (PDOException $e) {
-            return null;
-        }
-    }
-
-
-    /**
-     * Creates a new users_google record. Links a internal users record with a google id.
-     * @param userid - id of users record to be associated with googleid.
-     * @param googleid - googleid to be associated with users record.
-     */
-    public function createGoogleUser($userid, $googleid) {
-        try {
-            return $results = $this->query(
-                "INSERT INTO
-                    users_google (`user_id`, google_id)
-                VALUES
-                    (
-                        :_userid,
-                        :_googleid
+                        :_smid,
+                        (
+                            SELECT
+                                socialMediaProviders.id
+                            FROM
+                                socialMediaProviders
+                            WHERE
+                                socialMediaProviders.name = :_smname
+                        ),
+                        (
+                            SELECT
+                                privilegeLevels.id
+                            FROM
+                                privilegeLevels
+                            WHERE
+                                privilegeLevels.level = :_plname
+                        )
                     )",
                 array(
-                    ':_userid' => $userid,
-                    ':_googleid' => $googleid
+                    ':_smid' => $socialMediaID,
+                    ':_smname' => $socialMediaProviderName,
+                    ':_plname' => $privilegeLevelName
                 ),
                 Model::TYPE_INSERT
             );
@@ -183,24 +182,5 @@ class Model_User extends Model {
             return null;
         }
     }
-
-    /**
-     * Creates a new users_facebook record. Links a internal users record with a facebook id.
-     * @param userid - id of users record to be associated with facebookid.
-     * @param facebookid - facebookid to be associated with users record.
-     */
-    public function createFacebookUser($userid, $facebookid) {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * Creates a new users_linkedin record. Links a internal users record with a linkedin id.
-     * @param userid - id of users record to be associated with linkedinid.
-     * @param linkedinid - linkedinid to be associated with users record.
-     */
-    public function createLinkedInUser($userid, $linkedinid) {
-        throw new NotImplementedException();
-    }
-
 
 }

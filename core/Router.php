@@ -262,20 +262,23 @@ class Router {
         });
 
 
+
+
+
         // *************
         // *** USERS ***
         // *************
         // Authenticate with server (Google)
         $this->addPOSTRoute('/^\/users\/auth\/google\/?$/', function($params) {
-            Auth::initSession_Google();
+            // Will return null if no problems.
+            $error = Auth::initSession_Google();
+            if (isset($error)) {
+                echo json_encode(array('message' => $error), JSON_HEX_QUOT | JSON_HEX_TAG);
+            }
         });
         // Authenticate with server (Facebook) - NOT IMPLEMENTED
         // Authenticate with server (LinkedIn) - NOT IMPLEMENTED
 
-        // End session immediately.
-        $this->addPOSTRoute('/^\/users\/auth\/kill\/?$/', function($params) {
-            Auth::endSession();
-        });
 
         // Check authentification status with server (Google)
         $this->addPOSTRoute('/^\/users\/auth\/google\/validate\/?$/', function($params) {

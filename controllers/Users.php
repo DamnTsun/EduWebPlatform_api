@@ -66,64 +66,28 @@ class Users extends Controller {
      */
     public function getUserBySocialMediaID($socialMediaID, $socialMediaProviderName) {
         // Attempt query.
-        $results = $this->db->getUserBySocialMediaID($socialMediaID, $socialMediaProviderName);
-        if (!isset($results) || sizeof($results) == 0) {
-            return null;
-        }
-        return $results;
+        return $this->db->getUserBySocialMediaID($socialMediaID, $socialMediaProviderName);
     }
 
 
 
-
-
-
-
-
-
-    // OLD
-    /**
-     * Creates new user record with default values.
-     */
-    public function createUser() {
-        $result = $this->db->createUser();
-        if (!isset($result)) {
-            return null;
-        }
-        return $result;
-    }
 
 
     /**
-     * Creates new users_google record. Linking an internal users account with a googleid.
-     * @param user_id - id of user.
-     * @param googleid - googleid being linked.
+     * Creates a new user record with default displayName, the given socialMediaID, for the specified social media provider.
+     * Optionally may specify their user privilege level. (default 'normal')
+     * @param socialMediaID - socialMediaID for user.
+     * @param socialMediaProviderName - name of socialMediaProviders record. ID will be looked up using this.
+     * @param privilegeLevelName - name of privilegeLevels record. ID will be looked up using this.
      */
-    public function createGoogleUser($user_id, $googleid) {
-        $result = $this->db->createGoogleUser((int)$user_id, $googleid);
-        if (!isset($result)) {
-            return null;
-        }
-        return $result;
+    public function createUser($socialMediaID, $socialMediaProviderName, $privilegeLevelName = 'normal') {
+        // Attempt to create user.
+        return $this->db->createUser($socialMediaID, $socialMediaProviderName, $privilegeLevelName);
     }
 
-    /**
-     * Creates new users_facebook record. Linking an internal users account with a facebookid.
-     * @param user_id - id of user.
-     * @param facebookid - facebookid being linked.
-     */
-    public function createFacebookUser($user_id, $facebookid) {
-        throw new NotImplementedException();
-    }
 
-    /**
-     * Creates new users_linkedin record. Linking an internal users account with a linkedinid.
-     * @param user_id - id of user.
-     * @param linkedinid - facebookid being linked.
-     */
-    public function createLinkedInUser($user_id, $linkedinid) {
-        throw new NotImplementedException();
-    }
+
+
 
 
 
