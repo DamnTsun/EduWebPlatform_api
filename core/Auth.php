@@ -4,6 +4,7 @@ class Auth {
 
     // Constants
     private const GOOGLE_TOKEN_NAME = 'google_id_token';
+    private const FACEBOOK_TOKEN_NAME = 'facebook_id_token';
 
     private const JWT_ISSUER = 'EduWebPlatform backend';
     private const JWT_AUDIENCE = 'EduWebPlatform frontend';
@@ -21,6 +22,30 @@ class Auth {
 
 
     // *** TOKEN VALIDATION ***
+    /**
+     * Verifies a token (for any provider), by sending it to the given url. (Should be social media provider's endpoint for token validation)
+     * @param url - url to use.
+     */
+    private static function verifyTokenByURL($url) {
+        $curl = curl_init();
+        // Set url.
+        curl_setopt($curl, CURLOPT_URL, $url);
+        // Set return transfer. (Content returned by request is stored in a variable)
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        
+        // Execture request and close curl.
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        // Check response received.
+        if (!isset($response)) {
+            return null;
+        }
+
+        return $response;
+    }
+
+
     /**
      * Validates given google id_token.
      * @param id_token - id_token to be validated.
@@ -44,7 +69,41 @@ class Auth {
      * @param id_token - id_token to be validated.
      */
     private static function validateIdToken_Facebook($id_token) {
-        throw new NotImplementedException();
+        // Perform GET request to Facebook token validation endpoint using curl.
+        $curl = curl_init();
+        // Set url.
+        $response = Auth::verifyTokenByURL(
+            'https://graph.facebook.com/debug_token' .
+                '?input_token=' . $id_token .
+                '&access_token=' . $_ENV['facebook_client_id'] . '|' . $_ENV['facebook_client_secret']
+        );
+
+        // Check successful.
+        if (!isset($response)) {
+            return null;
+        }
+
+        // Try parsing it as JSON.
+        try {
+            $payload = json_decode($response);
+            // Make sure payload is in correct / expected format.
+            if (!isset($payload) || !isset($payload->data)) {
+                return null;
+            }
+        } catch (Exception $e) {
+            return null;
+        }
+
+        // Check app_id matches this app.
+        if (!isset($payload->data->app_id) || $payload->data->app_id !== $_ENV['facebook_client_id']) {
+            return null;
+        }
+        // Check is_valid is true.
+        if (!isset($payload->data->is_valid) || !$payload->data->is_valid) {
+            return null;
+        }
+
+        return $payload;
     }
 
     /**
@@ -61,37 +120,29 @@ class Auth {
 
     // *** INIT SESSION ***
     /**
-     * Initiates a new session. Checks and validates a google id_token. (given via POST)
+     * Initiates a new session. Gets user with given socialMediaID and given socialMediaProvider (by name)
+     * If user does not exists, an account is created for them, and then returned.
+     * Do not call this directly. Call initSession_Google or similar. It will pass the correspond values if validation is passed.
+     * @param socialMediaID - id of social media account being used to sign in. (Extenal id, aka on social media provider's side)
+     * @param socialMediaProviderName - name of socialMediaProviders record linked to the account.
      */
-    public static function initSession_Google() {
-        // Check id_token given in POST body.
-        if (!isset($_POST[Auth::GOOGLE_TOKEN_NAME])) {
-            http_response_code(400); return '`google_id_token` not given in POST body.';
-        }
-
-        // Attempt to get payload from id_token.
-        $payload = Auth::validateIdToken_Google($_POST[Auth::GOOGLE_TOKEN_NAME]);
-        if (!isset($payload)) {
-            http_response_code(400); return '`google_id_token` is not valid.';
-        }
-
+    private static function initSession($socialMediaID, $socialMediaProviderName) {
         // Create users controller instance for interacting with users / users_google records.
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $userController = new Users();
 
 
-        // $payload['sub'] is the subject - aka the user's google id.
-        // Check is user exists where socialMediaID = $payload['sub'] and social media type of Google.
-        if (!$userController->checkUserExistsBySocialMediaID($payload['sub'], 'google')) {
+        // Check if user exists with given socialMediaID, associated with given socialMediaProvider.
+        if (!$userController->checkUserExistsBySocialMediaID($socialMediaID, $socialMediaProviderName)) {
             // Attempt to create user account for user, using google, with normal privilege level.
-            $result = $userController->createUser($payload['sub'], 'google', 'normal');
+            $result = $userController->createUser($socialMediaID, $socialMediaProviderName, 'normal');
             if (!isset($result)) {
                 http_response_code(500); return 'Something went wrong. Unable to create new internal user record.';
             }
         }
 
         // Get user record using socialMediaID ($payload['sub']) and socialMediaProvider name (google).
-        $user = $userController->getUserBySocialMediaID($payload['sub'], 'google');
+        $user = $userController->getUserBySocialMediaID($socialMediaID, $socialMediaProviderName);
         if (!isset($user) || sizeof($user) == 0) {
             http_response_code(500); return 'Something went wrong. Your user record exists, but could not be retrieved.';
         }
@@ -104,13 +155,48 @@ class Auth {
 
         // Create and return JWT to user.
         Auth::createJWT($user[0]['id']);
+        return null;
+    }
+
+
+    /**
+     * Initiates a new session. Checks and validates a google id_token. (given via POST)
+     */
+    public static function initSession_Google() {
+        // Check id_token given in POST body.
+        if (!isset($_POST[Auth::GOOGLE_TOKEN_NAME])) {
+            http_response_code(400); return '`' . Auth::GOOGLE_TOKEN_NAME . '` not given in POST body.';
+        }
+
+        // Attempt to get payload from id_token.
+        $payload = Auth::validateIdToken_Google($_POST[Auth::GOOGLE_TOKEN_NAME]);
+        if (!isset($payload)) {
+            http_response_code(400); return '`' . Auth::GOOGLE_TOKEN_NAME . '` is not valid.';
+        }
+
+        // payload['sub'] is 'subject' - aka user's google id.
+        // Attempt to initialize session with given social media id of type 'google'. Return to return any errors.
+        return Auth::initSession($payload['sub'], 'google');
     }
 
     /**
      * Initiates a new session. Checks and validates a facebook id_token. (given via POST)
      */
     public static function initSession_Facebook() {
-        throw new NotImplementedException();
+        // Check id_token given in POST body.
+        if (!isset($_POST[Auth::FACEBOOK_TOKEN_NAME])) {
+            http_response_code(400); return '`' . Auth::FACEBOOK_TOKEN_NAME . '` not given in POST body.';
+        }
+
+        // Attempt to get payload from id_token.
+        $payload = Auth::validateIdToken_Facebook($_POST[Auth::FACEBOOK_TOKEN_NAME]);
+        if (!isset($payload)) {
+            http_response_code(400); return '`' . Auth::FACEBOOK_TOKEN_NAME . '` is not valid.';
+        }
+
+        // $payload->data->user_id is user's facebook id.
+        // Attempt to initialize session with given social media id of type 'facebook'. Return to return any errors.
+        return Auth::initSession($payload->data->user_id, 'facebook');
     }
 
     /**
