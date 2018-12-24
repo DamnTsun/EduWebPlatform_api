@@ -33,13 +33,8 @@ class Subjects extends Controller {
      */
     public function getAllSubjects() {
         // Get count / offset GET params if given.
-        $count = 10; $offset = 0;
-        if (isset($_GET['count']) && App::stringIsInt($_GET['count'])) {
-            $count = (int)$_GET['count'];
-        }
-        if (isset($_GET['offset']) && App::stringIsInt($_GET['offset'])) {
-            $offset = (int)$_GET['offset'];
-        }
+        $count = App::getGETParameter('count', 10);
+        $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
         $results = $this->db->getAllSubjects($count, $offset);
@@ -58,12 +53,6 @@ class Subjects extends Controller {
      * @param id - id of subject.
      */
     public function getSubjectByID($id) {
-        // Validate $id.
-        if (!isset($id) || !App::stringIsInt($id)) {
-            http_response_code(400); return;
-        }
-        $id = (int)$id;
-
         // Attempt query.
         $results = $this->db->getSubjectByID($id);
         // Check successful.
@@ -96,9 +85,8 @@ class Subjects extends Controller {
 
         // Check JSON sent as POST param.
         if (!isset($_POST['content'])) {
-            http_response_code(400);
             $this->printMessage('`content` parameter not given in POST body.');
-            return;
+            http_response_code(400); return;
         }
 
         // Validate JSON.
@@ -115,25 +103,22 @@ class Subjects extends Controller {
 
         // Check subject with name does not exist.
         if ($this->db->checkSubjectExists($name)) {
-            http_response_code(400);
             $this->printMessage('Subject with name `' . $name . '` already exists. Subject names must be unique.');
-            return;
+            http_response_code(400); return;
         }
 
         // Attempt to create new resource.
         $result = $this->db->addSubject($name, $description, $homepageContent);
         if (!isset($result)) {
-            http_response_code(500);
             $this->printMessage('Something went wrong. Unable to add subject.');
-            return;
+            http_response_code(500); return;
         }
 
         // Get newly create resource and return it.
         $record = $this->db->getSubjectByID($result);
         if (!isset($record)) {
-            http_response_code(500);
             $this->printMessage('Something went wrong. Subject was created, but cannot be retrieved.');
-            return;
+            http_response_code(500); return;
         }
         $this->printJSON($this->formatRecords($record));
         http_response_code(201);
@@ -222,25 +207,18 @@ class Subjects extends Controller {
             http_response_code(401); return;
         }
 
-        if (!App::stringIsInt($id)) {
-            http_response_code(400);
-            $this->printMessage('Cannot delete. Given id value is not an integer.');
-            return;
-        }
-
         // Check subject with id exists.
-        $record = $this->db->getSubject($id);
-        if (!isset($record) || sizeof($record) == 0) {
-            http_response_code(404);
+        if (!$this->checkSubjectExists($id)) {
             $this->printMessage('Cannot delete. No subject found with given id.');
-            return;
+            http_response_code(404); return;
         }
 
+        // Attempt to delete.
         $success = $this->db->deleteSubject($id);
         if (!$success) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Unable to delete subject.');
-            return;
+            http_response_code(500); return;
         }
 
         http_response_code(200);

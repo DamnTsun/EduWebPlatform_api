@@ -31,11 +31,12 @@ class Model_Lesson extends Model {
     }
 
     /**
-     * Check if a lesson exists with the given id and topic_id.
-     * @param topic_id - id of topic.
+     * Check if a lesson exists with the given id, in the given topic, in the given subject.
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
      * @param id - id of lesson.
      */
-    public function checkLessonExistsByID($topic_id, $id) {
+    public function checkLessonExistsByID($subjectid, $topicid, $lessonid) {
         try {
             return $results = $this->query(
                 "SELECT
@@ -43,13 +44,22 @@ class Model_Lesson extends Model {
                 FROM
                     lessons
                 WHERE
-                    lessons.topic_id = :_topicid
+                    lessons.id = :_lessonid
                     AND
-                    lessons.id = :_id
-                LIMIT 1",
+                    lessons.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )",
                 array(
-                    ':_topicid' => $topic_id,
-                    ':_id' => $id
+                    ':_lessonid' => $lessonid,
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid
                 ),
                 Model::TYPE_BOOL
             );
@@ -63,12 +73,13 @@ class Model_Lesson extends Model {
 
 
     /**
-     * Gets all lessons with the given topic_id.
-     * @param id - id of topic.
+     * Gets all lessons inside the given topic (by id), inside the given subject (by id).
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
      * @param count - how many records to get. Optional, default 10.
      * @param offset - how many records to skip. Optional, default 0.
      */
-    public function getLessonsByTopic($id, $count = 10, $offset = 0) {
+    public function getLessonsByTopic($subjectid, $topicid, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
         try {
             return $results = $this->query(
@@ -79,10 +90,20 @@ class Model_Lesson extends Model {
                 FROM
                     lessons
                 WHERE
-                    lessons.topic_id = :_id
+                    lessons.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )
                 LIMIT :_count OFFSET :_offset",
                 array(
-                    ':_id' => $id,
+                    ':_subjectid' => $subjectid,
+                    ':_topicid' => $topicid,
                     ':_count' => $count,
                     ':_offset' => $offset
                 ),
@@ -94,10 +115,12 @@ class Model_Lesson extends Model {
     }
 
     /**
-     * Gets the lesson with the given id.
-     * @param id - id of lesson.
+     * Gets the lesson with the given id, inside the given topic (by id), inside the given subject (by id).
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
+     * @param lessonid - id of lesson.
      */
-    public function getLessonByID($id) {
+    public function getLessonByID($subjectid, $topicid, $lessonid) {
         return $results = $this->query(
             "SELECT
                 lessons.id,
@@ -106,9 +129,23 @@ class Model_Lesson extends Model {
             FROM
                 lessons
             WHERE
-                lessons.id = :id
-            LIMIT 1",
-            array(':id' => $id),
+                lessons.id = :_lessonid
+                AND
+                lessons.topic_id = (
+                    SELECT
+                        topics.id
+                    FROM
+                        topics
+                    WHERE
+                        topics.id = :_topicid
+                        AND
+                        topics.subject_id = :_subjectid
+                )",
+            array(
+                ':_lessonid' => $lessonid,
+                ':_topicid' => $topicid,
+                ':_subjectid' => $subjectid
+            ),
             Model::TYPE_FETCHALL
         );
     }

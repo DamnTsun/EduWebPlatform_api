@@ -19,10 +19,8 @@ class Lessons extends Controller {
      * @param lessonid - id of lesson.
      */
     public function checkLessonExists($subjectid, $topicid, $lessonid) {
-        // Check topic is within given subject.
-        if (!$this->checkTopicExists($subjectid, $topicid)) { return false; }
-        // Check lesson is within the topic.
-        $results = $this->db->checkLessonExistsByID($topicid, $lessonid);
+        // Check lesson exists.
+        $results = $this->db->checkLessonExistsByID($subjectid, $topicid, $lessonid);
         if (!isset($results)) {
             return null;
         }
@@ -55,30 +53,17 @@ class Lessons extends Controller {
      * @param topicid - id of topic.
      */
     public function getAllLessonsByTopic($subjectid, $topicid) {
-        // Validate id values.
-        // subjectid.
-        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
-            http_response_code(400); return;
-        }
-        // topicid.
-        if (!isset($topicid) || !App::stringIsInt($topicid)) {
-            http_response_code(400); return;
-        }
-        $subjectid = (int)$subjectid;
-        $topicid = (int)$topicid;
-
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
             http_response_code(404); return;
         }
-
 
         // Get count / offset GET params if given.
         $count = App::getGETParameter('count', 10);
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getLessonsByTopic($topicid, $count, $offset);
+        $results = $this->db->getLessonsByTopic($subjectid, $topicid, $count, $offset);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -97,34 +82,15 @@ class Lessons extends Controller {
      * @param lessonid - id of lesson.
      */
     public function getLessonByID($subjectid, $topicid, $lessonid) {
-        // Validate id values.
-        // subjectid
-        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
-            http_response_code(400); return;
-        }
-        // topicid
-        if (!isset($topicid) || !App::stringIsInt($topicid)) {
-            http_response_code(400); return;
-        }
-        // lessonid
-        if (!isset($lessonid) || !App::stringIsInt($lessonid)) {
-            http_response_code(400); return;
-        }
-        $subjectid = (int)$subjectid;
-        $topicid = (int)$topicid;
-        $lessonid = (int)$lessonid;
-
-        // Check lesson exists.
-        if (!$this->checkLessonExists($subjectid, $topicid, $lessonid)) {
-            http_response_code(404); return;
-        }
-
-
         // Attempt query.
-        $results = $this->db->getLessonByID($lessonid);
+        $results = $this->db->getLessonByID($subjectid, $topicid, $lessonid);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
+        }
+        // Check found.
+        if (sizeof($results) == 0) {
+            http_response_code(404); return;
         }
 
 
@@ -151,16 +117,15 @@ class Lessons extends Controller {
 
         // Check JSON sent as POST param.
         if (!isset($_POST['content'])) {
-            http_response_code(400);
             $this->printMessage('`content` parameter not given in POST body.');
-            return;
+            http_response_code(400); return;
         }
 
         // Validate JSON.
         $json = $this->validateJSON($_POST['content']);
         if (!isset($json)) {
             $this->printMessage('`content` parameter is invalid or does not contain required fields.');
-            return;
+            http_response_code(400); return;
         }
 
         // Set values.
@@ -175,25 +140,22 @@ class Lessons extends Controller {
         }
         // Check no lesson with name and topic id.
         if ($this->db->checkLessonExists($topicid, $name)) {
-            http_response_code(400);
             $this->printMessage('Lesson with name `' . $name . '` already exists in the specified topic.');
-            return;
+            http_response_code(400); return;
         }
 
         // Attempt to create.
         $result = $this->db->addLesson($topicid, $name, $body);
         if (!isset($result)) {
-            http_response_code(500);
             $this->printMessage('Something went wrong. Unable to add lesson.');
-            return;
+            http_response_code(500); return;
         }
 
         // Get newly created lesson and return it.
         $record = $this->db->getLessonByID($result);
         if (!isset($record)) {
-            http_response_code(500);
             $this->printMessage('Something went wrong. Lesson was created, but cannot be retreived.');
-            return;
+            http_response_code(500); return;
         }
         $this->printJSON($this->formatRecords($record));
         http_response_code(201);
@@ -259,7 +221,7 @@ class Lessons extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getLessonByID($lessonid);
+        $record = $this->db->getLessonByID($subjectid, $topicid, $lessonid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Lesson was updated, but cannot be retrieved.');
             http_response_code(500); return;
@@ -288,17 +250,15 @@ class Lessons extends Controller {
 
         // Check lesson exists.
         if (!$this->checkLessonExists($subjectid, $topicid, $lessonid)) {
-            http_response_code(404);
             $this->printMessage('Specified lesson does not exists.');
-            return;
+            http_response_code(404); return;
         }
 
         // Attempt to delete.
         $result = $this->db->deleteLesson($lessonid);
         if (!$result) {
-            http_response_code(500);
             $this->printMessage('Something went wrong. Unable to delete lesson.');
-            return;
+            http_response_code(500); return;
         }
         // Success.
         http_response_code(200);
