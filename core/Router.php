@@ -276,7 +276,14 @@ class Router {
                 echo json_encode(array('message' => $error), JSON_HEX_QUOT | JSON_HEX_TAG);
             }
         });
-        // Authenticate with server (Facebook) - NOT IMPLEMENTED
+        // Authenticate with server (Facebook)
+        $this->addPOSTRoute('/^\/users\/auth\/facebook\/?$/', function($params) {
+            // Will return null if no problems.
+            $error = Auth::initSession_Facebook();
+            if (isset($error)) {
+                echo json_encode(array('message' => $error), JSON_HEX_QUOT | JSON_HEX_TAG);
+            }
+        });
         // Authenticate with server (LinkedIn) - NOT IMPLEMENTED
 
 
