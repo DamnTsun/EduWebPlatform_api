@@ -62,13 +62,8 @@ class Topics extends Controller {
 
 
         // Get count / offset GET params if given.
-        $count = 10; $offset = 0;
-        if (isset($_GET['count']) && App::stringIsInt($_GET['count'])) {
-            $count = (int)$_GET['count'];
-        }
-        if (isset($_GET['offset']) && App::stringIsInt($_GET['offset'])) {
-            $offset = (int)$_GET['offset'];
-        }
+        $count = App::getGETParameter('count', 10);
+        $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
         $results = $this->db->getTopicsBySubject($id, $count, $offset);
@@ -76,6 +71,7 @@ class Topics extends Controller {
         if (!isset($results)) {
             http_response_code(400); return;
         }
+
         
         // Format and display results.
         $output = $this->formatRecords($results);
@@ -89,25 +85,8 @@ class Topics extends Controller {
      * @param topicid - id of topic.
      */
     public function getTopicByID($subjectid, $topicid) {
-        // Validate $subjectid.
-        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
-            http_response_code(400); return;
-        }
-        // Validate $topicid.
-        if (!isset($topicid) || !App::stringIsInt($topicid)) {
-            http_response_code(400); return;
-        }
-        $subjectid = (int)$subjectid;
-        $topicid = (int)$topicid;
-
-        // Check topic exists.
-        if (!$this->checkTopicExists($subjectid, $topicid)) {
-            http_response_code(404);
-            $this->printMessage('Specified topic does not exist.'); return;
-        }
-
         // Attempt query.
-        $results = $this->db->getTopicByID($topicid);
+        $results = $this->db->getTopicByID($subjectid, $topicid);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -135,7 +114,7 @@ class Topics extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            http_response_code(401); return;
+            //http_response_code(401); return;
         }
 
         // Check JSON sent as POST param.
@@ -157,15 +136,13 @@ class Topics extends Controller {
         
         // Check subject exists.
         if (!$this->checkSubjectExists($subjectID)) {
-            http_response_code(400);
             $this->printMessage('Specified subject does not exist.');
-            return;
+            http_response_code(400); return;
         }
         // Check no topic with name and subject id.
         if ($this->db->checkTopicExists($subjectID, $name)) {
-            http_response_code(400);
             $this->printMessage('Topic with name `' . $name . '` already exists in the specified subject.');
-            return;
+            http_response_code(400); return;
         }
 
         // Attempt to create.
@@ -177,7 +154,7 @@ class Topics extends Controller {
         }
 
         // Get newly created resource and return it.
-        $record = $this->db->getTopicByID($result);
+        $record = $this->db->getTopicByID($subjectID, $result);
         if (!isset($record)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Topic was created, but cannot be retrieved.');
@@ -200,7 +177,7 @@ class Topics extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            http_response_code(401); return;
+            //http_response_code(401); return;
         }
 
         // Check topic exists.
@@ -237,6 +214,12 @@ class Topics extends Controller {
             http_response_code(400); return;
         }
 
+        // Check no topic with name and subject id.
+        if (isset($name) && $this->db->checkTopicExists($subjectid, $name)) {
+            $this->printMessage('Topic with name `' . $name . '` already exists in the specified subject.');
+            http_response_code(400); return;
+        }
+
 
         // Attempt query.
         $result = $this->db->modifyTopic($topicid, $name, $description);
@@ -246,7 +229,7 @@ class Topics extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getTopicByID($topicid);
+        $record = $this->db->getTopicByID($subjectid, $topicid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Topic was updated, but cannot be retrieved.');
             http_response_code(500); return;

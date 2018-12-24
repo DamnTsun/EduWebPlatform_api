@@ -1,10 +1,9 @@
 CREATE DATABASE EduWebApp;
 USE EduWebApp;
+SET default_storage_engine=INNODB;
 
+/* ***** GENERAL CONTENT RELATED ***** */
 
-/*
- * General content related tables.
- */
 CREATE TABLE `subjects` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL UNIQUE,
@@ -15,7 +14,7 @@ CREATE TABLE `subjects` (
 
 CREATE TABLE `topics` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(100) NOT NULL UNIQUE,
+    `name` VARCHAR(100) NOT NULL,
     `description` VARCHAR(4096) DEFAULT '',
     `subject_id` INT NOT NULL,
     FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -49,52 +48,50 @@ CREATE TABLE `testQuestions` (
     `answer` VARCHAR(255) NOT NULL,
     `imageUrl` VARCHAR(255) DEFAULT '',
     `test_id` INT NOT NULL,
-    FOREIGN KEY (`test_id`) REFERENCES `tests`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (`test_id`) REFERENCES `tests`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE KEY `testQuestion_test` (`test_id`, `question`)
+);
+/* END OF GENERAL CONTENT RELATED */
+
+
+
+/* ***** USER ACCOUNT RELATED ***** */
+-- User privilegeLevels table.
+-- Defines level of privileges that user has in the system. Also includes 'banned' as a 'privilege level'.
+-- Contains (22/12/2018): normal, admin, banned.
+CREATE TABLE `privilegeLevels` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `level` VARCHAR(30) NOT NULL UNIQUE
 );
 
 
+-- Social media providers table.
+-- Used for linking a users social media account id to their internal user account.
+-- Contains (22/12/2018): Google, Facebook, LinkedIn.
+CREATE TABLE `socialMediaProviders` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(30) NOT NULL UNIQUE
+);
 
-/*
- * Users records section.
- * `users` is the base users table. This holds the internal user records.
- * other users tables, such as `users_google` handle social media logins.
- *   - contains user_id. Links to an internal user record.
- *   - contains <x>_id. Is the id of the social media account, such as a Google account.
- *   - user_id and <x>_id form a composite primary key.
- * the intention is that this design will be expandable, making adding support for new social media account types easy.
- */
--- Base users table.
+-- Users table.
+-- Contains id, their (non-unique) display name, socialMediaID, reference to socialMediaProvider, reference to privilegeLevel.
+-- A user CANNOT have the same socialMediaID for the same socialMediaProvider. - id 'aaa', provider 'google' for 2 records.
+-- A user CAN have the same socialMediaID for different socialMediaProviders. - id 'aaa', provider 'google' - id 'aaa', provider 'facebook'.
 CREATE TABLE `users` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `displayName` VARCHAR(30) NOT NULL DEFAULT 'unnamed user',
-    `admin` BOOLEAN DEFAULT false,
-    `banned` BOOLEAN DEFAULT false
+    `socialMediaID` VARCHAR(255) NOT NULL,
+    `socialMediaProvider_id` INT NOT NULL,
+    `privilegeLevel_id` INT NOT NULL,
+    FOREIGN KEY (`socialMediaProvider_id`) REFERENCES `socialMediaProviders`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`privilegeLevel_id`) REFERENCES `privilegeLevels`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE KEY `socialMediaID_socialMediaProvider` (`socialMediaID`, `socialMediaProvider_id`)
 );
-
--- Google accounts
-CREATE TABLE `users_google` (
-    `user_id` INT NOT NULL UNIQUE,
-    `google_id` VARCHAR(255) NOT NULL UNIQUE,
-    PRIMARY KEY (`user_id`, `google_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
--- Facebook accounts
-CREATE TABLE `users_facebook` (
-    `user_id` INT NOT NULL UNIQUE,
-    `facebook_id` VARCHAR(255) NOT NULL UNIQUE,
-    PRIMARY KEY (`user_id`, `facebook_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
--- LinkedIn accounts
-CREATE TABLE `users_linkedin` (
-    `user_id` INT NOT NULL UNIQUE,
-    `linkedin_id` VARCHAR(255) NOT NULL UNIQUE,
-    PRIMARY KEY (`user_id`, `linkedin_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+/* END OF USER ACCOUNTS RELATED */
 
 
 
+/* ***** OTHER ***** */
 CREATE TABLE `posts` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `title` VARCHAR(1000) NOT NULL,
@@ -106,87 +103,3 @@ CREATE TABLE `posts` (
     FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
--- not in use
-/*
-CREATE TABLE `users` (
-    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `googleId` VARCHAR(255) NOT NULL UNIQUE,
-    `forename` VARCHAR(100) NOT NULL,
-    `surname` VARCHAR(100) NOT NULL,
-    `email` VARCHAR(255) NOT NULL,
-    `admin` BOOLEAN DEFAULT false,
-    `banned` BOOLEAN DEFAULT false
-);
-*/
-
-
-
-
-
-
-
--- Early tests. Don't delete yet... Maybe later...
--- SELECT STATEMENTS
-/* Get posts with author (users.forename + ' ' + users.surname). Ordered by date, newest to oldest.
-
-SELECT
-    posts.title,
-    posts.body,
-    posts.date,
-    CONCAT (users.forename, ' ', users.surname) AS 'author'
-FROM
-    posts,
-    users
-WHERE
-    posts.user_id = users.id
-ORDER BY
-    posts.date DESC;
-*/
-
-
-/* Get tests by a specified user, include how many questions were on test and how many questions were answered correctly.
-
-SELECT
-    tests.title,
-    (SELECT COUNT(questions.id) FROM questions WHERE questions.test_id = tests.id) AS 'Questions',
-    (SELECT COUNT(questions.id) FROM questions WHERE questions.test_id = tests.id AND questions.answer = questions.userAnswer) AS 'Score',
-    tests.date
-FROM
-    tests
-WHERE
-    tests.user_id = 2
-ORDER BY
-    tests.date DESC;
-*/
-
-/* Gets all questions on all tests a specific user has completed ordered by id.
-
-SELECT
-	tests.title AS 'Test',
-	content AS 'Question',
-    userAnswer AS 'Your Answer',
-    answer AS 'Correct Answer'
-FROM
-	questions, tests
-WHERE
-	test_id = tests.id AND tests.user_id = 1
-ORDER BY
-	questions.id ASC;
-
--- Same as above but only returns questions for a specific tests.id value.
-
-SELECT
-	tests.title AS 'Test',
-	content AS 'Question',
-    userAnswer AS 'Your Answer',
-    answer AS 'Correct Answer',
-    IF (userAnswer = answer, 'Yes', 'No') AS 'Correct?'
-FROM
-	questions, tests
-WHERE
-	test_id = tests.id AND tests.user_id = 2 AND tests.id = 2
-ORDER BY
-	questions.id ASC;
-
-*/

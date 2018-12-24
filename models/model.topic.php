@@ -98,10 +98,11 @@ class Model_Topic extends Model {
 
 
     /**
-     * Gets topic with the given id.
-     * @param id - id of topic.
+     * Gets topic with the given id and subjectid.
+     * @param subjectid - subjectid of topic.
+     * @param topicid - id of topic.
      */
-    public function getTopicByID($id) {
+    public function getTopicByID($subjectid, $topicid) {
         try {
             return $result = $this->query(
                 "SELECT
@@ -111,10 +112,12 @@ class Model_Topic extends Model {
                 FROM
                     topics
                 WHERE
-                    topics.id = :_id
-                LIMIT 1",
+                    topics.id = :_topicid
+                    AND
+                    topics.subject_id = :_subjectid",
                 array(
-                    ':_id' => $id
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid
                 ),
                 Model::TYPE_FETCHALL
             );

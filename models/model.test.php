@@ -9,7 +9,7 @@ class Model_Test extends Model {
      */
     public function checkTestExists($topic_id, $name) {
         try {
-            return $results = $this->query(
+            return $this->query(
                 "SELECT
                     tests.id
                 FROM
@@ -31,25 +31,35 @@ class Model_Test extends Model {
     }
 
     /**
-     * Checks if a test exists with the given id and topic_id.
-     * @param topic_id - topic_id of test being looked for.
+     * Checks if a test exists with the given id, in the given topic, in the given subject.
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
      * @param testid - id of test being looked for.
      */
-    public function checkTestExistsByID($topic_id, $testid) {
+    public function checkTestExistsByID($subjectid, $topicid, $testid) {
         try {
-            return $results = $this->query(
+            return $this->query(
                 "SELECT
                     tests.id
                 FROM
                     tests
                 WHERE
-                    tests.topic_id = :_topicid
+                    tests.id = :_testid
                     AND
-                    tests.id = :_id
-                LIMIT 1",
+                    tests.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )",
                 array(
-                    ':_topicid' => $topic_id,
-                    ':_id' => $testid
+                    ':_testid' => $testid,
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid
                 ),
                 Model::TYPE_BOOL
             );
@@ -63,15 +73,15 @@ class Model_Test extends Model {
 
 
     /**
-     * Gets all tests with the given topic_id.
+     * Gets all tests within the given topic, within the given subject.
      * @param topicid - topic_id of tests being looked for.
      * @param count - Number of records to be returned. - Optional, default 10.
      * @param offset - Number of records to skip when getting records. - Optional, default 0.
      */
-    public function getTestsByTopic($topicid, $count = 10, $offset = 0) {
+    public function getTestsByTopic($subjectid, $topicid, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
         try {
-            return $results = $this->query(
+            return $this->query(
                 "SELECT
                     tests.id,
                     tests.name,
@@ -79,9 +89,19 @@ class Model_Test extends Model {
                 FROM
                     tests
                 WHERE
-                    tests.topic_id = :_topicid
+                    tests.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )
                 LIMIT :_count OFFSET :_offset",
                 array(
+                    ':_subjectid' => $subjectid,
                     ':_topicid' => $topicid,
                     ':_count' => $count,
                     ':_offset' => $offset
@@ -94,10 +114,12 @@ class Model_Test extends Model {
     }
 
     /**
-     * Gets test record with given id.
-     * @param id - id of test record to be looked for.
+     * Gets test record with given id, in the given topic, in the given subject.
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
+     * @param testid - id of test.
      */
-    public function getTestByID($id) {
+    public function getTestByID($subjectid, $topicid, $testid) {
         try {
             return $results = $this->query(
                 "SELECT
@@ -107,10 +129,22 @@ class Model_Test extends Model {
                 FROM
                     tests
                 WHERE
-                    tests.id = :_id
-                LIMIT 1",
+                    tests.id = :_testid
+                    AND
+                    tests.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )",
                 array(
-                    ':_id' => $id
+                    ':_testid' => $testid,
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid
                 ),
                 Model::TYPE_FETCHALL
             );

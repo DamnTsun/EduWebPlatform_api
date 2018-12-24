@@ -19,10 +19,8 @@ class Tests extends Controller {
      * @param testid - id of test being checked.
      */
     public function checkTestExists($subjectid, $topicid, $testid) {
-        // Check topic is within given subject.
-        if (!$this->checkTopicExists($subjectid, $topicid)) { return false; }
         // Check test is within the topic.
-        $results = $this->db->checkTestExistsByID($topicid, $testid);
+        $results = $this->db->checkTestExistsByID($subjectid, $topicid, $testid);
         if (!isset($results)) {
             return null;
         }
@@ -55,18 +53,6 @@ class Tests extends Controller {
      * @param topicid - topic that the test is inside of.
      */
     public function getAllTestsByTopic($subjectid, $topicid) {
-        // Validate id values.
-        // subjectid.
-        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
-            http_response_code(400); return;
-        }
-        // topicid.
-        if (!isset($topicid) || !App::stringIsInt($topicid)) {
-            http_response_code(400); return;
-        }
-        $subjectid = (int)$subjectid;
-        $topicid = (int)$topicid;
-        
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
             http_response_code(404); return;
@@ -78,7 +64,7 @@ class Tests extends Controller {
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getTestsByTopic($topicid, $count, $offset);
+        $results = $this->db->getTestsByTopic($subjectid, $topicid, $count, $offset);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -100,34 +86,15 @@ class Tests extends Controller {
      * @param testid - id of test.
      */
     public function getTestByID($subjectid, $topicid, $testid) {
-        // Validate id values.
-        // subjectid.
-        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
-            http_response_code(400); return;
-        }
-        // topicid.
-        if (!isset($topicid) || !App::stringIsInt($topicid)) {
-            http_response_code(400); return;
-        }
-        // testid
-        if (!isset($testid) || !App::stringIsInt($testid)) {
-            http_response_code(400); return;
-        }
-        $subjectid = (int)$subjectid;
-        $topicid = (int)$topicid;
-        $testid = (int)$testid;
-
-        // Check test exists.
-        if (!$this->checkTestExists($subjectid, $topicid, $testid)) {
-            http_response_code(404); return;
-        }
-
-
         // Attempt query.
-        $results = $this->db->getTestByID($testid);
+        $results = $this->db->getTestByID($subjectid, $topicid, $testid);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
+        }
+        // Check exists.
+        if (sizeof($results) == 0) {
+            http_response_code(404); return;
         }
 
 
@@ -172,32 +139,28 @@ class Tests extends Controller {
 
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
-            http_response_code(400);
             $this->printMessage('Specified topic does not exists.');
-            return;
+            http_response_code(404); return;
         }
         // Check no test with name and topic id.
         if ($this->db->checkTestExists($topicid, $name)) {
-            http_response_code(400);
             $this->printMessage('Test with name `' . $name . '` already exists in the specified topic.');
-            return;
+            http_response_code(400); return;
         }
 
 
         // Attempt to create.
         $results = $this->db->addTest($topicid, $name, $description);
         if (!isset($results)) {
-            http_response_code(500);
             $this->printMessage('Something went wrong. Unable to add test.');
-            return;
+            http_response_code(500); return;
         }
 
         // Get newly created test and return it.
-        $record = $this->db->getTestByID($results);
+        $record = $this->db->getTestByID($subjectid, $topicid, $results);
         if (!isset($record)) {
-            http_response_code(500);
             $this->printMessage('Something went wrong. Test was created, but cannot be retreived.');
-            return;
+            http_response_code(500); return;
         }
         $this->printJSON($this->formatRecords($record));
         http_response_code(201);
@@ -217,7 +180,7 @@ class Tests extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            http_response_code(401); return;
+            //http_response_code(401); return;
         }
 
         // Check test exists.
@@ -254,6 +217,11 @@ class Tests extends Controller {
             http_response_code(400); return;
         }
 
+        // Check no test with name and topic id.
+        if (isset($name) && $this->db->checkTestExists($topicid, $name)) {
+            $this->printMessage('Test with name `' . $name . '` already exists in the specified topic.');
+            http_response_code(400); return;
+        }
 
         // Attempt query.
         $result = $this->db->modifyTest($testid, $name, $description);
@@ -263,7 +231,7 @@ class Tests extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getTestByID($testid);
+        $record = $this->db->getTestByID($subjectid, $topicid, $testid);
         if (!isset($record)) {
             $this->printJSON('Something went wrong. Test was updated, but cannot be retrieved.');
             http_response_code(500); return;
