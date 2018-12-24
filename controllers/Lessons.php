@@ -112,7 +112,7 @@ class Lessons extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            http_response_code(401); return;
+            //http_response_code(401); return;
         }
 
         // Check JSON sent as POST param.
@@ -152,7 +152,7 @@ class Lessons extends Controller {
         }
 
         // Get newly created lesson and return it.
-        $record = $this->db->getLessonByID($result);
+        $record = $this->db->getLessonByID($subjectid, $topicid, $result);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Lesson was created, but cannot be retreived.');
             http_response_code(500); return;
@@ -209,6 +209,12 @@ class Lessons extends Controller {
         // Ensure a value is actually being changed. (max is only null if all array items are null)
         if (max( array($name, $body) ) == null) {
             $this->printMessage('No fields specified to update.');
+            http_response_code(400); return;
+        }
+
+        // Check no lesson exists with topicid and name.
+        if (isset($name) && $this->db->checkLessonExists($topicid, $name)) {
+            $this->printMessage('Lesson with name `' . $name . '` already exists in the specified topic.');
             http_response_code(400); return;
         }
 

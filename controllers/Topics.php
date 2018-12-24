@@ -177,7 +177,7 @@ class Topics extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            http_response_code(401); return;
+            //http_response_code(401); return;
         }
 
         // Check topic exists.
@@ -214,6 +214,12 @@ class Topics extends Controller {
             http_response_code(400); return;
         }
 
+        // Check no topic with name and subject id.
+        if (isset($name) && $this->db->checkTopicExists($subjectid, $name)) {
+            $this->printMessage('Topic with name `' . $name . '` already exists in the specified subject.');
+            http_response_code(400); return;
+        }
+
 
         // Attempt query.
         $result = $this->db->modifyTopic($topicid, $name, $description);
@@ -223,7 +229,7 @@ class Topics extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getTopicByID($topicid);
+        $record = $this->db->getTopicByID($subjectid, $topicid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Topic was updated, but cannot be retrieved.');
             http_response_code(500); return;

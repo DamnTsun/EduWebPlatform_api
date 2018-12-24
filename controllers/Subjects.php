@@ -173,6 +173,12 @@ class Subjects extends Controller {
             http_response_code(400); return;
         }
 
+        // Check subject with name does not exist.
+        if (isset($name) && $this->db->checkSubjectExists($name)) {
+            $this->printMessage('Subject with name `' . $name . '` already exists. Subject names must be unique.');
+            http_response_code(400); return;
+        }
+
 
         // Attempt query.
         $result = $this->db->modifySubject($subjectid, $name, $description, $homepageContent);

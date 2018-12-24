@@ -21,10 +21,8 @@ class TestQuestions extends Controller {
      * @param testquestionid - id of question.
      */
     public function checkTestQuestionExists($subjectid, $topicid, $testid, $testquestionid) {
-        // Check test is within given topic.
-        if (!$this->checkTestExists($subjectid, $topicid, $testid)) { return false; }
         // Check test question is within given test.
-        $results = $this->db->checkTestQuestionExistsByID($testid, $testquestionid);
+        $results = $this->db->checkTestQuestionExistsByID($subjectid, $topicid, $testid, $testquestionid);
         if (!isset($results)) {
             return null;
         }
@@ -62,26 +60,10 @@ class TestQuestions extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            http_response_code(401); return;
+            //http_response_code(401); return;
         }
 
-        // Validate id values.
-        // subjectid
-        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
-            http_response_code(400); return;
-        }
-        // topicid
-        if (!isset($topicid) || !App::stringIsInt($topicid)) {
-            http_response_code(400); return;
-        }
-        // testid
-        if (!isset($testid) || !App::stringIsInt($testid)) {
-            http_response_code(400); return;
-        }
-        $subjectid = (int)$subjectid;
-        $topicid = (int)$topicid;
-        $testid = (int)$testid;
-
+        
         // Check test exists.
         if (!$this->checkTestExists($subjectid, $topicid, $testid)) {
             http_response_code(404); return;
@@ -93,7 +75,7 @@ class TestQuestions extends Controller {
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getTestQuestionsByTest($testid, $count, $offset);
+        $results = $this->db->getTestQuestionsByTest($subjectid, $topicid, $testid, $count, $offset);
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -115,46 +97,21 @@ class TestQuestions extends Controller {
      * @param testid - test test question is in.
      * @param testquestionid - id of test question.
      */
-    public function getTestQuestionByID($subjectid, $topicid, $testid, $testquestionid) {
+    public function getTestQuestionByID($subjectid, $topicid, $testid, $questionid) {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
             http_response_code(401); return;
         }
-
-        // Validate id values.
-        // subjectid
-        if (!isset($subjectid) || !App::stringIsInt($subjectid)) {
-            http_response_code(400); return;
-        }
-        // topicid
-        if (!isset($topicid) || !App::stringIsInt($topicid)) {
-            http_response_code(400); return;
-        }
-        // testid
-        if (!isset($testid) || !App::stringIsInt($testid)) {
-            http_response_code(400); return;
-        }
-        // testquestionid
-        if (!isset($testquestionid) || !App::stringIsInt($testquestionid)) {
-            http_response_code(400); return;
-        }
-        $subjectid = (int)$subjectid;
-        $topicid = (int)$topicid;
-        $testid = (int)$testid;
-        $testquestionid = (int)$testquestionid;
-
-        // Check testquestion exists.
-        if (!$this->checkTestQuestionExists($subjectid, $topicid, $testid, $testquestionid)) {
-            http_response_code(404); return;
-        }
-
-
+        
         // Attempt query.
-        $results = $this->db->getTestQuestionByID($testquestionid);
+        $results = $this->db->getTestQuestionByID($subjectid, $topicid, $testid, $questionid);
         // Check successful.
         if (!isset ($results)) {
             http_response_code(400); return;
+        }
+        if (sizeof($results) == 0) {
+            http_response_code(404); return;
         }
 
 
@@ -204,6 +161,12 @@ class TestQuestions extends Controller {
             $this->printMessage('Specified test does not exists.');
             http_response_code(400); return;
         }
+
+        // Check no question with 'question' and test id.
+        if ($this->db->checkTestQuestionExists($testid, $question)) {
+            $this->printMessage('Test question with question value `' . $question . '` already exists in the specified test.');
+            http_response_code(400); return;
+        }
         
 
         // Attempt to create.
@@ -214,7 +177,7 @@ class TestQuestions extends Controller {
         }
 
         // Get newly created test question and return it.
-        $record = $this->db->getTestQuestionByID($results);
+        $record = $this->db->getTestQuestionByID($subjectid, $topicid, $testid, $results);
         if (!isset($record)) {
             $this->printMessage('something went wrong. Test question was created, but cannot be retrieved.');
             http_response_code(500); return;
@@ -227,7 +190,11 @@ class TestQuestions extends Controller {
 
 
     /**
-     * 
+     * Modifies existing test question, in the given test, in the given topic, in the given subject.
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
+     * @param testid - id of test.
+     * @param testquestionid - id of question.
      */
     public function modifyTestQuestion($subjectid, $topicid, $testid, $testquestionid) {
         // Check user signed into a session. Require that they be an admin.
@@ -271,6 +238,12 @@ class TestQuestions extends Controller {
             http_response_code(400); return;
         }
 
+        // Check no test question exists with testid and question value.
+        if ($this->db->checkTestQuestionExists($testid, $question)) {
+            $this->printMessage('Test question with question value `' . $question . '` already exists in the specified test.');
+            http_response_code(400); return;
+        }
+
 
         // Attempt query.
         $result = $this->db->modifyTestQuestion($testquestionid, $question, $answer, $imageUrl);
@@ -280,7 +253,7 @@ class TestQuestions extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getTestQuestionByID($testquestionid);
+        $record = $this->db->getTestQuestionByID($subjectid, $topicid, $testid, $testquestionid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Test question was updated, but cannot be retrieved.');
             http_response_code(500); return;

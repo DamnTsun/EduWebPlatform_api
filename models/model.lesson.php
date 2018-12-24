@@ -121,33 +121,37 @@ class Model_Lesson extends Model {
      * @param lessonid - id of lesson.
      */
     public function getLessonByID($subjectid, $topicid, $lessonid) {
-        return $results = $this->query(
-            "SELECT
-                lessons.id,
-                lessons.name,
-                lessons.body
-            FROM
-                lessons
-            WHERE
-                lessons.id = :_lessonid
-                AND
-                lessons.topic_id = (
-                    SELECT
-                        topics.id
-                    FROM
-                        topics
-                    WHERE
-                        topics.id = :_topicid
-                        AND
-                        topics.subject_id = :_subjectid
-                )",
-            array(
-                ':_lessonid' => $lessonid,
-                ':_topicid' => $topicid,
-                ':_subjectid' => $subjectid
-            ),
-            Model::TYPE_FETCHALL
+        try {
+            return $this->query(
+                "SELECT
+                    lessons.id,
+                    lessons.name,
+                    lessons.body
+                FROM
+                    lessons
+                WHERE
+                    lessons.id = :_lessonid
+                    AND
+                    lessons.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )",
+                array(
+                    ':_lessonid' => $lessonid,
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid
+                ),
+                Model::TYPE_FETCHALL
         );
+        } catch (PDOException $e) {
+            return null;
+        }
     }
 
 
