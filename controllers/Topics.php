@@ -108,7 +108,7 @@ class Topics extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            //http_response_code(401); return;
+            http_response_code(401); return;
         }
 
         // Check JSON sent as POST param.
@@ -174,7 +174,7 @@ class Topics extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            //http_response_code(401); return;
+            http_response_code(401); return;
         }
 
         // Check topic exists.

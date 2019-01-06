@@ -86,7 +86,8 @@ class Model_Lesson extends Model {
                 "SELECT
                     lessons.id,
                     lessons.name,
-                    lessons.body
+                    lessons.body,
+                    lessons.hidden
                 FROM
                     lessons
                 WHERE
@@ -126,7 +127,8 @@ class Model_Lesson extends Model {
                 "SELECT
                     lessons.id,
                     lessons.name,
-                    lessons.body
+                    lessons.body,
+                    lessons.hidden
                 FROM
                     lessons
                 WHERE
@@ -163,21 +165,24 @@ class Model_Lesson extends Model {
      * @param topic_id - id of topic.
      * @param name - name of lesson.
      * @param body - body of lesson.
+     * @param hidden - hidden status of lesson.
      */
-    public function addLesson($topic_id, $name, $body) {
+    public function addLesson($topic_id, $name, $body, $hidden) {
         try {
             return $results = $this->query(
                 "INSERT INTO
-                    lessons (name, body, topic_id)
+                    lessons (name, body, hidden, topic_id)
                 VALUES
                     (
                         :_name,
                         :_body,
+                        :_hidden,
                         :_topicid
                     )",
                 array(
                     ':_name' => $name,
                     ':_body' => $body,
+                    ':_hidden' => $hidden,
                     ':_topicid' => $topic_id
                 ),
                 Model::TYPE_INSERT
@@ -196,8 +201,9 @@ class Model_Lesson extends Model {
      * @param id - id of lesson.
      * @param name - name for lesson. Is ignored if null.
      * @param body - body for lesson. Is ignored if null.
+     * @param hidden - hidden status for lessons.
      */
-    public function modifyLesson($id, $name, $body) {
+    public function modifyLesson($id, $name, $body, $hidden) {
         // Build string with variable number of fields.
         $queryString = "UPDATE lessons SET ";
         $queryParams = array();
@@ -206,13 +212,21 @@ class Model_Lesson extends Model {
             $queryString = $queryString . "lessons.name = :_name";
             $queryParams[':_name'] = $name;
         }
-        // description
+        // body
         if (isset($body)) {
             // Add ', ' if another field has already been added.
             if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
             $queryString = $queryString . "lessons.body = :_body";
             $queryParams[':_body'] = $body;
         }
+        // hidden
+        if (isset($hidden)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "lessons.hidden = :_hidden";
+            $queryParams[':_hidden'] = $hidden;
+        }
+
         // end query string.
         $queryString = $queryString . " WHERE lessons.id = :_id LIMIT 1";
         $queryParams[':_id'] = $id;

@@ -85,7 +85,16 @@ class Model_Test extends Model {
                 "SELECT
                     tests.id,
                     tests.name,
-                    tests.description
+                    tests.description,
+                    tests.hidden,
+                    (
+                        SELECT
+                            COUNT(testQuestions.id)
+                        FROM
+                            testQuestions
+                        WHERE
+                            testQuestions.test_id = tests.id
+                    ) as 'testQuestionCount'
                 FROM
                     tests
                 WHERE
@@ -125,7 +134,16 @@ class Model_Test extends Model {
                 "SELECT
                     tests.id,
                     tests.name,
-                    tests.description
+                    tests.description,
+                    tests.hidden,
+                    (
+                        SELECT
+                            COUNT(testQuestions.id)
+                        FROM
+                            testQuestions
+                        WHERE
+                            testQuestions.test_id = tests.id
+                    ) as 'testQuestionCount'
                 FROM
                     tests
                 WHERE
@@ -162,21 +180,24 @@ class Model_Test extends Model {
      * @param topic_id - value for topic_id field of new record.
      * @param name - value for name field of new record.
      * @param description - value for description field of new record.
+     * @param hidden - hidden status for test.
      */
-    public function addTest($topic_id, $name, $description) {
+    public function addTest($topic_id, $name, $description, $hidden) {
         try {
             return $results = $this->query(
                 "INSERT INTO
-                    tests (name, description, topic_id)
+                    tests (name, description, hidden, topic_id)
                 VALUES
                     (
                         :_name,
                         :_description,
+                        :_hidden,
                         :_topic_id
                     )",
                 array(
                     ':_name' => $name,
                     ':_description' => $description,
+                    ':_hidden' => $hidden,
                     ':_topic_id' => $topic_id
                 ),
                 Model::TYPE_INSERT
@@ -195,8 +216,9 @@ class Model_Test extends Model {
      * @param id - id of test.
      * @param name - name for test. Is ignored if null.
      * @param description - description for test. Is ignored if null.
+     * @param hidden - hidden status for test.
      */
-    public function modifyTest($id, $name, $description) {
+    public function modifyTest($id, $name, $description, $hidden) {
         // Build string with variable number of fields.
         $queryString = "UPDATE tests SET ";
         $queryParams = array();
@@ -212,6 +234,14 @@ class Model_Test extends Model {
             $queryString = $queryString . "tests.description = :_desc";
             $queryParams[':_desc'] = $description;
         }
+        // hidden
+        if (isset($hidden)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "tests.hidden = :_hidden";
+            $queryParams[':_hidden'] = $hidden;
+        }
+
         // end query string.
         $queryString = $queryString . " WHERE tests.id = :_id LIMIT 1";
         $queryParams[':_id'] = $id;

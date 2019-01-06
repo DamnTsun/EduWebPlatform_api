@@ -136,6 +136,9 @@ class Tests extends Controller {
         // Set values.
         $name =                         $json['name']; // Required
         $description =                  $json['description']; // Required.
+        $hidden =                       (isset($json['hidden'])) ? $json['hidden'] : false;
+        // Convert hidden (bool) to string. (0 / 1).
+        $hidden = App::boolToString($hidden);
 
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
@@ -150,7 +153,7 @@ class Tests extends Controller {
 
 
         // Attempt to create.
-        $results = $this->db->addTest($topicid, $name, $description);
+        $results = $this->db->addTest($topicid, $name, $description, $hidden);
         if (!isset($results)) {
             $this->printMessage('Something went wrong. Unable to add test.');
             http_response_code(500); return;
@@ -211,6 +214,10 @@ class Tests extends Controller {
         // Set values.
         $name =                 (isset($json['name'])) ? $json['name'] : null;
         $description =          (isset($json['description'])) ? $json['description'] : null;
+        $hidden =               (isset($json['hidden'])) ? $json['hidden'] : null;
+        // Convert hidden (bool) to string. (0 / 1).
+        if (isset($hidden)) { $hidden = App::boolToString($hidden); }
+
         // Ensure a value is actually being changed. (max is only null if all array items are null)
         if (max( array($name, $description) ) == null) {
             $this->printMessage('No fields specified to update.');
@@ -224,7 +231,7 @@ class Tests extends Controller {
         }
 
         // Attempt query.
-        $result = $this->db->modifyTest($testid, $name, $description);
+        $result = $this->db->modifyTest($testid, $name, $description, $hidden);
         if (!isset($result)) {
             $this->printMessage('Something went wrong. Unable to update test.');
             http_response_code(500); return;
@@ -292,7 +299,9 @@ class Tests extends Controller {
                 array(
                     'id' => (int)$rec['id'],
                     'name' => $rec['name'],
-                    'description' => $rec['description']
+                    'description' => $rec['description'],
+                    'hidden' => ($rec['hidden'] == '1'),
+                    'testQuestionCount' => (int)$rec['testQuestionCount']
                 )
             );
         }
@@ -318,6 +327,14 @@ class Tests extends Controller {
             !isset($object['description'])) {
             return null;
         }
+
+        // Check given fields are correct type.
+        if (isset($object) &&
+            isset($object['hidden']) &&
+            gettype($object['hidden']) != 'boolean') {
+            return null;
+        }
+
         return $object;
     }
 }

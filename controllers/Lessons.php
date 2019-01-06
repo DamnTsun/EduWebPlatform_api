@@ -112,7 +112,7 @@ class Lessons extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            //http_response_code(401); return;
+            http_response_code(401); return;
         }
 
         // Check JSON sent as POST param.
@@ -131,6 +131,9 @@ class Lessons extends Controller {
         // Set values.
         $name =                     $json['name']; // Required.
         $body =                     $json['body']; // Required.
+        $hidden =                       (isset($json['hidden'])) ? $json['hidden'] : false;
+        // Convert hidden (bool) to string. (0 / 1).
+        $hidden = App::boolToString($hidden);
         
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
@@ -145,7 +148,7 @@ class Lessons extends Controller {
         }
 
         // Attempt to create.
-        $result = $this->db->addLesson($topicid, $name, $body);
+        $result = $this->db->addLesson($topicid, $name, $body, $hidden);
         if (!isset($result)) {
             $this->printMessage('Something went wrong. Unable to add lesson.');
             http_response_code(500); return;
@@ -206,8 +209,12 @@ class Lessons extends Controller {
         // Set values.
         $name =             (isset($json['name'])) ? $json['name'] : null;
         $body =             (isset($json['body'])) ? $json['body'] : null;
+        $hidden =                   (isset($json['hidden'])) ? $json['hidden'] : null;
+        // Convert hidden (bool) to string. (0 / 1).
+        if (isset($hidden)) { $hidden = App::boolToString($hidden); }
+
         // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($name, $body) ) == null) {
+        if (max( array($name, $body, $hidden) ) == null) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }
@@ -220,7 +227,7 @@ class Lessons extends Controller {
 
 
         // Attempt query.
-        $result = $this->db->modifyLesson($lessonid, $name, $body);
+        $result = $this->db->modifyLesson($lessonid, $name, $body, $hidden);
         if (!isset($result)) {
             $this->printMessage('Something went wrong. Unable to update lesson.');
             http_response_code(500); return;
@@ -286,7 +293,8 @@ class Lessons extends Controller {
                 array(
                     'id' => (int)$rec['id'],
                     'name' => $rec['name'],
-                    'body' => addslashes($rec['body'])
+                    'body' => addslashes($rec['body']),
+                    'hidden' => ($rec['hidden'] == '1')
                 )
             );
         }
@@ -312,6 +320,14 @@ class Lessons extends Controller {
             !isset($object['body'])) {
             return null;
         }
+
+        // Check given fields are correct type.
+        if (isset($object) &&
+            isset($object['hidden']) &&
+            gettype($object['hidden']) != 'boolean') {
+            return null;
+        }
+
         return $object;
     }
 }
