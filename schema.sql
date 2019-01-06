@@ -8,7 +8,7 @@ CREATE TABLE `subjects` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL UNIQUE,
     `description` VARCHAR(4096) DEFAULT '',
-    `homepageContent` TEXT
+    `hidden` BOOLEAN DEFAULT FALSE
 );
 
 
@@ -16,6 +16,7 @@ CREATE TABLE `topics` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL,
     `description` VARCHAR(4096) DEFAULT '',
+    `hidden` BOOLEAN DEFAULT FALSE,
     `subject_id` INT NOT NULL,
     FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE KEY `subject_topic` (`subject_id`, `name`)
@@ -26,6 +27,7 @@ CREATE TABLE `lessons` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR (100) NOT NULL,
     `body` TEXT NOT NULL,
+    `hidden` BOOLEAN DEFAULT FALSE,
     `topic_id` INT NOT NULL,
     FOREIGN KEY (`topic_id`) REFERENCES `topics`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE KEY `topic_lesson` (`topic_id`, `name`)
@@ -36,12 +38,14 @@ CREATE TABLE `tests` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL,
     `description` VARCHAR(4096),
+    `hidden` BOOLEAN DEFAULT FALSE,
     `topic_id` INT NOT NULL,
     FOREIGN KEY (`topic_id`) REFERENCES `topics`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE KEY `topic_test` (`topic_id`, `name`)
 );
 
-
+-- Test questions table.
+-- Contains the question, answer, optional url of image, the associated test, the associated test question type.
 CREATE TABLE `testQuestions` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `question` VARCHAR(255) NOT NULL,
@@ -77,7 +81,7 @@ CREATE TABLE `socialMediaProviders` (
 -- Contains id, their (non-unique) display name, socialMediaID, reference to socialMediaProvider, reference to privilegeLevel.
 -- A user CANNOT have the same socialMediaID for the same socialMediaProvider. - id 'aaa', provider 'google' for 2 records.
 -- A user CAN have the same socialMediaID for different socialMediaProviders. - id 'aaa', provider 'google' - id 'aaa', provider 'facebook'.
-CREATE TABLE `users` (
+CREATE TABLE users (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `displayName` VARCHAR(30) NOT NULL DEFAULT 'unnamed user',
     `socialMediaID` VARCHAR(255) NOT NULL,
@@ -87,11 +91,23 @@ CREATE TABLE `users` (
     FOREIGN KEY (`privilegeLevel_id`) REFERENCES `privilegeLevels`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE KEY `socialMediaID_socialMediaProvider` (`socialMediaID`, `socialMediaProvider_id`)
 );
+
+-- Intermediary table for users - subject many-to-many relationship.
+-- Defines which admin users are specialised in a specific subject.
+CREATE TABLE subject_admins (
+    `user_id` INT NOT NULL,
+    `subject_id` INT NOT NULL,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`user_id`, `subject_id`)
+);
 /* END OF USER ACCOUNTS RELATED */
 
 
 
-/* ***** OTHER ***** */
+-- Posts table.
+-- Contains title, optional body, creationDate (auto set), modificationDate (auto set and updated)
+-- ID of subject post is for, ID of user who created / last modified the post.
 CREATE TABLE `posts` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `title` VARCHAR(1000) NOT NULL,
@@ -103,3 +119,97 @@ CREATE TABLE `posts` (
     FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+
+/* ***** USER TEST RESULTS TRACKING RELATED ***** */
+-- User tests table.
+-- Contains title to differentiate individual user tests. Date of completion.
+-- ID of user who completed test. ID of test that the user test is based on.
+-- Is used to linked multiple userTestQuestions into a group.
+CREATE TABLE `user_tests` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(30) NOT NULL DEFAULT 'untitled test',
+    `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `test_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    FOREIGN KEY (`test_id`) REFERENCES `tests`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- User test questions table.
+-- Contains user's answer of question.
+-- ID of question being answered. ID of user who attempted the question.
+-- Multiple are linked together by a userTests record.
+CREATE TABLE `user_TestQuestions` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `userAnswer` VARCHAR(255) NOT NULL,
+    `testQuestion_id` INT NOT NULL,
+    `user_Test_id` INT NOT NULL,
+    FOREIGN KEY (`testQuestion_id`) REFERENCES `testQuestions`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`user_test_id`) REFERENCES `user_tests`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+/* END OF USER TEST RESULTS TRACKING RELATED */
+
+
+
+
+
+/* ***** USER GROUPS RELATED ***** */
+-- User groups table.
+-- Contains group name, group description, url of image for group.
+CREATE TABLE `groups` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(100) NOT NULL DEFAULT 'unnamed group',
+    `description` TEXT,
+    `imageUrl` VARCHAR(255) DEFAULT ''
+);
+
+-- User group members table.
+-- Intermediary table for users - groups many-to-many relationship.
+CREATE TABLE `user_groups` (
+    `user_id` INT NOT NULL,
+    `group_id` INT NOT NULL,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`user_id`, `group_id`)
+);
+
+/* END OF USER GROUPS RELATED */
+
+
+
+
+
+/* ***** MESSAGING SYSTEM RELATED ***** */
+-- Messages table.
+-- Contains a message a user has sent
+CREATE TABLE `messages` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `message` VARCHAR(1024) NOT NULL,
+    `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `sender_id` INT NOT NULL,
+    FOREIGN KEY (`sender_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- user_message table.
+-- Intermediary table for users - messages many-to-many relationship
+CREATE TABLE `user_messages` (
+    `user_id` INT NOT NULL,
+    `message_id` INT NOT NULL,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`message_id`) REFERENCES `messages`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`user_id`, `message_id`)
+);
+
+-- group_message table.
+-- Intermediary table for groups - messages many-to-many relationship.
+CREATE TABLE `group_messages` (
+    `group_id` INT NOT NULL,
+    `message_id` INT NOT NULL,
+    FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`message_id`) REFERENCES `messages`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`group_id`, `message_id`)
+);
+/* END OF MESSAGING SYSTEM RELATED */

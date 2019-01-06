@@ -1,11 +1,10 @@
-
 USE EduWebApp;
 
 -- Subjects
-insert into Subjects (name, description, homepageContent) values ('Mathematics', 'Covers mathematics, such as: basic arithmetic, basic fractions, basic algebra, and similar.', 'Not sure what to put here... Placeholder placeholder placeholder.');
-insert into Subjects (name, description, homepageContent) values ('English Language', 'This is just a placeholder.', 'Not sure what to put here... Placeholder placeholder placeholder.');
-insert into Subjects (name, description, homepageContent) values ('Physics', 'Again. A placeholder.', 'Not sure what to put here... Placeholder placeholder placeholder.');
-insert into Subjects (name, description, homepageContent) values ('Citizenship', 'Guess what? Placeholder.', 'Not sure what to put here... Placeholder placeholder placeholder.');
+insert into Subjects (name, description) values ('Mathematics', 'Covers mathematics, such as: basic arithmetic, basic fractions, basic algebra, and similar.');
+insert into Subjects (name, description) values ('English Language', 'This is just a placeholder.');
+insert into Subjects (name, description) values ('Physics', 'Again. A placeholder.');
+insert into Subjects (name, description) values ('Citizenship', 'Guess what? Placeholder.');
 
 
 -- Topics
@@ -69,6 +68,7 @@ INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('9 + 6',
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('3 + 8', '11', '', 1);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('6 + 1', '7', '', 1);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('10 + 7', '17', '', 1);
+
 
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('82 + 60', '142', '', 2);
 INSERT INTO TestQuestions (question, answer, imageUrl, test_id) VALUES ('61 + 17', '78', '', 2);
@@ -142,3 +142,4 @@ INSERT INTO socialMediaProviders (name) VALUES ('LinkedIn');
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the normie', '102562326633765021134', 1, 1); -- Google account, normal.
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the admin', '117929523951432123072', 1, 2); -- Google account, admin.
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the banned', '111865521247464378466', 1, 3); -- Google account, banned.
+
