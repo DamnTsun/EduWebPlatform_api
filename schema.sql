@@ -213,3 +213,47 @@ CREATE TABLE `group_messages` (
     PRIMARY KEY (`group_id`, `message_id`)
 );
 /* END OF MESSAGING SYSTEM RELATED */
+
+
+
+
+
+
+
+
+-- QUERIES
+
+/*
+-- sets topics to hidden if:
+--  all lessons / tests inside topic are hidden.
+--  the topic contains no lessons / tests.
+-- Also sets topic to visible if:
+--  at least 1 lesson / test exists inside topic that is not hidden.
+UPDATE
+	topics
+SET
+	topics.hidden =
+    (
+        SELECT
+        	COUNT(lessons.id)
+        FROM
+        	lessons
+        WHERE
+        	lessons.topic_id = topics.id
+        	AND
+        	lessons.hidden = FALSE
+    ) + (
+        SELECT
+        	COUNT(tests.id)
+        FROM
+        	tests
+        WHERE
+        	tests.topic_id = topics.id
+        	AND
+        	tests.hidden = FALSE
+    ) = 0
+WHERE
+	topics.id = 1;
+
+
+*/
