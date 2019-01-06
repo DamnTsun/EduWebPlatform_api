@@ -76,7 +76,24 @@ class Model_Topic extends Model {
                 "SELECT
                     topics.id,
                     topics.name,
-                    topics.description
+                    topics.description,
+                    topics.hidden,
+                    (
+                        SELECT
+                            COUNT(lessons.id)
+                        FROM
+                            lessons
+                        WHERE
+                            lessons.topic_id = topics.id
+                    ) as 'lessonCount',
+                    (
+                        SELECT
+                            COUNT(tests.id)
+                        FROM
+                            tests
+                        WHERE
+                            tests.topic_id = topics.id
+                    ) as 'testCount'
                 FROM
                     topics
                 WHERE
@@ -108,7 +125,24 @@ class Model_Topic extends Model {
                 "SELECT
                     topics.id,
                     topics.name,
-                    topics.description
+                    topics.description,
+                    topics.hidden,
+                    (
+                        SELECT
+                            COUNT(lessons.id)
+                        FROM
+                            lessons
+                        WHERE
+                            lessons.topic_id = topics.id
+                    ) as 'lessonCount',
+                    (
+                        SELECT
+                            COUNT(tests.id)
+                        FROM
+                            tests
+                        WHERE
+                            tests.topic_id = topics.id
+                    ) as 'testCount'
                 FROM
                     topics
                 WHERE
@@ -131,25 +165,28 @@ class Model_Topic extends Model {
 
 
     /**
-     * Creates a new topic in the given subject with the given name and description.
+     * Creates a new topic in the given subject with the given name, description, and hidden status.
      * @param subjectID - id of subject.
      * @param name - name for topic.
      * @param description - description for topic.
+     * @param hidden - hidden status for topic.
      */
-    public function addTopic($subjectID, $name, $description) {
+    public function addTopic($subjectID, $name, $description, $hidden) {
         try {
             return $result = $this->query(
                 "INSERT INTO
-                    topics (name, description, subject_id)
+                    topics (name, description, hidden, subject_id)
                 VALUES
                     (
                         :_name,
                         :_desc,
+                        :_hidden,
                         :_id
                     )", 
                 array(
                     ':_name' => $name,
                     ':_desc' => $description,
+                    ':_hidden' => $hidden,
                     ':_id' => $subjectID
                 ),
                 Model::TYPE_INSERT
@@ -168,8 +205,9 @@ class Model_Topic extends Model {
      * @param topicid - id of topic.
      * @param name - name for topic. Is ignored if null.
      * @param description - description for topic. Is ignored if null.
+     * @param hidden - hidden status for topic.
      */
-    public function modifyTopic($topicid, $name, $description) {
+    public function modifyTopic($topicid, $name, $description, $hidden) {
         // Build string with variable number of fields.
         $queryString = "UPDATE topics SET ";
         $queryParams = array();
@@ -184,6 +222,13 @@ class Model_Topic extends Model {
             if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
             $queryString = $queryString . "topics.description = :_desc";
             $queryParams[':_desc'] = $description;
+        }
+        // hidden
+        if (isset($hidden)) {
+            // Add ', ' if another field has already been added.
+            if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
+            $queryString = $queryString . "topics.hidden = :_hidden";
+            $queryParams[':_hidden'] = $hidden;
         }
         // end query string.
         $queryString = $queryString . " WHERE topics.id = :_id LIMIT 1";
