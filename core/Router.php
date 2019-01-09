@@ -304,6 +304,18 @@ class Router {
         });
         // Check authentification status with server (Facebook) - NOT IMPLEMENTED
         // Check authentification status with server (LinkedIn) - NOT IMPLEMENTED
+
+
+
+        // ******************
+        // *** USER_TESTS ***
+        // ******************
+        // TESTING
+        $this->addPOSTRoute('/^\/users\/user_tests\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->createUserTest();
+        });
     }
 
 
