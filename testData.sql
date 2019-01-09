@@ -24,7 +24,7 @@ insert into Topics (name, description, subject_id) values ('Citizenship placehol
 
 
 -- Lessons
-insert into Lessons (name, body, topic_id) values ('Addition 1', '2 + 2 = 4', 1);
+insert into Lessons (name, body, topic_id) values ('Addition 1', '2 + 2 = 4<h2>List:</h2><ul><li>1</li><li>2</li></ul>', 1);
 insert into Lessons (name, body, topic_id) values ('Addition 2', '3 + 3 = 6', 1);
 insert into Lessons (name, body, topic_id) values ('Addition 3', 'Do you really not understand?', 1);
 insert into Lessons (name, body, topic_id) values ('Subtraction 1', '2 - 2 = 0', 2);
@@ -143,3 +143,11 @@ INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilege
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the admin', '117929523951432123072', 1, 2); -- Google account, admin.
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the banned', '111865521247464378466', 1, 3); -- Google account, banned.
 
+-- Posts
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1', 'something...', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1', 'something again', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1', 'something ... ... ...', 1, 1);
+
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('English Language post 1', 'something ... ... ...', 2, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('English Language post 1', 'something ... ... ...', 2, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('English Language post 1', 'something ... ... ...', 2, 1);

@@ -112,7 +112,7 @@ class Router {
         $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
             $controller = new Tests();
-            $controller->getTestByID($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
+            $controller->getTestByID($params[1], $params[3], $params[5]); // subjectid, topicid, testid
         });
 
 
@@ -131,6 +131,12 @@ class Router {
             $controller = new TestQuestions();
             // subjectid, topicid, testid, testquestionid
             $controller->getTestQuestionByID($params[1], $params[3], $params[5], $params[7]);
+        });
+        // GET n random questions from specific test.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/questions\/random\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['test_questions'];
+            $controller = new TestQuestions();
+            $controller->getRandomTestQuestionsByTest($params[1], $params[3], $params[5]); // subjectid, topicid, testid
         });
 
 

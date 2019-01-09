@@ -60,7 +60,7 @@ class TestQuestions extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            //http_response_code(401); return;
+            http_response_code(401); return;
         }
 
         
@@ -118,6 +118,44 @@ class TestQuestions extends Controller {
         // Format and display results.
         $output = $this->formatRecords($results);
         $this->printJSON($output);
+    }
+
+
+
+
+
+    /**
+     * Gets test questions, chosen randomly, inside a specific test, inside a specific topic,
+     *  inside a specific subject.
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
+     * @param testid - id of test.
+     */
+    public function getRandomTestQuestionsByTest($subjectid, $topicid, $testid) {
+        // Check user signed into a session. Admin NOT required.
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Get count as GET parameter. Default to 10. Param must be int.
+        $count = App::getGETParameter('count', 10, true);
+        if ($count < 1) {
+            $count = 1;
+        }
+
+        // Attempt to get questions.
+        $results = $this->db->getRandomTestQuestionsByTest($subjectid, $topicid, $testid, $count);
+        if (!isset($results)) {
+            http_response_code(500); return;
+        }
+        if (sizeof($results) == 0) {
+            http_response_code(404); return;
+        }
+
+
+        // Format and display results.
+        $this->printJSON($this->formatRecords($results));
     }
 
 
@@ -307,14 +345,16 @@ class TestQuestions extends Controller {
     protected function formatRecords($records) {
         $results = array();
         foreach ($records as $rec) {
+            // Build array for pushing. Question may or may not be included.
+            $arr = array();
+            $arr['id'] = (int)$rec['id'];
+            $arr['question'] = $rec['question'];
+            if (isset($rec['answer'])) { $arr['answer'] = $rec['answer']; }
+            $arr['imageUrl'] = $rec['imageUrl'];
+
             array_push(
                 $results,
-                array(
-                    'id' => (int)$rec['id'],
-                    'question' => $rec['question'],
-                    'answer' => $rec['answer'],
-                    'imageUrl' => $rec['imageUrl']
-                )
+                $arr
             );
         }
         return $results;
