@@ -39,7 +39,7 @@ class Subjects extends Controller {
         // Attempt query.
         $results = $this->db->getAllSubjects($count, $offset);
         if (!isset($results)) {
-            http_response_code(400); return;
+            http_response_code(500); return;
         }
 
         // Format and display results.
@@ -99,7 +99,9 @@ class Subjects extends Controller {
         // Set values.
         $name =                         $json['name']; // Required
         $description =                  (isset($json['description'])) ? $json['description'] : '';
-        $homepageContent =              (isset($json['homepageContent'])) ? $json['homepageContent'] : '';
+        $hidden =                       (isset($json['hidden'])) ? $json['hidden'] : false;
+        // Convert hidden (bool) to string. (0 / 1).
+        $hidden = App::boolToString($hidden);
 
         // Check subject with name does not exist.
         if ($this->db->checkSubjectExists($name)) {
@@ -108,7 +110,7 @@ class Subjects extends Controller {
         }
 
         // Attempt to create new resource.
-        $result = $this->db->addSubject($name, $description, $homepageContent);
+        $result = $this->db->addSubject($name, $description, $hidden);
         if (!isset($result)) {
             $this->printMessage('Something went wrong. Unable to add subject.');
             http_response_code(500); return;
@@ -166,9 +168,12 @@ class Subjects extends Controller {
         // Set values.
         $name =                     (isset($json['name'])) ? $json['name'] : null;
         $description =              (isset($json['description'])) ? $json['description'] : null;
-        $homepageContent =          (isset($json['homepageContent'])) ? $json['homepageContent'] : null;
+        $hidden =                   (isset($json['hidden'])) ? $json['hidden'] : null;
+        // Convert hidden (bool) to string. (0 / 1).
+        if (isset($hidden)) { $hidden = App::boolToString($hidden); }
+
         // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($name, $description, $homepageContent) ) == null) {
+        if (max( array($name, $description, $hidden) ) == null) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }
@@ -181,7 +186,7 @@ class Subjects extends Controller {
 
 
         // Attempt query.
-        $result = $this->db->modifySubject($subjectid, $name, $description, $homepageContent);
+        $result = $this->db->modifySubject($subjectid, $name, $description, $hidden);
         if (!isset($result)) {
             $this->printMessage('Something went wrong. Unable to update subject.');
             http_response_code(500); return;
@@ -247,7 +252,8 @@ class Subjects extends Controller {
                     'id' => (int)$rec['id'],
                     'name' => $rec['name'],
                     'description' => $rec['description'],
-                    'homepageContent' => $rec['homepageContent']
+                    'hidden' => ($rec['hidden'] == 1),
+                    'topicCount' => (int)$rec['topicCount']
                 )
             );
         }
@@ -271,6 +277,14 @@ class Subjects extends Controller {
             !isset($object['name'])) {
             return null;
         }
+
+        // Check given fields are correct type.
+        if (isset($object) &&
+            isset($object['hidden']) &&
+            gettype($object['hidden']) != 'boolean') {
+            return null;
+        }
+
         return $object;
     }
 }

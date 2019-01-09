@@ -95,4 +95,18 @@ class App {
         return preg_match('/^[0123456789]+$/', $value) == 1;
     }
 
+
+    /**
+     * Converts given value from boolean to string.
+     * Will convert to: '1' if true - '0' if false.
+     * Will return null if given value is null or not a boolean.
+     * @param value - value to be checked.
+     */
+    public static function boolToString($value) {
+        if (!isset($value) || gettype($value) != 'boolean') { return null; }
+        switch ($value) {
+            case true: return '1';
+            case false: return '0';
+        }
+    }
 }

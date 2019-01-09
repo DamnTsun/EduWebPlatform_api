@@ -68,7 +68,15 @@ class Model_Subject extends Model {
                     subjects.id,
                     subjects.name,
                     subjects.description,
-                    subjects.homepageContent
+                    subjects.hidden,
+                    (
+                        SELECT
+                            COUNT(topics.id)
+                        FROM
+                            topics
+                        WHERE
+                            topics.subject_id = subjects.id
+                    ) as 'topicCount'
                 FROM
                     subjects
                 ORDER BY
@@ -97,7 +105,15 @@ class Model_Subject extends Model {
                     subjects.id,
                     subjects.name,
                     subjects.description,
-                    subjects.homepageContent
+                    subjects.hidden,
+                    (
+                        SELECT
+                            COUNT(topics.id)
+                        FROM
+                            topics
+                        WHERE
+                            topics.subject_id = subjects.id
+                    ) as 'topicCount'
                 FROM
                     subjects
                 WHERE
@@ -118,26 +134,26 @@ class Model_Subject extends Model {
 
 
     /**
-     * Creates new subject record with given name / description / homepageContent.
+     * Creates new subject record with given name / description / hidden status
      * @param name - name of subject.
      * @param description - description of subject.
-     * @param homepageContent - homepageContent of subject.
+     * @param hidden - whether subject is hidden.
      */
-    public function addSubject($name, $description, $homepageContent) {
+    public function addSubject($name, $description, $hidden) {
         try {
             return $results = $this->query(
                 "INSERT INTO
-                    subjects (name, description, homepageContent)
+                    subjects (name, description, hidden)
                 VALUES
                     (
                         :_name,
                         :_desc,
-                        :_hpContent
+                        :_hidden
                     )",
                 array(
                     ':_name' => $name,
                     ':_desc' => $description,
-                    ':_hpContent' => $homepageContent
+                    ':_hidden' => $hidden
                 ),
                 Model::TYPE_INSERT
             );
@@ -157,7 +173,7 @@ class Model_Subject extends Model {
      * @param description - description for subject. Is ignored if null.
      * @param homepageContent - homepageContent for subject. Is ignored if null.
      */
-    public function modifySubject($id, $name, $description, $homepageContent) {
+    public function modifySubject($id, $name, $description, $hidden) {
         // Build string with variable number of fields.
         $queryString = "UPDATE subjects SET ";
         $queryParams = array();
@@ -173,12 +189,12 @@ class Model_Subject extends Model {
             $queryString = $queryString . "subjects.description = :_desc";
             $queryParams[':_desc'] = $description;
         }
-        // homepageContent
-        if (isset($homepageContent)) {
+        // hidden
+        if (isset($hidden)) {
             // Add ', ' if another field has already been added.
             if (sizeof($queryParams) > 0) { $queryString = $queryString . ", "; }
-            $queryString = $queryString . "subjects.homepageContent = :_hpContent";
-            $queryParams[':_hpContent'] = $homepageContent;
+            $queryString = $queryString . "subjects.hidden = :_hidden";
+            $queryParams[':_hidden'] = $hidden;
         }
 
         // end query string.

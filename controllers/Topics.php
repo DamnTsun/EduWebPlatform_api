@@ -49,12 +49,6 @@ class Topics extends Controller {
      * @param id - id of subject.
      */
     public function getAllTopicsBySubject($id) {
-        // Validate $id.
-        if (!isset($id) || !App::stringIsInt($id)) {
-            http_response_code(400); return;
-        }
-        $id = (int)$id;
-
         // Check subject exists.
         if (!$this->checkSubjectExists($id)) {
             http_response_code(404); return;
@@ -114,7 +108,7 @@ class Topics extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            //http_response_code(401); return;
+            http_response_code(401); return;
         }
 
         // Check JSON sent as POST param.
@@ -133,6 +127,9 @@ class Topics extends Controller {
         // Set values.
         $name =                         $json['name'];
         $description =                  (isset($json['description'])) ? $json['description'] : '';
+        $hidden =                       (isset($json['hidden'])) ? $json['hidden'] : false;
+        // Convert hidden (bool) to string. (0 / 1).
+        $hidden = App::boolToString($hidden);
         
         // Check subject exists.
         if (!$this->checkSubjectExists($subjectID)) {
@@ -146,7 +143,7 @@ class Topics extends Controller {
         }
 
         // Attempt to create.
-        $result = $this->db->addTopic($subjectID, $name, $description);
+        $result = $this->db->addTopic($subjectID, $name, $description, $hidden);
         if (!isset($result)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Unable to add topic.');
@@ -177,7 +174,7 @@ class Topics extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            //http_response_code(401); return;
+            http_response_code(401); return;
         }
 
         // Check topic exists.
@@ -208,8 +205,12 @@ class Topics extends Controller {
         // Set values.
         $name =                 (isset($json['name'])) ? $json['name'] : null;
         $description =          (isset($json['description'])) ? $json['description'] : null;
+        $hidden =                   (isset($json['hidden'])) ? $json['hidden'] : null;
+        // Convert hidden (bool) to string. (0 / 1).
+        if (isset($hidden)) { $hidden = App::boolToString($hidden); }
+
         // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($name, $description) ) == null) {
+        if (max( array($name, $description, $hidden) ) == null) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }
@@ -222,7 +223,7 @@ class Topics extends Controller {
 
 
         // Attempt query.
-        $result = $this->db->modifyTopic($topicid, $name, $description);
+        $result = $this->db->modifyTopic($topicid, $name, $description, $hidden);
         if (!isset($result)) {
             $this->printMessage('Something went wrong. Unable to update topic.');
             http_response_code(500); return;
@@ -289,7 +290,10 @@ class Topics extends Controller {
                 array(
                     'id' => (int)$rec['id'],
                     'name' => $rec['name'],
-                    'description' => $rec['description']
+                    'description' => $rec['description'],
+                    'hidden' => ($rec['hidden'] == '1'),
+                    'lessonCount' => (int)$rec['lessonCount'],
+                    'testCount' => (int)$rec['testCount']
                 )
             );
         }
@@ -312,6 +316,13 @@ class Topics extends Controller {
         // Check if has required fields.
         if (!isset($object) ||
             !isset($object['name'])) {
+            return null;
+        }
+
+        // Check given fields are correct type.
+        if (isset($object) &&
+            isset($object['hidden']) &&
+            gettype($object['hidden']) != 'boolean') {
             return null;
         }
         return $object;
