@@ -86,8 +86,8 @@ class User_Tests extends Controller {
                     'id' => (int)$rec['User_Test id'],
                     'title' => $rec['title'],
                     'date' => $rec['date'],
-                    'QuestionCount' => (int)$rec['QuestionCount'],
-                    'Score' => (int)$rec['Score'],
+                    'questionCount' => (int)$rec['QuestionCount'],
+                    'score' => (int)$rec['Score'],
                     'test_id' => (int)$rec['Test id']
                 )
             );
