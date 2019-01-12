@@ -16,11 +16,13 @@ ini_set('session.cookie_secure', 0);        // HTTPS only. (should be 0 when usi
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: idToken");
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
 // Handle OPTIONS request for CORS preflight request. (Browser don't like it if not explicitly stated...)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     header("Access-Control-Allow-Credentials: true");
     header("Access-Control-Allow-Headers: idToken");
     header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
     exit();
 }
 
