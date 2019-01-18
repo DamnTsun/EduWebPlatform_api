@@ -188,6 +188,29 @@ class Model_User extends Model {
 
 
     /**
+     * Deletes user with given id.
+     */
+    public function deleteUser($id) {
+        try {
+            return $this->query(
+                "DELETE from
+                    users
+                WHERE
+                    id = :_id",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_DELETE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+    /**
      * Updates a users display name.
      * @param id - id of user.
      * @param name - new name for user.

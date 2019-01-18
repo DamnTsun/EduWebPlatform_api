@@ -175,6 +175,26 @@ class Users extends Controller {
 
 
     /**
+     * Deletes account of current user. (Based on idToken header)
+     */
+    public function deleteCurrentAccount() {
+        // Check user signed in. (Does not need to be admin).
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->deleteUser($user['id']);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to delete user account.');
+            http_response_code(500); return;
+        }
+    }
+
+
+    /**
      * Formats records for output.
      * @param records - Records to be formatted.
      */

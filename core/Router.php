@@ -328,7 +328,7 @@ class Router {
         // ******************
         // *** USER_TESTS ***
         // ******************
-        // TESTING
+        // Creates a new user test. (Based on idToken header and passed POST parameter)
         $this->addPOSTRoute('/^\/users\/user_tests\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
             $controller = new User_Tests();
@@ -408,6 +408,30 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
             $controller = new Posts();
             $controller->deletePost($params[1], $params[3]); // subjectid, postid
+        });
+
+
+
+        // ******************
+        // *** USER_TESTS ***
+        // ******************
+        // Deletes all user tests associated with a user. (Based on idToken header)
+        $this->addDELETERoute('/^\/users\/user_tests\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->deleteAllCurrentUserUserTests();
+        });
+
+
+
+        // *************
+        // *** USERS ***
+        // *************
+        // Deletes current users account. (Based on JWT in header)
+        $this->addDELETERoute('/^\/users\/me\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->deleteCurrentAccount();
         });
 
     }

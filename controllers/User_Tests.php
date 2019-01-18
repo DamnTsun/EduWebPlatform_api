@@ -74,6 +74,25 @@ class User_Tests extends Controller {
 
 
     /**
+     * Deletes ALL of the user tests associated with the current user. (Based on idToken header)
+     */
+    public function deleteAllCurrentUserUserTests() {
+        // Check user signed in. (Does not need to be admin).
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->deleteAllUserTests($user['id']);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to delete user tests.');
+            http_response_code(500); return;
+        }
+    }
+
+    /**
      * Formats record so they look better.
      * @param records - Records to be formatted.
      */

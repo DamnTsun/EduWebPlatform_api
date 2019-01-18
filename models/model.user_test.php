@@ -200,4 +200,29 @@ class Model_User_Test extends Model {
             return null;
         }
     }
+
+
+
+
+    
+    /**
+     * Deletes all of the user_tests record with the given user_id.
+     * @param id - id of user.
+     */
+    public function deleteAllUserTests($id) {
+        try {
+            return $this->query(
+                "DELETE FROM
+                    user_tests
+                WHERE
+                    user_tests.user_id = :_userid",
+                array(
+                    ':_userid' => $id
+                ),
+                Model::TYPE_DELETE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }
