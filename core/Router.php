@@ -155,6 +155,17 @@ class Router {
             $controller = new Posts();
             $controller->getPostByID($params[1], $params[3]); // subjectid, postid
         });
+
+
+        // *************
+        // *** USERS ***
+        // *************
+        // Get current users details. (Based on passed idToken header)
+        $this->addGETRoute('/^\/users\/me\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->getCurrentUserDetails();
+        });
     }
 
 

@@ -104,6 +104,32 @@ class Users extends Controller {
 
 
 
+    /**
+     * Gets details about the current user, based on the user associated with the given idToken header.
+     */
+    public function getCurrentUserDetails() {
+        // Check user signed in. (Does not need to be admin).
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Get the users record.
+        $record = $this->getUserByID($user['id']);
+        if (!isset($record)) {
+            $this->printMessage('Unable to retrieve user record.');
+            http_response_code(500); return;
+        }
+        if (sizeof($record) == 0) {
+            $this->printMessage('User record could not be found.');
+            http_response_code(404); return;
+        }
+
+        // Format and return record.
+        $this->printJSON($this->formatRecords($record));
+    }
+
 
     /**
      * Formats records for output.
@@ -116,8 +142,9 @@ class Users extends Controller {
                 $results,
                 array(
                     'id' => (int)$rec['id'],
-                    'admin' => ($rec['admin']) ? true : false,
-                    'banned' => ($rec['banned']) ? true : false
+                    'displayname' => $rec['displayName'],
+                    'admin' => ($rec['level'] == 'Admin') ? true : false,
+                    'banned' => ($rec['level'] == 'Banned') ? true : false
                 )
             );
         }
