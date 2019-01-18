@@ -166,6 +166,7 @@ class Router {
             $controller = new Users();
             $controller->getCurrentUserDetails();
         });
+
     }
 
 
@@ -316,6 +317,12 @@ class Router {
         // Check authentification status with server (Facebook) - NOT IMPLEMENTED
         // Check authentification status with server (LinkedIn) - NOT IMPLEMENTED
 
+        // Change current users name.
+        $this->addPOSTRoute('/^\/users\/me\/name\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->updateCurrentUserName();
+        });
 
 
         // ******************

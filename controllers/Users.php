@@ -132,6 +132,49 @@ class Users extends Controller {
 
 
     /**
+     * Updates the current users name.
+     * @param name - new name for user.
+     */
+    public function updateCurrentUserName() {
+        // Check user signed in. (Does not need to be admin).
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check content parameter given.
+        if (!isset($_POST['content'])) {
+            $this->printMessage('`content` parameter not given in post body.');
+            http_response_code(400); return;
+        }
+
+        // Check content parameter is valid.
+        $json = $this->validateJSON($_POST['content']);
+        if (!isset($json)) {
+            $this->printMessage('`content` parameter is invalid or does not contain required fields.');
+            http_response_code(400); return;
+        }
+
+        // Check name is not blank or more than 50 characters.
+        if (strlen($json['name']) > 50 || strlen($json['name']) < 1) {
+            $this->printMessage('Given name is not valid. Name must be between 1 and 50 characters.');
+            http_response_code(400); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->changeUserName($user['id'], $json['name']);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to update user name.');
+            http_response_code(500); return;
+        }
+
+        // Return the users new details.
+        $this->getCurrentUserDetails();
+    }
+
+
+    /**
      * Formats records for output.
      * @param records - Records to be formatted.
      */
@@ -156,8 +199,20 @@ class Users extends Controller {
      * @param json - the json of the object.
      */
     protected function validateJSON($json) {
-        // Not currently needed. Update later.
-        throw new NotImplementedException();
+        // Try to parse.
+        try {
+            $object = json_decode($json, true);
+        } catch (Exception $e) {
+            return null;
+        }
+
+        // Check if has required fields.
+        if (!isset($object) ||
+            !isset($object['name'])) {
+            return null;
+        }
+
+        return $object;
     }
 
 }

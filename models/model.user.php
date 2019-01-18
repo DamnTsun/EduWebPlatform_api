@@ -183,4 +183,33 @@ class Model_User extends Model {
         }
     }
 
+
+
+
+
+    /**
+     * Updates a users display name.
+     * @param id - id of user.
+     * @param name - new name for user.
+     */
+    public function changeUserName($id, $name) {
+        try {
+            return $this->query(
+                "UPDATE
+                    users
+                SET
+                    displayName = :_name
+                WHERE
+                    id = :_id",
+                array(
+                    ':_name' => $name,
+                    ':_id' => $id
+                ),
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
 }
