@@ -26,7 +26,8 @@ $_ENV['controllers'] = array(
     'posts' => 'Posts.php',
 
     'user_tests' => 'User_Tests.php',
-    'users' => 'Users.php'
+    'users' => 'Users.php',
+    'messages' => 'Messages.php'
 );
 
 // Model filenames.
@@ -39,7 +40,8 @@ $_ENV['models'] = array(
     'posts' => 'model.post.php',
 
     'user_tests' => 'model.user_test.php',
-    'users' => 'model.user.php'
+    'users' => 'model.user.php',
+    'messages' => 'model.message.php'
 );
 
 

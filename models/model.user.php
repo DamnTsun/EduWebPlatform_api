@@ -235,4 +235,70 @@ class Model_User extends Model {
         }
     }
 
+
+
+    /**
+     * Gets users from users table, ordered by id.
+     * @param count - number of users to get.
+     * @param offset - number of users to skip.
+     */
+    public function getUsers($count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    users.id,
+                    users.displayName,
+                    privilegeLevels.level
+                FROM
+                    users
+                JOIN privilegeLevels ON
+                    privilegeLevels.id = users.privilegeLevel_id
+                ORDER BY users.id
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Gets users whose displayname is like the given value.
+     * @param name - value for displayname search.
+     * @param count - number of records to get.
+     * @param offset - number of records to skip.
+     */
+    public function getUsersByName($name, $count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    users.id,
+                    users.displayName,
+                    privilegeLevels.level
+                FROM
+                    users
+                JOIN privilegeLevels ON
+                    privilegeLevels.id = users.privilegeLevel_id
+                WHERE
+                    users.displayName LIKE :_name
+                ORDER BY users.id
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_name' => $name,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }

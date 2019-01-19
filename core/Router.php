@@ -160,6 +160,15 @@ class Router {
         // *************
         // *** USERS ***
         // *************
+        // Get all users ordered by id.
+        $this->addGETRoute('/^\/users\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->getAllUsers();
+        });
+
+        
+
         // Get current users details. (Based on passed idToken header)
         $this->addGETRoute('/^\/users\/me\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
@@ -167,6 +176,31 @@ class Router {
             $controller->getCurrentUserDetails();
         });
 
+
+
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        // Get user messages.
+        $this->addGETRoute('/^\/users\/messages\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserMessages();
+        });
+
+        // Get user messages from a specific user.
+        $this->addGETRoute('/^\/users\/messages\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserMessagesFromUser($params[2]); // sender_id.
+        });
+
+        // Get user messages current user has sent.
+        $this->addGETRoute('/^\/users\/messages\/sent\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserSentMessages();
+        });
     }
 
 
@@ -334,6 +368,18 @@ class Router {
             $controller = new User_Tests();
             $controller->createUserTest();
         });
+
+
+
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        // Send a user message.
+        $this->addPOSTRoute('/^\/users\/messages\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->sendUserMessage($params[2]); // receiver_id
+        });
     }
 
 
@@ -434,6 +480,17 @@ class Router {
             $controller->deleteCurrentAccount();
         });
 
+
+
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        // Delete a user message. (only if user is sender / receiver)
+        $this->addDELETERoute('/^\/users\/messages\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->deleteUserMessage($params[2]); // message_id.
+        });
     }
 
 

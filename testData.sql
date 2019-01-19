@@ -178,3 +178,19 @@ INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1
 INSERT INTO posts (title, body, subject_id, user_id) VALUES ('English Language post 1', 'something ... ... ...', 2, 1);
 INSERT INTO posts (title, body, subject_id, user_id) VALUES ('English Language post 1', 'something ... ... ...', 2, 1);
 INSERT INTO posts (title, body, subject_id, user_id) VALUES ('English Language post 1', 'something ... ... ...', 2, 1);
+
+
+
+-- Messages.
+INSERT INTO messages (message, sender_id) VALUES ('Message 01', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 02', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 03', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 04', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 05', 1);
+
+-- Link messages to receiver.
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 1);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 2);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 3);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 4);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 5);

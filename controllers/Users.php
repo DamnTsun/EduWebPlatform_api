@@ -72,6 +72,57 @@ class Users extends Controller {
 
 
 
+    /**
+     * Gets all users in system, ordered by id.
+     */
+    public function getAllUsers() {
+        // Check user is signed in. Authorization not required.
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Get GET params if set.
+        $count = App::getGETParameter('count', 10, true);
+        $offset = App::getGETParameter('offset', 0, true);
+        $name = App::getGETParameter('name', null);
+        // If name given, search by name instead.
+        if (isset($name)) {
+            $this->getAllUsersByName(('%' . $name . '%'), $count, $offset);
+            return;
+        }
+
+        // Lookup users.
+        $results = $this->db->getUsers($count, $offset);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to lookup users.');
+            http_response_code(500); return;
+        }
+
+        // Display results.
+        $this->printJSON($this->formatRecords($results));
+    }
+
+
+
+    /**
+     * Get all users in system where the name is like a term.
+     */
+    private function getAllUsersByName($name, $count, $offset) {
+        // Lookup users.
+        $results = $this->db->getUsersByName($name, $count, $offset);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to lookup users.');
+            http_response_code(500); return;
+        }
+
+        // Display results.
+        $this->printJSON($this->formatRecords($results));
+    }
+
+
+
+
 
     /**
      * Creates a new user record with default displayName, the given socialMediaID, for the specified social media provider.
