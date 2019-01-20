@@ -57,14 +57,14 @@ class Model_Message extends Model {
                     messages.id,
                     messages.message,
                     messages.date,
-                    users.id AS 'sender_id',
-                    users.displayName AS 'sender_displayname'
+                    users.id AS 'receiver_id',
+                    users.displayName AS 'receiver_displayname'
                 FROM
                     user_messages
                 JOIN messages ON
                     user_messages.message_id = messages.id
                 JOIN users ON
-                    messages.sender_id = users.id
+                    user_messages.user_id = users.id
                 WHERE
                     messages.sender_id = :_id
                 ORDER BY
@@ -98,14 +98,14 @@ class Model_Message extends Model {
                     messages.id,
                     messages.message,
                     messages.date,
-                    users.id AS 'sender_id',
-                    users.displayName AS 'sender_displayname'
+                    users.id AS 'receiver_id',
+                    users.displayName AS 'receiver_displayname'
                 FROM
                     user_messages
                 JOIN messages ON
                     user_messages.message_id = messages.id
                 JOIN users ON
-                    messages.sender_id = users.id
+                    user_messages.user_id = users.id
                 WHERE
                     messages.sender_id = :_senderid
                     AND

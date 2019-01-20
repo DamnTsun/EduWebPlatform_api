@@ -130,6 +130,8 @@ class Messages extends Controller {
 
 
 
+
+
     /**
      * Sends a user message to another user.
      */
@@ -199,15 +201,19 @@ class Messages extends Controller {
     public function formatRecords($records) {
         $results = array();
         foreach ($records as $rec) {
+            $values = array();
+            $values['id'] = (int)$rec['id'];
+            $values['message'] = $rec['message'];
+            $values['date'] = $rec['date'];
+            // Sender values.
+            if (isset($rec['sender_id'])) { $values['sender_id'] = $rec['sender_id']; }
+            if (isset($rec['sender_displayname'])) { $values['sender_displayname'] = $rec['sender_displayname']; }
+            // Receiver values.
+            if (isset($rec['receiver_id'])) { $values['receiver_id'] = $rec['receiver_id']; }
+            if (isset($rec['receiver_displayname'])) { $values['receiver_displayname'] = $rec['receiver_displayname']; }
             array_push(
                 $results,
-                array(
-                    'id' => (int)$rec['id'],
-                    'message' => $rec['message'],
-                    'date' => $rec['date'],
-                    'sender_id' => (int)$rec['sender_id'],
-                    'sender_displayname' => $rec['sender_displayname']
-                )
+                $values
             );
         }
         return $results;
