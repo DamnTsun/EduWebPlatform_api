@@ -201,6 +201,13 @@ class Router {
             $controller = new Messages();
             $controller->getCurrentUserSentMessages();
         });
+
+        // Get user messages current user has sent to a specific user.
+        $this->addGETRoute('/^\/users\/messages\/sent\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserSentMessagesToUser($params[3]); // receiver_id.
+        });
     }
 
 

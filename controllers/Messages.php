@@ -99,6 +99,36 @@ class Messages extends Controller {
     }
 
 
+    /**
+     * Gets messages sent by a user to another user.
+     * @param userid - id of other user.
+     */
+    public function getCurrentUserSentMessagesToUser($userid) {
+        // Check user is signed in. Authorization not required.
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Get GET params if set.
+        $count = App::getGETParameter('count', 10, true);
+        $offset = App::getGETParameter('offset', 0, true);
+
+
+        // Get messages.
+        $results = $this->db->getUserMessagesSentToUser($user['id'], (int)$userid, $count, $offset);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to lookup messages.');
+            http_response_code(500); return;
+        }
+
+
+        // Format and display messages.
+        $this->printJSON($this->formatRecords($results));
+    }
+
+
 
     /**
      * Sends a user message to another user.

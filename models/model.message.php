@@ -83,6 +83,49 @@ class Model_Message extends Model {
     }
 
 
+    /**
+     * Gets messages sent by a user to another user.
+     * @param senderid - id of sender.
+     * @param id - id of user.
+     * @param count - number of messages to get.
+     * @param offset - number of messages to skip.
+     */    
+    public function getUserMessagesSentToUser($senderid, $id, $count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    messages.id,
+                    messages.message,
+                    messages.date,
+                    users.id AS 'sender_id',
+                    users.displayName AS 'sender_displayname'
+                FROM
+                    user_messages
+                JOIN messages ON
+                    user_messages.message_id = messages.id
+                JOIN users ON
+                    messages.sender_id = users.id
+                WHERE
+                    messages.sender_id = :_senderid
+                    AND
+                    user_messages.user_id = :_id
+                ORDER BY
+                    messages.date DESC
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_senderid' => $senderid,
+                    ':_id' => $id,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
 
     /**
      * Gets messages sent to a user, from a specified user, ordered by date.
