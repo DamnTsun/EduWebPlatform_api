@@ -69,6 +69,14 @@ insert into Lessons (name, body, topic_id) values ('Division 3', 'Do you really 
 insert into Tests (name, description, topic_id) values ('Addition 1', 'Basic addition. (1 digit)', 1);
 insert into Tests (name, description, topic_id) values ('Addition 2', 'Basic addition. (2 digit)', 1);
 insert into Tests (name, description, topic_id) values ('Addition 3', 'Intermediate addition. (3 digit)', 1);
+insert into Tests (name, description, topic_id) values ('z_addition_test01', 'Placeholer description', 1);
+insert into Tests (name, description, topic_id) values ('z_addition_test02', 'Placeholer description', 1);
+insert into Tests (name, description, topic_id) values ('z_addition_test03', 'Placeholer description', 1);
+insert into Tests (name, description, topic_id) values ('z_addition_test04', 'Placeholer description', 1);
+insert into Tests (name, description, topic_id) values ('z_addition_test05', 'Placeholer description', 1);
+insert into Tests (name, description, topic_id) values ('z_addition_test06', 'Placeholer description', 1);
+insert into Tests (name, description, topic_id) values ('z_addition_test07', 'Placeholer description', 1);
+insert into Tests (name, description, topic_id) values ('z_addition_test08', 'Placeholer description', 1);
 
 insert into Tests (name, description, topic_id) values ('Subtraction 1', 'Basic subtraction. (1 digit)', 2);
 insert into Tests (name, description, topic_id) values ('Subtraction 2', 'Basic subtraction. (2 digit)', 2);
@@ -171,9 +179,17 @@ INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilege
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the banned', '111865521247464378466', 1, 3); -- Google account, banned.
 
 -- Posts
-INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1', 'something...', 1, 1);
-INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1', 'something again', 1, 1);
-INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1', 'something ... ... ...', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 2', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 3', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 4', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 5', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 6', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 7', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 8', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 9', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 10', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
+INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 11', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
 
 INSERT INTO posts (title, body, subject_id, user_id) VALUES ('English Language post 1', 'something ... ... ...', 2, 1);
 INSERT INTO posts (title, body, subject_id, user_id) VALUES ('English Language post 1', 'something ... ... ...', 2, 1);
@@ -183,10 +199,33 @@ INSERT INTO posts (title, body, subject_id, user_id) VALUES ('English Language p
 
 -- Messages.
 INSERT INTO messages (message, sender_id) VALUES ('Message 01', 1);
-INSERT INTO messages (message, sender_id) VALUES ('Message 02', 1);
 INSERT INTO messages (message, sender_id) VALUES ('Message 03', 1);
-INSERT INTO messages (message, sender_id) VALUES ('Message 04', 1);
 INSERT INTO messages (message, sender_id) VALUES ('Message 05', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 07', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 09', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 11', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 13', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 15', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 17', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 19', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 21', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 23', 1);
+INSERT INTO messages (message, sender_id) VALUES ('Message 25', 1);
+
+INSERT INTO messages (message, sender_id) VALUES ('Message 02', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 04', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 06', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 08', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 10', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 12', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 14', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 16', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 18', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 20', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 22', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 24', 2);
+INSERT INTO messages (message, sender_id) VALUES ('Message 26', 2);
+
 
 -- Link messages to receiver.
 INSERT INTO user_messages (user_id, message_id) VALUES (2, 1);
@@ -194,3 +233,27 @@ INSERT INTO user_messages (user_id, message_id) VALUES (2, 2);
 INSERT INTO user_messages (user_id, message_id) VALUES (2, 3);
 INSERT INTO user_messages (user_id, message_id) VALUES (2, 4);
 INSERT INTO user_messages (user_id, message_id) VALUES (2, 5);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 6);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 7);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 8);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 9);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 10);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 11);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 12);
+INSERT INTO user_messages (user_id, message_id) VALUES (2, 13);
+
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 14);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 15);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 16);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 17);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 18);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 19);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 20);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 21);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 22);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 23);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 24);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 25);
+INSERT INTO user_messages (user_id, message_id) VALUES (1, 26);
+
+

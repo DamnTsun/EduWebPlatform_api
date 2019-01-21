@@ -143,18 +143,6 @@ class Users extends Controller {
 
 
 
-
-    /**
-     * Deletes a user record.
-     * @param user_id - id of record.
-     */
-    public function deleteUser($user_id) {
-
-    }
-
-
-
-
     /**
      * Gets details about the current user, based on the user associated with the given idToken header.
      */
@@ -243,6 +231,74 @@ class Users extends Controller {
             http_response_code(500); return;
         }
     }
+
+
+
+
+
+
+
+
+    // Admin stuff.
+    /**
+     * Sets a given users admin status.
+     * @param id - id of user.
+     * @param value - boolean. Whether to set the user to admin or not.
+     */
+    public function setUserAdminStatus($id, $value) {
+        // Check user is an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Attempt to set admin status.
+        $results = $this->db->setUserAdminStatus($id, $value);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to change user privilege level.');
+            http_response_code(500); return;
+        }
+
+        // Return users updated record.
+        $record = $this->getUserByID($id);
+        if (!isset($record)) {
+            $this->printMessage('Something went wrong. User admin status updated, but unable to get user details.');
+            http_response_code(500); return;
+        }
+        $this->printJSON($this->formatRecords($record));
+    }
+
+
+    /**
+     * Sets a given users banned status.
+     * @param id - id of user.
+     * @param value - boolean. Whether to set the user to banned or not.
+     */
+    public function setUserBannedStatus($id, $value) {
+        // Check user is an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Attempt to set admin status.
+        $results = $this->db->setUserBannedStatus($id, $value);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to change user privilege level.');
+            http_response_code(500); return;
+        }
+
+        // Return users updated record.
+        $record = $this->getUserByID($id);
+        if (!isset($record)) {
+            $this->printMessage('Something went wrong. User admin status updated, but unable to get user details.');
+            http_response_code(500); return;
+        }
+        $this->printJSON($this->formatRecords($record));
+    }
+
 
 
     /**

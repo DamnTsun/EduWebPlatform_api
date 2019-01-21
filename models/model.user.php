@@ -301,4 +301,61 @@ class Model_User extends Model {
             return null;
         }
     }
+
+
+
+
+    /**
+     * Sets privilege level of a user.
+     * Sets to 1 if regular user, 2 if admin.
+     * @param id - id of user.
+     * @param setToAdmin - whether to set user to admin.
+     */
+    public function setUserAdminStatus($id, $setToAdmin) {
+        // Privilege level 1 is normal. 2 is admin.
+        $level = ($setToAdmin) ? '2' : '1';
+
+        // Attempt to set.
+        return $this->setUserPrivilegeLevel($id, $level);
+    }
+
+    /**
+     * Sets whether a user is banned.
+     * @param id - id of user.
+     * @param setToBanned - whether to set user to banned.
+     */
+    public function setUserBannedStatus($id, $setToBanned) {
+        // If user is being unbanned, they get regular user privilege level (1).
+        $level = ($setToBanned) ? '3' : '1';
+
+        // Attempt to set.
+        return $this->setUserPrivilegeLevel($id, $level);
+    }
+
+
+    /**
+     * Sets users privilege leve (regular, admin, banned, etc).
+     * @param id - id of user.
+     * @param value - id of privilege level in privilegeLevels table. CURRENTLY... (1 = regular, 2 = admin, 3 = banned)
+     */
+    private function setUserPrivilegeLevel($id, $value) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "UPDATE
+                    users
+                SET
+                    users.privilegeLevel_id = :_level
+                WHERE
+                    users.id = :_id",
+                array(
+                    ':_level' => $value,
+                    ':_id' => $id
+                ),
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }

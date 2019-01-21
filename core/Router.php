@@ -387,6 +387,39 @@ class Router {
             $controller = new Messages();
             $controller->sendUserMessage($params[2]); // receiver_id
         });
+
+
+
+
+        // *************
+        // *** ADMIN ***
+        // *************
+        // Set user to admin.
+        $this->addPOSTRoute('/^\/admin\/setAdmin\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->setUserAdminStatus($params[2], true); // userid, set to admin.
+        });
+        // Set user to regular user.
+        $this->addPOSTRoute('/^\/admin\/removeAdmin\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->setUserAdminStatus($params[2], false); // userid, set to banned.
+        });
+
+        // Set user to banned.
+        $this->addPOSTRoute('/^\/admin\/banUser\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->setUserBannedStatus($params[2], true); // userid, set to banned.
+        });
+
+        // Set user to not banned.
+        $this->addPOSTRoute('/^\/admin\/unbanUser\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->setUserBannedStatus($params[2], false); // userid, set to banned.
+        });
     }
 
 
