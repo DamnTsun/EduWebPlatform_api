@@ -13,8 +13,73 @@ class User_Tests extends Controller {
 
 
 
+    /**
+     * Gets user_tests records corresponding to current user. (Based on idToken in header)
+     */
+    public function getCurrentUserUserTests() {
+        // Check user signed in. (Does not need to be admin).
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
 
-    // TESTING CURRENTLY
+        // Get GET params if given.
+        $count = App::getGETParameter('count', 10, true);
+        $offset = App::getGETParameter('offset', 0, true);
+
+
+        // Attempt query.
+        $results = $this->db->getUserUserTests($user['id'], $count, $offset);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to lookup user_tests for user.');
+            http_response_code(500); return;
+        }
+
+
+        // Format and display results.
+        $this->printJSON($this->formatRecords($results));
+    }
+
+
+    /**
+     * Gets user_test (by id) associated with current user. (Based on idToken in header)
+     * May not return anything. (No user_test with id, etc)
+     * @param utestid - id of user_test.
+     */
+    public function getCurrentUserUserTest($utestid) {
+        // Check user signed in. (Does not need to be admin).
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->getUserUserTestByID($user['id'], $utestid);
+        // Check successful.
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to successfully lookup user_test.');
+            http_response_code(500); return;
+        }
+        // Check exists.
+        if (sizeof($result) == 0) {
+            http_response_code(404); return;
+        }
+
+        // Format and output.
+        $this->printJSON($this->formatRecords($result));
+    }
+
+
+
+
+
+    /**
+     * Creates a user test for the current user.
+     * Involves:
+     * - Creating user_test record associated with the current user and a specific test.
+     * - Creating multiple user_testquestion records, each associated with the user_test record and a testquestion record.
+     */
     public function createUserTest() {
         // Check user signed in. (Does not need to be admin).
         $user = Auth::validateSession(false);
@@ -71,6 +136,27 @@ class User_Tests extends Controller {
 
 
 
+
+
+    /**
+     * Deletes a user test (by id) associated with the current user. (Based on idToken)
+     * @param utestid - id of user test to be deleted.
+     */
+    public function deleteCurrentUserUserTest($utestid) {
+        // Check user signed in. (Does not need to be admin).
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Attempt to delete.
+        $result = $this->db->deleteUserTest($user['id'], $utestid);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to delete user test.');
+            http_response_code(500); return;
+        }
+    }
 
 
     /**

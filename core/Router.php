@@ -167,14 +167,32 @@ class Router {
             $controller->getAllUsers();
         });
 
-        
-
         // Get current users details. (Based on passed idToken header)
         $this->addGETRoute('/^\/users\/me\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
             $controller = new Users();
             $controller->getCurrentUserDetails();
         });
+
+
+
+        // ******************
+        // *** USER TESTS ***
+        // ******************
+        // Get current users user_tests.
+        $this->addGETRoute('/^\/users\/user_tests\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->getCurrentUserUserTests();
+        });
+
+        // Gets a user_test (by id) associated with the current user. (Based on passed idToken header)
+        $this->addGETRoute('/^\/users\/user_tests\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->getCurrentUserUserTest($params[2]); // usertestid
+        });
+
 
 
 
@@ -501,11 +519,18 @@ class Router {
         // ******************
         // *** USER_TESTS ***
         // ******************
-        // Deletes all user tests associated with a user. (Based on idToken header)
+        // Deletes all user tests associated with current user. (Based on idToken header)
         $this->addDELETERoute('/^\/users\/user_tests\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
             $controller = new User_Tests();
             $controller->deleteAllCurrentUserUserTests();
+        });
+        
+        // Deletes a user test (by id) associated with current user. (Based on idToken header)
+        $this->addDELETERoute('/^\/users\/user_tests\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->deleteCurrentUserUserTest($params[2]); // user_testid
         });
 
 

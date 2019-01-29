@@ -257,3 +257,44 @@ INSERT INTO user_messages (user_id, message_id) VALUES (1, 25);
 INSERT INTO user_messages (user_id, message_id) VALUES (1, 26);
 
 
+
+
+-- User tests
+INSERT INTO user_tests (test_id, user_id) VALUES (1, 2);
+INSERT INTO user_tests (test_id, user_id) VALUES (1, 2);
+INSERT INTO user_tests (test_id, user_id) VALUES (1, 2);
+INSERT INTO user_tests (test_id, user_id) VALUES (1, 2);
+INSERT INTO user_tests (test_id, user_id) VALUES (1, 2);
+
+-- User test questions.
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('19', 1, 1);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('6', 2, 1);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('6', 3, 1);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('16', 4, 1);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('1', 5, 1);
+
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('19', 1, 2);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('1', 5, 2);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('15', 7, 2);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('abc', 8, 2);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('zz', 9, 2);
+
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('wr', 3, 3);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('on', 2, 3);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('G', 4, 3);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('answ', 8, 3);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('er', 7, 3);
+
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('1', 5, 4);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('2', 6, 4);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('15', 7, 4);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('abc', 8, 4);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('zz', 9, 4);
+
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('19', 2, 5);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('1', 4, 5);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('15', 6, 5);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('abc', 8, 5);
+INSERT INTO user_testquestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('zz', 9, 5);
+
+

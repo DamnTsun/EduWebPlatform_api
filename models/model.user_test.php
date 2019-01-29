@@ -2,6 +2,14 @@
 
 class Model_User_Test extends Model {
 
+
+    /**
+     * Checks whether given questions (by id) as associated with the given test (by id).
+     * Returns rowcount of query.
+     * If returned value is not equal to length of given questionids array, not all questions are associated with the given test.
+     * @param testid - id of test.
+     * @param questionids - ids of test questions.
+     */
     public function checkQuestionsInTest($testid, $questionids) {
         // Holds parameters, and the IN part of query. (testquestions.id IN ( x, y, z ))
         $queryParams = array();
@@ -54,44 +62,159 @@ class Model_User_Test extends Model {
         try {
             return $this->query(
                 "SELECT
-                user_tests.id AS 'User_Test id',
-                user_tests.title,
-                user_tests.date,
-                tests.id AS 'Test id',
-                (
-                    SELECT
-                        COUNT(user_testquestions.id)
-                       FROM
-                        user_testquestions
-                    WHERE
-                        user_testquestions.user_Test_id = user_tests.id
-                ) AS 'QuestionCount',
-                (
-                    SELECT
-                        COUNT(user_testquestions.id)
-                    FROM
-                        user_testquestions
-                    JOIN
-                        testquestions
-                    ON
-                        user_testquestions.testQuestion_id = testquestions.id
-                    WHERE
-                        user_testquestions.user_Test_id = user_tests.id
-                        AND
-                        user_testquestions.userAnswer = testquestions.answer
-                ) AS 'Score'
-            FROM
-                user_tests,
-                tests
-            WHERE
-                user_tests.id = :_user_testid
-                AND
-                user_tests.user_id = :_userid
-                AND
-                tests.id = user_tests.test_id",
+                    user_tests.id AS 'User_Test id',
+                    user_tests.title,
+                    user_tests.date,
+                    tests.id AS 'Test id',
+                    (
+                        SELECT
+                            COUNT(user_testquestions.id)
+                        FROM
+                            user_testquestions
+                        WHERE
+                            user_testquestions.user_Test_id = user_tests.id
+                    ) AS 'QuestionCount',
+                    (
+                        SELECT
+                            COUNT(user_testquestions.id)
+                        FROM
+                            user_testquestions
+                        JOIN
+                            testquestions
+                        ON
+                            user_testquestions.testQuestion_id = testquestions.id
+                        WHERE
+                            user_testquestions.user_Test_id = user_tests.id
+                            AND
+                            user_testquestions.userAnswer = testquestions.answer
+                    ) AS 'Score'
+                FROM
+                    user_tests,
+                    tests
+                WHERE
+                    user_tests.id = :_user_testid
+                    AND
+                    user_tests.user_id = :_userid
+                    AND
+                    tests.id = user_tests.test_id",
                 array(
                     ':_user_testid' => $user_testid,
                     ':_userid' => $userid
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Gets user tests associated with a specific user (by id). Count and offset determines which records are returned.
+     * @param userid - id of user associated with user tests.
+     * @param count - number of records to get.
+     * @param offset - number of records to skip.
+     */
+    public function getUserUserTests($userid, $count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    user_tests.id AS 'User_Test id',
+                    user_tests.title,
+                    user_tests.date,
+                    tests.id AS 'Test id',
+                    (
+                        SELECT
+                            COUNT(user_testquestions.id)
+                        FROM
+                            user_testquestions
+                        WHERE
+                            user_testquestions.user_Test_id = user_tests.id
+                    ) AS 'QuestionCount',
+                    (
+                        SELECT
+                            COUNT(user_testquestions.id)
+                        FROM
+                            user_testquestions
+                        JOIN
+                            testquestions
+                        ON
+                            user_testquestions.testQuestion_id = testquestions.id
+                        WHERE
+                            user_testquestions.user_Test_id = user_tests.id
+                            AND
+                            user_testquestions.userAnswer = testquestions.answer
+                    ) AS 'Score'
+                FROM
+                    user_tests
+                JOIN 
+                    tests ON user_tests.test_id = tests.id
+                WHERE
+                    user_tests.user_id = :_userid
+                ORDER BY
+                    user_tests.date DESC
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_userid' => $userid,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Gets user_test record (by id) associated with given user (by id).
+     * @param userid - id of user.
+     * @param utestid - id of user_test.
+     */
+    public function getUserUserTestByID($userid, $utestid) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    user_tests.id AS 'User_Test id',
+                    user_tests.title,
+                    user_tests.date,
+                    tests.id AS 'Test id',
+                    (
+                        SELECT
+                            COUNT(user_testquestions.id)
+                        FROM
+                            user_testquestions
+                        WHERE
+                            user_testquestions.user_Test_id = user_tests.id
+                    ) AS 'QuestionCount',
+                    (
+                        SELECT
+                            COUNT(user_testquestions.id)
+                        FROM
+                            user_testquestions
+                        JOIN
+                            testquestions
+                        ON
+                            user_testquestions.testQuestion_id = testquestions.id
+                        WHERE
+                            user_testquestions.user_Test_id = user_tests.id
+                            AND
+                            user_testquestions.userAnswer = testquestions.answer
+                    ) AS 'Score'
+                FROM
+                    user_tests
+                JOIN
+                    tests ON user_tests.test_id = tests.id
+                WHERE
+                    user_tests.user_id = :_userid
+                    AND
+                    user_tests.id = :_utestid",
+                array(
+                    ':_userid' => $userid,
+                    ':_utestid' => $utestid
                 ),
                 Model::TYPE_FETCHALL
             );
@@ -203,6 +326,32 @@ class Model_User_Test extends Model {
 
 
 
+
+
+    /**
+     * Deletes a user test associated with a specific user.
+     * @param userid - id of user associated with test.
+     * @param id - id of user_test to be deleted.
+     */
+    public function deleteUserTest($userid, $id) {
+        try {
+            return $this->query(
+                "DELETE FROM
+                    user_tests
+                WHERE
+                    user_tests.user_id = :_userid
+                    AND
+                    user_tests.id = :_id",
+                array(
+                    ':_userid' => $userid,
+                    ':_id' => $id
+                ),
+                Model::TYPE_DELETE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 
     
     /**
