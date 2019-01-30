@@ -392,10 +392,10 @@ class Router {
         // *** USER_TESTS ***
         // ******************
         // Creates a new user test. (Based on idToken header and passed POST parameter)
-        $this->addPOSTRoute('/^\/users\/user_tests\/?$/', function($params) {
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
             $controller = new User_Tests();
-            $controller->createUserTest();
+            $controller->createUserTest($params[1], $params[3], $params[5]); // subjectid, topicid, testid.
         });
 
 
@@ -531,10 +531,10 @@ class Router {
         });
         
         // Deletes a user test (by id) associated with current user. (Based on idToken header)
-        $this->addDELETERoute('/^\/users\/user_tests\/\d+\/?$/', function($params) {
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
             $controller = new User_Tests();
-            $controller->deleteCurrentUserUserTest($params[2]); // user_testid
+            $controller->deleteCurrentUserUserTest($params[1], $params[3], $params[5], $params[7]); // subjectid, topicid, testid, utestid.
         });
 
 

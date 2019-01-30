@@ -54,6 +54,77 @@ class Model_User_Test extends Model {
 
 
     /**
+     * Checks if user test exists with given id and user_id.
+     * @param userid - id of user.
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
+     * @param testid - id of test.
+     * @param utestid - id of user_test.
+     */
+    public function checkUserUserTestExists($userid, $subjectid, $topicid, $testid, $utestid) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    user_tests.id
+                FROM
+                    user_tests
+                WHERE
+                    -- Assoc. with user.
+                    user_tests.user_id = :_userid
+                    AND
+                    -- Assoc. with test.
+                    user_tests.test_id = (
+                        SELECT
+                            tests.id
+                        FROM
+                            tests
+                        WHERE
+                            tests.id = :_testid
+                            AND
+                            -- Check test inside topic.
+                            tests.topic_id = (
+                                SELECT
+                                    topics.id
+                                FROM
+                                    topics
+                                WHERE
+                                    topics.id = :_topicid
+                                    AND
+                                    -- Check topic inside subject.
+                                    topics.subject_id = (
+                                        SELECT
+                                            subjects.id
+                                        FROM
+                                            subjects
+                                        WHERE
+                                            subjects.id = :_subjectid
+                                    )
+                            )
+                    )
+                    AND
+                    -- Has specified id.
+                    user_tests.id = :_utestid",
+                array(
+                    ':_userid' => $userid,
+                    ':_subjectid' => $subjectid,
+                    ':_topicid' => $topicid,
+                    ':_testid' => $testid,
+                    ':_utestid' => $utestid
+                ),
+                Model::TYPE_BOOL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
+
+    /**
      * Gets a user_test by id, associated with a specific user.
      * @param userid - id of user.
      * @param user_testid - id of user_test

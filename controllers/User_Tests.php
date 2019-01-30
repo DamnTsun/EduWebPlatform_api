@@ -27,6 +27,22 @@ class User_Tests extends Controller {
         return $controller->checkTestExists($subjectid, $topicid, $testid);
     }
 
+    /**
+     * Checks whether a user_test exists (by id). (Associated with specified user)
+     * @param userid - id of user associated with user_test.
+     * @param subjectid - id of subject that user_test is inside of (via topic)
+     * @param topicid - id of topic that user_test is inside of (via test)
+     * @param testid - id of test that user_test is associated with.
+     * @param utestid - id of user_test.
+     */
+    private function checkUserTestExists($userid, $subjectid, $topicid, $testid, $utestid) {
+        $result = $this->db->checkUserUserTestExists($userid, $subjectid, $topicid, $testid, $utestid);
+        if (!isset($result)) {
+            return null;
+        }
+        return $result;
+    }
+
 
 
 
@@ -161,11 +177,14 @@ class User_Tests extends Controller {
 
     /**
      * Creates a user test for the current user.
+     * @param subjectid - id of subject that test is inside of (via topic).
+     * @param topicid - id of topic that test is inside of.
+     * @param testid - id of test.
      * Involves:
      * - Creating user_test record associated with the current user and a specific test.
      * - Creating multiple user_testquestion records, each associated with the user_test record and a testquestion record.
      */
-    public function createUserTest() {
+    public function createUserTest($subjectid, $topicid, $testid) {
         // Check user signed in. (Does not need to be admin).
         $user = Auth::validateSession(false);
         if (!isset($user)) {
@@ -186,7 +205,6 @@ class User_Tests extends Controller {
 
         // Set values. (all required)
         $title =        $json['title'];
-        $testid =      $json['test_id'];
         // Add each question.
         $questionids = array();
         $questionanswers = array();
@@ -194,6 +212,13 @@ class User_Tests extends Controller {
             array_push($questionids, $q['id']);
             array_push($questionanswers, $q['answer']);
         }
+
+
+        // Check specified test exists.
+        if (!$this->checkTestExists($subjectid, $topicid, $testid)) {
+            http_response_code(404); return;
+        }
+
 
         // Check given questions are inside of given test. (by ids)
         $results = $this->db->checkQuestionsInTest($testid, $questionids);
@@ -225,13 +250,21 @@ class User_Tests extends Controller {
 
     /**
      * Deletes a user test (by id) associated with the current user. (Based on idToken)
+     * @param subjectid - id of subject that user_test is inside of (via topic)
+     * @param topicid - id of topic that user_test is inside of (via test)
+     * @param testid - id of test that user_test is inside of.
      * @param utestid - id of user test to be deleted.
      */
-    public function deleteCurrentUserUserTest($utestid) {
+    public function deleteCurrentUserUserTest($subjectid, $topicid, $testid, $utestid) {
         // Check user signed in. (Does not need to be admin).
         $user = Auth::validateSession(false);
         if (!isset($user)) {
             http_response_code(401); return;
+        }
+
+        // Check user_test exists.
+        if (!$this->checkUserTestExists($user['id'], $subjectid, $topicid, $testid, $utestid)) {
+            http_response_code(404); return;
         }
 
 
@@ -305,9 +338,6 @@ class User_Tests extends Controller {
         }
         // Title.
         if (!isset($object['title'])) { return null; }
-        // Test id (int).
-        if (!isset($object['test_id'])) { return null; }
-        if (gettype($object['test_id']) != 'integer') { return null; }
         // Questions.
         if (!isset($object['questions'])) { return null; }
         if (gettype($object['questions']) != 'array') { return null; }
