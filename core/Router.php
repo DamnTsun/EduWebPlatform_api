@@ -179,18 +179,22 @@ class Router {
         // ******************
         // *** USER TESTS ***
         // ******************
-        // Get current users user_tests.
-        $this->addGETRoute('/^\/users\/user_tests\/?$/', function($params) {
+        // NOTES...
+        // new route: subjects/:id/topics/:id/tests/:id/user_tests
+        // For getting all (regardless of test it was based on): users/user_tests
+
+        // Get current users user_tests by test.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
             $controller = new User_Tests();
-            $controller->getCurrentUserUserTests();
+            $controller->getCurrentUserUserTestsByTest($params[1], $params[3], $params[5]); // subjectid, topicid, testid.
         });
 
         // Gets a user_test (by id) associated with the current user. (Based on passed idToken header)
-        $this->addGETRoute('/^\/users\/user_tests\/\d+\/?$/', function($params) {
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
             $controller = new User_Tests();
-            $controller->getCurrentUserUserTest($params[2]); // usertestid
+            $controller->getCurrentUserUserTestByID($params[1], $params[3], $params[5], $params[7]); // subjectid, topicid, testid, utestid.
         });
 
 

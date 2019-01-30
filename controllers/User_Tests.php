@@ -13,10 +13,32 @@ class User_Tests extends Controller {
 
 
 
+
+
+    /**
+     * Checks whether a test exists.
+     * @param subjectid - subject that test is within (via topic)
+     * @param topicid - topic that test is within.
+     * @param testid - id of test.
+     */
+    private function checkTestExists($subjectid, $topicid, $testid) {
+        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
+        $controller = new Tests();
+        return $controller->checkTestExists($subjectid, $topicid, $testid);
+    }
+
+
+
+
+
+
+
+
+    // *** OLD METHODS - Got user tests, but not by test. Currently unused. Will be updated or removed. ***
     /**
      * Gets user_tests records corresponding to current user. (Based on idToken in header)
      */
-    public function getCurrentUserUserTests() {
+    /*public function getCurrentUserUserTests() {
         // Check user signed in. (Does not need to be admin).
         $user = Auth::validateSession(false);
         if (!isset($user)) {
@@ -38,7 +60,7 @@ class User_Tests extends Controller {
 
         // Format and display results.
         $this->printJSON($this->formatRecords($results));
-    }
+    }*/
 
 
     /**
@@ -46,7 +68,7 @@ class User_Tests extends Controller {
      * May not return anything. (No user_test with id, etc)
      * @param utestid - id of user_test.
      */
-    public function getCurrentUserUserTest($utestid) {
+    /*public function getCurrentUserUserTest($utestid) {
         // Check user signed in. (Does not need to be admin).
         $user = Auth::validateSession(false);
         if (!isset($user)) {
@@ -68,7 +90,70 @@ class User_Tests extends Controller {
 
         // Format and output.
         $this->printJSON($this->formatRecords($result));
+    }*/
+
+
+
+
+
+    /**
+     * Gets user_tests associated with the current user (Based on idToken in header) as a specific test (by id).
+     * @param subjectid - id of subject test is in (via topic).
+     * @param topicid - id of topic test is in.
+     * @param testid - id of test.
+     */
+    public function getCurrentUserUserTestsByTest($subjectid, $topicid, $testid) {
+        // Check user signed in. (Does not need to be admin).
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Check specified test exists.
+        if (!$this->checkTestExists($subjectid, $topicid, $testid)) {
+            http_response_code(404); return;
+        }
+
+        // Get GET params if given.
+        $count = App::getGETParameter('count', 10, true);
+        $offset = App::getGETParameter('offset', 0, true);
+
+
+        // Attempt query.
+        $results = $this->db->getUserUserTestsByTest($user['id'],
+                $subjectid, $topicid, $testid, $count, $offset);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to lookup user_tests for specfied test.');
+            http_response_code(500); return;
+        }
+
+        // Format and output.
+        $this->printJSON($this->formatRecords($results));
     }
+
+    public function getCurrentUserUserTestByID($subjectid, $topicid, $testid, $utestid) {
+        // Check user signed in. (Does not need to be admin).
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+        // Attempt query.
+        $results = $this->db->getUserUserTestById($user['id'], $subjectid, $topicid, $testid, $utestid);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to lookup user_test successfully.');
+            http_response_code(500); return;
+        }
+        if (sizeof($results) == 0) {
+            http_response_code(404); return;
+        }
+
+        // Format and output.
+        $this->printJSON($this->formatRecords($results));
+    }
+
+
+
 
 
 
