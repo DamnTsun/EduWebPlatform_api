@@ -177,6 +177,65 @@ INSERT INTO socialMediaProviders (name) VALUES ('LinkedIn');
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the normie', '102562326633765021134', 1, 1); -- Google account, normal.
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the admin', '117929523951432123072', 1, 2); -- Google account, admin.
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the banned', '111865521247464378466', 1, 3); -- Google account, banned.
+-- Testing users. (No real account; impossible to actually sign in as.)
+-- Regulars
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_01', 'fake01', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_02', 'fake02', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_03', 'fake03', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_04', 'fake04', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_05', 'fake05', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_06', 'fake06', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_07', 'fake07', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_08', 'fake08', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_09', 'fake09', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_user_10', 'fake10', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake11', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake12', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake13', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake14', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake15', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake16', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake17', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake18', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake19', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake20', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake21', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake22', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake23', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake24', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake25', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake26', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake27', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake28', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake29', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake30', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake31', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake32', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake33', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake34', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake35', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake36', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake37', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake38', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake39', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake40', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake41', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake42', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake43', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake44', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake45', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake46', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake47', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake48', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake49', 1, 1);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES (DEFAULT, 'fake50', 1, 1);
+-- Admins
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_01', 'fake01a', 1, 2);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_02', 'fake02a', 1, 2);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_03', 'fake03a', 1, 2);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_04', 'fake04a', 1, 2);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_05', 'fake05a', 1, 2);
+
 
 -- Posts
 INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
