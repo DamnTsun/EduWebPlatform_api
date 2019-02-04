@@ -26,6 +26,7 @@ $_ENV['controllers'] = array(
     'posts' => 'Posts.php',
 
     'user_tests' => 'User_Tests.php',
+    'user_test_questions' => 'User_TestQuestions.php',
     'users' => 'Users.php',
     'messages' => 'Messages.php'
 );
@@ -40,6 +41,7 @@ $_ENV['models'] = array(
     'posts' => 'model.post.php',
 
     'user_tests' => 'model.user_test.php',
+    'user_test_questions' => 'model.user_test_question.php',
     'users' => 'model.user.php',
     'messages' => 'model.message.php'
 );

@@ -197,6 +197,15 @@ class Router {
             $controller->getCurrentUserUserTestByID($params[1], $params[3], $params[5], $params[7]); // subjectid, topicid, testid, utestid.
         });
 
+        // ****************************
+        // *** USER TESTS QUESTIONS ***
+        // ****************************
+        // Get current users user_testquestions for the given user_test.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/\d+\/questions\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_test_questions'];
+            $controller = new User_TestQuestions();
+            $controller->getCurrentUserUserTestQuestionsByUserTest($params[1], $params[3], $params[5], $params[7]); // subjectid, topicid, testid, utestid.
+        });
 
 
 

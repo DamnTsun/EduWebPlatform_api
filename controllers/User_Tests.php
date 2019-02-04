@@ -35,7 +35,7 @@ class User_Tests extends Controller {
      * @param testid - id of test that user_test is associated with.
      * @param utestid - id of user_test.
      */
-    private function checkUserTestExists($userid, $subjectid, $topicid, $testid, $utestid) {
+    public function checkUserTestExists($userid, $subjectid, $topicid, $testid, $utestid) {
         $result = $this->db->checkUserUserTestExists($userid, $subjectid, $topicid, $testid, $utestid);
         if (!isset($result)) {
             return null;
@@ -43,70 +43,6 @@ class User_Tests extends Controller {
         return $result;
     }
 
-
-
-
-
-
-
-
-    // *** OLD METHODS - Got user tests, but not by test. Currently unused. Will be updated or removed. ***
-    /**
-     * Gets user_tests records corresponding to current user. (Based on idToken in header)
-     */
-    /*public function getCurrentUserUserTests() {
-        // Check user signed in. (Does not need to be admin).
-        $user = Auth::validateSession(false);
-        if (!isset($user)) {
-            http_response_code(401); return;
-        }
-
-        // Get GET params if given.
-        $count = App::getGETParameter('count', 10, true);
-        $offset = App::getGETParameter('offset', 0, true);
-
-
-        // Attempt query.
-        $results = $this->db->getUserUserTests($user['id'], $count, $offset);
-        if (!isset($results)) {
-            $this->printMessage('Something went wrong. Unable to lookup user_tests for user.');
-            http_response_code(500); return;
-        }
-
-
-        // Format and display results.
-        $this->printJSON($this->formatRecords($results));
-    }*/
-
-
-    /**
-     * Gets user_test (by id) associated with current user. (Based on idToken in header)
-     * May not return anything. (No user_test with id, etc)
-     * @param utestid - id of user_test.
-     */
-    /*public function getCurrentUserUserTest($utestid) {
-        // Check user signed in. (Does not need to be admin).
-        $user = Auth::validateSession(false);
-        if (!isset($user)) {
-            http_response_code(401); return;
-        }
-
-
-        // Attempt query.
-        $result = $this->db->getUserUserTestByID($user['id'], $utestid);
-        // Check successful.
-        if (!isset($result)) {
-            $this->printMessage('Something went wrong. Unable to successfully lookup user_test.');
-            http_response_code(500); return;
-        }
-        // Check exists.
-        if (sizeof($result) == 0) {
-            http_response_code(404); return;
-        }
-
-        // Format and output.
-        $this->printJSON($this->formatRecords($result));
-    }*/
 
 
 
