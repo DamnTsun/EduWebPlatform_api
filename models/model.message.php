@@ -296,4 +296,130 @@ class Model_Message extends Model {
             return null;
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // *******************************************************
+    // ***** EXPERIMENTAL IM CHAT MESSAGE SYSTEM METHODS *****
+    // ***** MAY OR MAY NOT BE USED (CURRENTLY TESTING)  *****
+    // *******************************************************
+    /**
+     * Gets messages sent between 2 specified users, ordered by date (newest).
+     * @param userid1 - id of one user in chat.
+     * @param userid2 - id of other user in chat.
+     * @param count - how many messages to get.
+     * @param offset - how many messages to skip.
+     */
+    public function getUserChat($userid1, $userid2, $count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    messages.id,
+                    messages.message,
+                    messages.date,
+                    messages.sender_id,
+                    users.displayName AS 'sender_displayname'
+                FROM
+                    user_messages
+                JOIN messages ON
+                    user_messages.message_id = messages.id
+                JOIN users ON
+                    messages.sender_id = users.id
+                WHERE
+                    -- Get messages sent between the 2 users.
+                    (
+                        -- Sent to user 1 from user 2
+                        user_messages.user_id = :_userid1_0 AND messages.sender_id = :_userid2_0
+                        OR
+                        -- Sent to user 2 from user 1
+                        user_messages.user_id = :_userid2_1 AND messages.sender_id = :_userid1_1
+                    )
+                -- Order by newest date. Should sort messages into order, forming a chain of messages.
+                ORDER BY messages.date DESC
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_userid1_0' => $userid1,
+                    ':_userid1_1' => $userid1,
+                    ':_userid2_0' => $userid2,
+                    ':_userid2_1' => $userid2,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets messages sent between 2 specified users, ordered by date (newest), sent after the specified timestamp.
+     * @param userid1 - id of one user in chat.
+     * @param userid2 - id of other user in chat.
+     * @param date - date to get messages after.
+     */
+    public function getUserChatSinceDate($userid1, $userid2, $date) {
+        try {
+            return $this->query(
+                "SELECT
+                    messages.id,
+                    messages.message,
+                    messages.date,
+                    messages.sender_id,
+                    users.displayName AS 'sender_displayname'
+                FROM
+                    user_messages
+                JOIN messages ON
+                    user_messages.message_id = messages.id
+                JOIN users ON
+                    messages.sender_id = users.id
+                WHERE
+                    -- Get messages sent between the 2 users.
+                    (
+                        -- Sent to user 1 from user 2
+                        user_messages.user_id = :_userid1_0 AND messages.sender_id = :_userid2_0
+                        OR
+                        -- Sent to user 2 from user 1
+                        user_messages.user_id = :_userid2_1 AND messages.sender_id = :_userid1_1
+                    )
+                    AND
+                    messages.date > :_date
+                -- Order by newest date. Should sort messages into order, forming a chain of messages.
+                ORDER BY messages.date DESC",
+                array(
+                    ':_userid1_0' => $userid1,
+                    ':_userid1_1' => $userid1,
+                    ':_userid2_0' => $userid2,
+                    ':_userid2_1' => $userid2,
+                    ':_date' => $date
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }

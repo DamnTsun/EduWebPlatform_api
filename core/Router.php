@@ -239,6 +239,22 @@ class Router {
             $controller = new Messages();
             $controller->getCurrentUserSentMessagesToUser($params[3]); // receiver_id.
         });
+
+
+
+
+        // *******************************************************************
+        // *** EXPERIMENTAL IM CHAT (may replace current messaging system) ***
+        // *******************************************************************
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        // Get messages between 2 users. (Will be used by either sender or receiver to view list of messages, ordered by date)
+        $this->addGETRoute('/^\/users\/chat\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserChat($params[2]);
+        });
     }
 
 

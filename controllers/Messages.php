@@ -142,10 +142,6 @@ class Messages extends Controller {
             http_response_code(401); return;
         }
 
-        // Get GET params if set.
-        $count = App::getGETParameter('count', 10, true);
-        $offset = App::getGETParameter('offset', 0, true);
-
 
         // Check content param given.
         if (!isset($_POST['content'])) {
@@ -240,4 +236,74 @@ class Messages extends Controller {
 
         return $object;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // *******************************************************
+    // ***** EXPERIMENTAL IM CHAT MESSAGE SYSTEM METHODS *****
+    // ***** MAY OR MAY NOT BE USED (CURRENTLY TESTING)  *****
+    // *******************************************************
+    /**
+     * Gets messages sent between the current user (determined by authorization token) and the specified other user.
+     * @param otherUserId - id of other user in the chat.
+     */
+    public function getCurrentUserChat($otherUserId) {
+        // Check user is signed in. Authorization not required. (gets sender)
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Get GET params if set.
+        $date = App::getGETParameter('date', null, false);
+        $count = App::getGETParameter('count', 10, true);
+        $offset = App::getGETParameter('offset', 0, true);
+
+
+        // If date param given, get messages sent after date, ignoring count and offset.
+        // Else get all messages between users, based on count and offset.
+        if (isset($date)) {
+            // Validate date with regex.
+            if (!preg_match('/^\d{4}\-\d{2}\-\d{2} ([01][0-9]|2[0-3]):[0-5]\d:[0-5]\d$/', $date)) {
+                $this->printMessage('Given date is not valid.');
+                http_response_code(400); return;
+            }
+            $results = $this->db->getUserChatSinceDate($user['id'], $otherUserId, $date);
+        } else {
+            $results = $this->db->getUserChat($user['id'], $otherUserId, $count, $offset);
+        }
+
+
+        // Check results fetched successfully.
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to lookup messages between specified users.');
+            http_response_code(500); return;
+        }
+
+
+        // Output results.
+        $this->printJSON($this->formatRecords($results));
+    }
+
 }
