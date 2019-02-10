@@ -248,7 +248,7 @@ class Model_Message extends Model {
         // Create userMessages record associated with messages record.
         $userMessageid = $this->createUserMessageRecord($receiver_id, $messageid);
 
-        return true;
+        return $messageid;
     }
 
 
@@ -325,6 +325,54 @@ class Model_Message extends Model {
     // ***** EXPERIMENTAL IM CHAT MESSAGE SYSTEM METHODS *****
     // ***** MAY OR MAY NOT BE USED (CURRENTLY TESTING)  *****
     // *******************************************************
+    /**
+     * Get message sent between 2 specified user, with the specified id.
+     * @param userid1 - id of one user.
+     * @param userid2 - id of other user.
+     * @param messageid - id of message.
+     */
+    public function getUserChatMessageByID($userid1, $userid2, $messageid) {
+        try {
+            return $this->query(
+                "SELECT
+                    messages.id,
+                    messages.message,
+                    messages.date,
+                    messages.sender_id,
+                    users.displayName AS 'sender_displayname'
+                FROM
+                    user_messages
+                JOIN messages ON
+                    user_messages.message_id = messages.id
+                JOIN users ON
+                    messages.sender_id = users.id
+                WHERE
+                    -- Get messages sent between the 2 users.
+                    (
+                        -- Sent to user 1 from user 2
+                        user_messages.user_id = :_userid1_0 AND messages.sender_id = :_userid2_0
+                        OR
+                        -- Sent to user 2 from user 1
+                        user_messages.user_id = :_userid2_1 AND messages.sender_id = :_userid1_1
+                    )
+                    AND
+                    -- Get message with specified id.
+                    messages.id = :_messageid",
+                array(
+                    ':_userid1_0' => $userid1,
+                    ':_userid1_1' => $userid1,
+                    ':_userid2_0' => $userid2,
+                    ':_userid2_1' => $userid2,
+                    ':_messageid' => $messageid
+                    
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
     /**
      * Gets messages sent between 2 specified users, ordered by date (newest).
      * @param userid1 - id of one user in chat.

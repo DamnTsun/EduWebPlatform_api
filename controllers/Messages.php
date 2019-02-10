@@ -284,7 +284,7 @@ class Messages extends Controller {
         // If date param given, get messages sent after date, ignoring count and offset.
         // Else get all messages between users, based on count and offset.
         if (isset($date)) {
-            // Validate date with regex.
+            // Validate date with regex. (yyyy-mm-dd hh:mm:ss) (checks hours/minutes/seconds are valid)
             if (!preg_match('/^\d{4}\-\d{2}\-\d{2} ([01][0-9]|2[0-3]):[0-5]\d:[0-5]\d$/', $date)) {
                 $this->printMessage('Given date is not valid.');
                 http_response_code(400); return;
@@ -306,4 +306,57 @@ class Messages extends Controller {
         $this->printJSON($this->formatRecords($results));
     }
 
+
+
+    /**
+     * Sends a user chat message from the current user to the specified user.
+     * @param otherUserId - id of other user of chat.
+     */
+    public function createUserChatMessage($otherUserId) {
+        // Check user is signed in. Authorization not required. (gets sender)
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Check content param given.
+        if (!isset($_POST['content'])) {
+            $this->printMessage('`content` parameter not given in POST body.');
+            http_response_code(400); return;
+        }
+
+        // Get and validate content.
+        $json = $this->validateJSON($_POST['content']);
+        if (!isset($json)) {
+            $this->printMessage('`content` parameter is invalid or does not contain required fields.');
+            http_response_code(400); return;
+        }
+
+
+        // Validate message.
+        $message = $json['message'];
+        if (sizeof($message) < 1 || sizeof($message) > 1024) {
+            $this->printMessage('Message must be between 1 and 1024 characters long.');
+            http_response_code(400); return;
+        }
+
+
+        // Attempt to create message and user_message records for message.
+        $results = $this->db->createUserMessage($user['id'], (int)$otherUserId, $json['message']);
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to create user message.');
+            http_response_code(400); return;
+        }
+
+
+        // Get and return newly created message.
+        $chatMsg = $this->db->getUserChatMessageByID($user['id'], $otherUserId, $results);
+        if (!isset($chatMsg)) {
+            $this->printMessage('Something went wrong. Message created, but could not be retreived.');
+            http_response_code(500); return;
+        }
+
+        $this->printJSON($this->formatRecords($chatMsg));
+    }
 }

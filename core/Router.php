@@ -438,6 +438,24 @@ class Router {
 
 
 
+
+        // *******************************************************************
+        // *** EXPERIMENTAL IM CHAT (may replace current messaging system) ***
+        // *******************************************************************
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        $this->addPOSTRoute('/^\/users\/chat\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->createUserChatMessage($params[2]); // receiver_id
+        });
+
+
+
+
+
+
         // *************
         // *** ADMIN ***
         // *************
