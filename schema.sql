@@ -161,7 +161,7 @@ CREATE TABLE `user_TestQuestions` (
 CREATE TABLE `groups` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL DEFAULT 'unnamed group',
-    `description` TEXT,
+    `description` VARCHAR(4096),
     `imageUrl` VARCHAR(255) DEFAULT ''
 );
 

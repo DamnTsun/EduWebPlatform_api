@@ -255,6 +255,48 @@ class Router {
             $controller = new Messages();
             $controller->getCurrentUserChat($params[2]);
         });
+
+
+
+
+
+
+
+
+
+        // *******************
+        // *** USER GROUPS ***
+        // *******************
+        // Gets groups that the current user is part of.
+        $this->addGETRoute('/^\/groups\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getCurrentUserGroups();
+        });
+        // Gets all groups (admin only)
+        $this->addGETRoute('/^\/groups\/all\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getAllUserGroups();
+        });
+        // Get group by id.
+        $this->addGETRoute('/^\/groups\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getUserGroupByID($params[1]);
+        });
+        // Get users who are members of a group.
+        $this->addGETRoute('/^\/groups\/\d+\/members\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getUsersInGroup($params[1]);
+        });
+        // Get users who are not members of a group.
+        $this->addGETRoute('/^\/groups\/\d+\/nonmembers\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getUsersNotInGroup($params[1]);
+        });
     }
 
 
@@ -485,6 +527,38 @@ class Router {
             $controller = new Users();
             $controller->setUserBannedStatus($params[2], false); // userid, set to banned.
         });
+
+
+
+
+
+
+
+
+
+
+        // *******************
+        // *** USER GROUPS ***
+        // *******************
+        // Create user group.
+        $this->addPOSTRoute('/^\/groups\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->createGroup();
+        });
+        // Modify existing user group.
+        $this->addPOSTRoute('/^\/groups\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->modifyGroup($params[1]); // groupid
+        });
+
+        // Add member to group. (Remove member is a delete route)
+        $this->addPOSTRoute('/^\/groups\/\d+\/members\/\d+?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->addUserToGroup($params[1], $params[3]); // groupid, userid
+        });
     }
 
 
@@ -602,6 +676,36 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
             $controller = new Messages();
             $controller->deleteUserMessage($params[2]); // message_id.
+        });
+
+
+
+
+
+
+
+
+
+
+        // *******************
+        // *** USER GROUPS ***
+        // *******************
+        // Create user group.
+        $this->addDELETERoute('/^\/groups\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->deleteGroup($params[1]); // groupid
+        });
+
+
+
+
+
+        // Remove member from group.
+        $this->addDELETERoute('/^\/groups\/\d+\/members\/\d+?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->removeUserFromGroup($params[1], $params[3]); // groupid, userid
         });
     }
 

@@ -357,3 +357,44 @@ INSERT INTO user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) VALUE
 INSERT INTO user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) VALUES ('zz', 9, 5);
 
 
+
+
+
+-- User groups
+-- group records
+INSERT INTO groups (`name`, `description`) VALUES ('red team', 'red team description');
+INSERT INTO groups (`name`, `description`) VALUES ('blue team', 'blue team description');
+INSERT INTO groups (`name`, `description`) VALUES ('yellow team', 'yellow team description');
+INSERT INTO groups (`name`, `description`) VALUES ('gold team', 'gold team description');
+INSERT INTO groups (`name`, `description`) VALUES ('silver team', 'silver team description');
+
+-- User group records.
+INSERT INTO user_groups (user_id, group_id) VALUES (2, 1);
+INSERT INTO user_groups (user_id, group_id) VALUES (1, 1);
+INSERT INTO user_groups (user_id, group_id) VALUES (7, 1);
+INSERT INTO user_groups (user_id, group_id) VALUES (11, 1);
+INSERT INTO user_groups (user_id, group_id) VALUES (34, 1);
+
+INSERT INTO user_groups (user_id, group_id) VALUES (2, 2);
+INSERT INTO user_groups (user_id, group_id) VALUES (4, 2);
+INSERT INTO user_groups (user_id, group_id) VALUES (7, 2);
+INSERT INTO user_groups (user_id, group_id) VALUES (18, 2);
+INSERT INTO user_groups (user_id, group_id) VALUES (22, 2);
+
+INSERT INTO user_groups (user_id, group_id) VALUES (2, 3);
+INSERT INTO user_groups (user_id, group_id) VALUES (21, 3);
+INSERT INTO user_groups (user_id, group_id) VALUES (26, 3);
+INSERT INTO user_groups (user_id, group_id) VALUES (43, 3);
+INSERT INTO user_groups (user_id, group_id) VALUES (23, 3);
+
+INSERT INTO user_groups (user_id, group_id) VALUES (2, 4);
+INSERT INTO user_groups (user_id, group_id) VALUES (25, 4);
+INSERT INTO user_groups (user_id, group_id) VALUES (23, 4);
+INSERT INTO user_groups (user_id, group_id) VALUES (1, 4);
+INSERT INTO user_groups (user_id, group_id) VALUES (29, 4);
+
+INSERT INTO user_groups (user_id, group_id) VALUES (2, 5);
+INSERT INTO user_groups (user_id, group_id) VALUES (5, 5);
+INSERT INTO user_groups (user_id, group_id) VALUES (44, 5);
+INSERT INTO user_groups (user_id, group_id) VALUES (37, 5);
+INSERT INTO user_groups (user_id, group_id) VALUES (24, 5);
