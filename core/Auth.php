@@ -152,6 +152,11 @@ class Auth {
             http_response_code(401); return 'You are banned.';
         }
 
+        // Update user lastSignInDate field.
+        if ($userController->updateUserLastSignInDate($user[0]['id']) == null) {
+            http_response_code(500); return 'Something went wrong. Unable to update your lastSignInDate field.';
+        }
+
 
         // Create and return JWT to user.
         Auth::createJWT($user[0]['id'], ($user[0]['level'] == Auth::PRIVILEGE_LEVELS['admin']));

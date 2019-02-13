@@ -213,6 +213,25 @@ class Users extends Controller {
     }
 
 
+
+
+
+    /**
+     * Updates lastSignInDate field of specified user.
+     * @param userid - id of user.
+     */
+    public function updateUserLastSignInDate($userid) {
+        $result = $this->db->updateUserLastSignInDate($userid);
+        if (!isset($result)) {
+            return null;
+        }
+        return $result;
+    }
+
+
+
+
+
     /**
      * Deletes account of current user. (Based on idToken header)
      */

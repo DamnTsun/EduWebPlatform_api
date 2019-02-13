@@ -186,6 +186,33 @@ class Model_User extends Model {
 
 
 
+    
+    /**
+     * Updates specified user's 'lastSignInDate' field to the current timestamp.
+     * This field is used to delete old users, based on whether the timestamp is a set time in the past. (e.g. 180 days).
+     * @param userid- id of user.
+     */
+    public function updateUserLastSignInDate($userid) {
+        try {
+            return $this->query(
+                "UPDATE
+                    users
+                SET
+                    users.lastSignInDate = DEFAULT
+                WHERE
+                    users.id = :_userid",
+                array(
+                    ':_userid' => $userid
+                ),
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
 
     /**
      * Deletes user with given id.

@@ -1,6 +1,7 @@
 CREATE DATABASE EduWebApp;
 USE EduWebApp;
 SET default_storage_engine=INNODB;
+SET GLOBAL event_scheduler = ON;
 
 /* ***** GENERAL CONTENT RELATED ***** */
 
@@ -84,6 +85,7 @@ CREATE TABLE `socialMediaProviders` (
 CREATE TABLE users (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `displayName` VARCHAR(30) NOT NULL DEFAULT 'unnamed user',
+    `lastSignInDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `socialMediaID` VARCHAR(255) NOT NULL,
     `socialMediaProvider_id` INT NOT NULL,
     `privilegeLevel_id` INT NOT NULL,
@@ -221,39 +223,41 @@ CREATE TABLE `group_messages` (
 
 
 
--- QUERIES
 
-/*
--- sets topics to hidden if:
---  all lessons / tests inside topic are hidden.
---  the topic contains no lessons / tests.
--- Also sets topic to visible if:
---  at least 1 lesson / test exists inside topic that is not hidden.
-UPDATE
-	topics
-SET
-	topics.hidden =
-    (
-        SELECT
-        	COUNT(lessons.id)
-        FROM
-        	lessons
+
+/* DATABASE EVENTS */
+/**
+ * *** GDPR RELATED ***
+ * Delete messages that are 7 days or older.
+ * Runs once per day at 00:00:00.
+ */
+CREATE EVENT `delete_old_messages`
+    ON SCHEDULE
+        EVERY 1 DAY                             -- Every day.
+        STARTS '2019-01-01 00:00:00'            -- At 00:00:00.
+    ON COMPLETION PRESERVE ENABLE               -- Repeat.
+    DO
+        DELETE FROM
+            `messages`
         WHERE
-        	lessons.topic_id = topics.id
-        	AND
-        	lessons.hidden = FALSE
-    ) + (
-        SELECT
-        	COUNT(tests.id)
-        FROM
-        	tests
+            `messages`.`date` < CURRENT_TIMESTAMP - INTERVAL 1 WEEK
+;
+
+
+/**
+ * *** GDPR RELATED ***
+ * Deletes users who have not signed in for 180 days or longer.
+ * Runs once per day at 00:00:00.
+ */
+CREATE EVENT `delete_old_users`
+    ON SCHEDULE
+        EVERY 1 DAY                             -- Every day.
+        STARTS '2019-01-01 00:00:00'            -- At 00:00:00.
+    ON COMPLETION PRESERVE ENABLE               -- Repeat.
+    DO
+        DELETE FROM
+            `users`
         WHERE
-        	tests.topic_id = topics.id
-        	AND
-        	tests.hidden = FALSE
-    ) = 0
-WHERE
-	topics.id = 1;
+            `users`.`lastSignInDate` < CURRENT_TIMESTAMP - INTERVAL 180 DAY
+;
 
-
-*/
