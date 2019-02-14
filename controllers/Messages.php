@@ -179,12 +179,22 @@ class Messages extends Controller {
             http_response_code(401); return;
         }
 
+        // Check message exists.
+        if (!$this->db->checkMessageExists($id)) {
+            http_response_code(404); return;
+        }
+
 
         // Attempt delete.
         $results = $this->db->deleteUserMessage((int)$id, $user['id']);
         if (!isset($results)) {
             $this->printMessage('Something went wrong. Unable to delete message.');
             http_response_code(500); return;
+        }
+        // Message exists, so if delete returns false, user must not be sender of message.
+        if (!$results) {
+            $this->printMessage('Cannot delete message. You are not the user who sent the message.');
+            http_response_code(401); return;
         }
     }
 
@@ -308,6 +318,26 @@ class Messages extends Controller {
 
 
 
+
+    /**
+     * Checks whether given user is in given group.
+     * @param userid - id of user.
+     * @param groupid - id of group.
+     */
+    private function checkUserInGroup($userid, $groupid) {
+        require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+        $controller = new Groups();
+        $result = $controller->checkUserInGroup($userid, $groupid);
+        if (!isset($result)) {
+            return false;
+        }
+        return $result;
+    }
+
+
+
+
+
     /**
      * Sends a user chat message from the current user to the specified user.
      * @param otherUserId - id of other user of chat.
@@ -358,5 +388,165 @@ class Messages extends Controller {
         }
 
         $this->printJSON($this->formatRecords($chatMsg));
+    }
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Gets group messages sent to group.
+     * @param groupid - id of group.
+     */
+    public function getGroupChat($groupid) {
+        // Check user is signed in. Authorization not required. (gets sender)
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // If user not admin, check they are in the group.
+        if ($user['privilegeLevel'] != 'Admin') {
+            if (!$this->checkUserInGroup($user['id'], $groupid)) {
+                $this->printMessage('Cannot lookup group messages. You are not a member of the group.');
+                http_response_code(400); return;
+            }
+        }
+
+
+        // Get GET params if set.
+        $date = App::getGETParameter('date', null, false);
+        $count = App::getGETParameter('count', 10, true);
+        $offset = App::getGETParameter('offset', 0, true);
+
+        // If date param given, get messages sent after date, ignoring count and offset.
+        // Else get all messages between users, based on count and offset.
+        if (isset($date)) {
+            // Validate date with regex. (yyyy-mm-dd hh:mm:ss) (checks hours/minutes/seconds are valid)
+            if (!preg_match('/^\d{4}\-\d{2}\-\d{2} ([01][0-9]|2[0-3]):[0-5]\d:[0-5]\d$/', $date)) {
+                $this->printMessage('Given date is not valid.');
+                http_response_code(400); return;
+            }
+            $results = $this->db->getGroupChatSinceDate($groupid, $date);
+        } else {
+            $results = $this->db->getGroupChat($groupid, $count, $offset);
+        }
+
+        // Check results fetched successfully.
+        if (!isset($results)) {
+            $this->printMessage('Something went wrong. Unable to lookup group messages.');
+            http_response_code(500); return;
+        }
+
+
+        // Output results.
+        $this->printJSON($this->formatRecords($results));
+    }
+
+
+
+
+    /**
+     * Creates a new group chat message from the current user to the specified group.
+     * @param groupid - id of group.
+     */
+    public function createGroupChatMessage($groupid) {
+        // Check user is signed in. Authorization not required. (gets sender)
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // If user not admin, check they are in the group.
+        if ($user['privilegeLevel'] != 'Admin') {
+            if (!$this->checkUserInGroup($user['id'], $groupid)) {
+                $this->printMessage('Cannot create group message. You are not a member of the group.');
+                http_response_code(400); return;
+            }
+        }
+
+
+        // Check content param given.
+        if (!isset($_POST['content'])) {
+            $this->printMessage('`content` parameter not given in POST body.');
+            http_response_code(400); return;
+        }
+
+        // Get and validate content.
+        $json = $this->validateJSON($_POST['content']);
+        if (!isset($json)) {
+            $this->printMessage('`content` parameter is invalid or does not contain required fields.');
+            http_response_code(400); return;
+        }
+
+
+        // Validate message.
+        $message = $json['message'];
+        if (sizeof($message) < 1 || sizeof($message) > 1024) {
+            $this->printMessage('Message must be between 1 and 1024 characters long.');
+            http_response_code(400); return;
+        }
+
+
+        // Create message and associated group_message record.
+        $result = $this->db->createGroupMessage($user['id'], $groupid, $message);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to create group message.');
+            http_response_code(500); return;
+        }
+        
+        // Get and return newly created group message.
+        $record = $this->db->getGroupChatMessageByID($groupid, (int)$result);
+        if (!isset($record)) {
+            $this->printMessage('Something went wrong. Message created, but could not be retreived.');
+            http_response_code(500); return;
+        }
+        $this->printJSON($this->formatRecords($record));
+    }
+
+
+
+
+
+    /**
+     * Delete an existing group message. User must be admin or in group.
+     * @param groupid - id of group.
+     * @param messageid - id of message.
+     */
+    public function deleteGroupChatMessage($groupid, $messageid) {
+        // Check user is signed in. Authorization not required. (gets sender)
+        $user = Auth::validateSession(false);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Check message exists.
+        if (!$this->db->checkMessageExists($messageid)) {
+            $this->printMessage('The specified message does not exist.');
+            http_response_code(404); return;
+        }
+
+        // If user not admin, check they are in the group.
+        if ($user['privilegeLevel'] != 'Admin') {
+            if (!$this->checkUserInGroup($user['id'], $groupid)) {
+                $this->printMessage('Cannot delete group message. You are not a member of the group.');
+                http_response_code(400); return;
+            }
+        }
+
+        // Attempt to delete.
+        $result = $this->db->deleteGroupMessage($groupid, $messageid);
+        if (!isset($result)) {
+            $this->printMessage('Something went wrong. Unable to delete group message');
+            http_response_code(500); return;
+        }
     }
 }

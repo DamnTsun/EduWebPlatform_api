@@ -267,6 +267,7 @@ INSERT INTO messages (message, sender_id) VALUES ('Message 13', 1);
 INSERT INTO messages (message, sender_id) VALUES ('Message 15', 1);
 INSERT INTO messages (message, sender_id) VALUES ('Message 17', 1);
 INSERT INTO messages (message, sender_id) VALUES ('Message 19', 1);
+
 INSERT INTO messages (message, sender_id) VALUES ('Message 21', 1);
 INSERT INTO messages (message, sender_id) VALUES ('Message 23', 1);
 INSERT INTO messages (message, sender_id) VALUES ('Message 25', 1);
@@ -281,6 +282,7 @@ INSERT INTO messages (message, sender_id) VALUES ('Message 14', 2);
 INSERT INTO messages (message, sender_id) VALUES ('Message 16', 2);
 INSERT INTO messages (message, sender_id) VALUES ('Message 18', 2);
 INSERT INTO messages (message, sender_id) VALUES ('Message 20', 2);
+
 INSERT INTO messages (message, sender_id) VALUES ('Message 22', 2);
 INSERT INTO messages (message, sender_id) VALUES ('Message 24', 2);
 INSERT INTO messages (message, sender_id) VALUES ('Message 26', 2);
@@ -398,3 +400,27 @@ INSERT INTO user_groups (user_id, group_id) VALUES (5, 5);
 INSERT INTO user_groups (user_id, group_id) VALUES (44, 5);
 INSERT INTO user_groups (user_id, group_id) VALUES (37, 5);
 INSERT INTO user_groups (user_id, group_id) VALUES (24, 5);
+
+
+-- Group messages
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('Hello group', '2019-02-10 01:00:00', 2);
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('Hello there', '2019-02-10 01:00:40', 1);
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('General Kenobi', '2019-02-10 01:01:00', 2);
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('Is that legal?', '2019-02-10 01:02:00', 7);
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('I don''t actually know how real people talk.', '2019-02-10 01:03:00', 2);
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('Normies, amirite?', '2019-02-10 01:04:00', 11);
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('Anyone know the answer to question 10324 of test 203 of topic 306 of subject 942?', '2019-02-10 01:05:00', 34);
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('No.', '2019-02-10 01:06:00', 11);
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('Nope.', '2019-02-10 01:07:00', 1);
+INSERT INTO messages (`message`, `date`, `sender_id`) VALUES ('fraid not.', '2019-02-10 01:08:00', 2);
+
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 27);
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 28);
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 29);
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 30);
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 31);
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 32);
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 33);
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 34);
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 35);
+INSERT INTO group_messages (group_id, message_id) VALUES (1, 36);

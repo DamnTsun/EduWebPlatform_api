@@ -2,6 +2,29 @@
 
 class Model_Message extends Model {
 
+
+    /**
+     * Checks whether a messages with the given id exists.
+     * @param messageid - id of message.
+     */
+    public function checkMessageExists($messageid) {
+        try {
+            return $this->query(
+                "SELECT
+                    messages.id
+                FROM
+                    messages
+                WHERE
+                    messages.id = :_messageid",
+                array(
+                    ':_messageid' => $messageid
+                ),
+                Model::TYPE_BOOL
+            );
+        } catch(PDOException $e) {
+            return null;
+        }
+    }
     
     /**
      * Gets messages sent to a user, ordered by date (newest).
@@ -255,7 +278,7 @@ class Model_Message extends Model {
 
     /**
      * Deletes the user_messages record with given id.
-     * If and only if the given user_id is for the sender or receiver of message.
+     * If and only if the given user_id is for the sender of message.
      * @param message_id - id of message.
      * @param user_id - id of sender/receiver.
      */
@@ -270,24 +293,12 @@ class Model_Message extends Model {
                     messages.id = :_messageid
                     AND
                     (
+                        -- Only sender can delete message.
                         messages.sender_id = :_senderid
-                        OR
-                        (
-                            SELECT
-                                user_messages.user_id
-                            FROM
-                                user_messages
-                            WHERE
-                                user_messages.message_id = messages.id
-                                AND
-                                user_messages.user_id = :_receiverid1
-                        ) = :_receiverid2
                     )",
                 array(
                     ':_messageid' => $message_id,
-                    ':_senderid' => $user_id,
-                    ':_receiverid1' => $user_id,
-                    ':_receiverid2' => $user_id
+                    ':_senderid' => $user_id
                 ),
                 Model::TYPE_DELETE
             );
@@ -456,7 +467,9 @@ class Model_Message extends Model {
                     AND
                     messages.date > :_date
                 -- Order by newest date. Should sort messages into order, forming a chain of messages.
-                ORDER BY messages.date DESC",
+                ORDER BY messages.date DESC
+                -- Limit to 100.
+                LIMIT 100",
                 array(
                     ':_userid1_0' => $userid1,
                     ':_userid1_1' => $userid1,
@@ -465,6 +478,208 @@ class Model_Message extends Model {
                     ':_date' => $date
                 ),
                 Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+    /**
+     * Gets group messages for group.
+     * @param groupid - id of group.
+     * @param count - number of records to get.
+     * @param offset - number of records to skip.
+     */
+    public function getGroupChat($groupid, $count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    messages.id,
+                    messages.message,
+                    messages.date,
+                    messages.sender_id,
+                    users.displayName AS 'sender_displayname'
+                FROM
+                    group_messages
+                JOIN messages ON
+                    group_messages.message_id = messages.id
+                JOIN users ON
+                    messages.sender_id = users.id
+                WHERE
+                    -- Get messages between user and group.
+                    group_messages.group_id = :_groupid
+                ORDER BY messages.date DESC
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_groupid' => $groupid,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets group messages sent to specified group after specified date.
+     * @param groupid - id of group.
+     * @param date - timestamp.
+     */
+    public function getGroupChatSinceDate($groupid, $date) {
+        try {
+            return $this->query(
+                "SELECT
+                    messages.id,
+                    messages.message,
+                    messages.date,
+                    messages.sender_id,
+                    users.displayName AS 'sender_displayname'
+                FROM
+                    group_messages
+                JOIN messages ON
+                    group_messages.message_id = messages.id
+                JOIN users ON
+                    messages.sender_id = users.id
+                WHERE
+                    -- Get messages between user and group.
+                    group_messages.group_id = :_groupid
+                    AND
+                    -- Get after date.
+                    messages.date > :_date
+                ORDER BY messages.date DESC
+                -- Limit to 100.
+                LIMIT 100",
+                array(
+                    ':_groupid' => $groupid,
+                    ':_date' => $date
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Gets a group message sent to a specified group with a specific id.
+     * @param groupid - id of group.
+     * @param messageid - id of message.
+     */
+    public function getGroupChatMessageByID($groupid, $messageid) {
+        try {
+            return $this->query(
+                "SELECT
+                    messages.id,
+                    messages.message,
+                    messages.date,
+                    messages.sender_id,
+                    users.displayName AS 'sender_displayname'
+                FROM
+                    group_messages
+                JOIN messages ON
+                    group_messages.message_id = messages.id
+                JOIN users ON
+                    messages.sender_id = users.id
+                WHERE
+                    -- Get messages to group.
+                    group_messages.group_id = :_groupid
+                    AND
+                    messages.id = :_messageid",
+                array(
+                    ':_groupid' => $groupid,
+                    ':_messageid' => $messageid
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
+     * Creates a group_message record for the given group and message.
+     * @param groupid - id of group.
+     * @param message - id of message.
+     */
+    private function createGroupMessageRecord($groupid, $messageid) {
+        try {
+            return $this->query(
+                "INSERT INTO
+                    group_messages (group_id, message_id)
+                    VALUES
+                    (
+                        :_groupid,
+                        :_messageid
+                    )",
+                array(
+                    ':_groupid' => $groupid,
+                    ':_messageid' => $messageid
+                ),
+                Model::TYPE_INSERT
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Creates a new message record for message, and an associated group_message record.
+     * @param groupid - id of group.
+     * @param message - message.
+     */
+    public function createGroupMessage($senderid, $groupid, $message) {
+        // Create messages record.
+        $messageid = $this->createMessageRecord($senderid, $message);
+        if (!isset($messageid)) { return null; }
+
+        // Create group_messages record associated with messages record.
+        $groupMessageid = $this->createGroupMessageRecord($groupid, $messageid);
+
+        return $messageid;
+    }
+
+
+
+
+
+    /**
+     * Deletes a group message.
+     * @param groupid - id of group.
+     * @param messageid - id of message.
+     */
+    public function deleteGroupMessage($groupid, $messageid) {
+        try {
+            return $this->query(
+                "DELETE FROM
+                    messages
+                WHERE
+                    -- Lookup record id to delete.
+                    messages.id = (
+                        SELECT
+                            group_messages.message_id
+                        FROM
+                            group_messages
+                        WHERE
+                            -- Ensure message has both group id and specified id.
+                            group_messages.group_id = :_groupid
+                            AND
+                            group_messages.message_id = :_messageid
+                    )",
+                array(
+                    ':_groupid' => $groupid,
+                    ':_messageid' => $messageid
+                ),
+                Model::TYPE_DELETE
             );
         } catch (PDOException $e) {
             return null;

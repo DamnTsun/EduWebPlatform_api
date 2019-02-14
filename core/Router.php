@@ -297,6 +297,13 @@ class Router {
             $controller = new Groups();
             $controller->getUsersNotInGroup($params[1]);
         });
+
+        // Get group messages.
+        $this->addGETRoute('/^\/groups\/\d+\/chat\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getGroupChat($params[1]);
+        });
     }
 
 
@@ -481,9 +488,6 @@ class Router {
 
 
 
-        // *******************************************************************
-        // *** EXPERIMENTAL IM CHAT (may replace current messaging system) ***
-        // *******************************************************************
         // *********************
         // *** USER MESSAGES ***
         // *********************
@@ -558,6 +562,15 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
             $controller = new Groups();
             $controller->addUserToGroup($params[1], $params[3]); // groupid, userid
+        });
+
+
+        // Send user group message.
+        // Add member to group. (Remove member is a delete route)
+        $this->addPOSTRoute('/^\/groups\/\d+\/chat\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->createGroupChatMessage($params[1]); // groupid
         });
     }
 
@@ -706,6 +719,17 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
             $controller = new Groups();
             $controller->removeUserFromGroup($params[1], $params[3]); // groupid, userid
+        });
+
+
+
+
+
+        // Remove member from group.
+        $this->addDELETERoute('/^\/groups\/\d+\/chat\/\d+?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->deleteGroupChatMessage($params[1], $params[3]); // groupid, messageid
         });
     }
 
