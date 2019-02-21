@@ -41,6 +41,36 @@ class SubjectAdmins extends Controller {
 
 
     /**
+     * Checks whether current user is a subject admin for the given subject.
+     * @param subjectid - id of subject.
+     */
+    public function isCurrentUserASubjectAdmin($subjectid) {
+        // Check user authorized. Admin required.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Check subject exists.
+        if (!$this->checkSubjectExists($subjectid)) {
+            http_response_code(404); return;
+        }
+
+        
+        // Check whether user is subject admin for group.
+        $result = $this->checkSubjectAdminExists($subjectid, $user['id']);
+        if (!isset($result)) {
+            $this->printJSON(array('isSubjectAdmin' => false)); return;
+        }
+        $this->printJSON(array('isSubjectAdmin' => $result));
+    }
+
+
+
+
+
+    /**
      * Gets subject admins for the specified subject.
      * @param subjectid - id of subject.
      */

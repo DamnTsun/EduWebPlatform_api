@@ -72,7 +72,12 @@ class Router {
             $controller = new SubjectAdmins();
             $controller->getSubjectAdmins($params[1]); // Subjectid
         });
-
+        // Gets whether current user is a subject admin.
+        $this->addGETRoute('/^\/subjects\/\d+\/admins\/me?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subject_admins'];
+            $controller = new SubjectAdmins();
+            $controller->isCurrentUserASubjectAdmin($params[1]); // Subjectid
+        });
 
 
         // **************
