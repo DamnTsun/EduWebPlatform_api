@@ -92,7 +92,7 @@ class App {
         // Check it is a string.
         if (!is_string($value)) { return false; }
         // Check it only contains numbers. (0 - 9)
-        return preg_match('/^[0123456789]+$/', $value) == 1;
+        return preg_match('/^-?[0123456789]+$/', $value) == 1;
     }
 
 

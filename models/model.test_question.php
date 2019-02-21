@@ -123,6 +123,7 @@ class Model_TestQuestion extends Model {
                                     topics.subject_id = :_subjectid
                             )
                     )
+                ORDER BY testQuestions.question
                 LIMIT :_count OFFSET :_offset",
                 array(
                     ':_testid' => $testid,
@@ -186,6 +187,63 @@ class Model_TestQuestion extends Model {
                     ':_testid' => $testid,
                     ':_topicid' => $topicid,
                     ':_subjectid' => $subjectid
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
+     * Gets specified number of questions, chosen randomly, from a specific test,
+     *  inside a specific topic, inside a specific subject.
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
+     * @param testid - id of test.
+     * @param count - number of questions to get. (max all questions (in random order))
+     */
+    public function getRandomTestQuestionsByTest($subjectid, $topicid, $testid, $count) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    testQuestions.id,
+                    testQuestions.question,
+                    testQuestions.imageUrl
+                FROM
+                    testQuestions
+                WHERE
+                    testQuestions.test_id = (
+                        SELECT
+                            tests.id
+                        FROM
+                            tests
+                        WHERE
+                            tests.id = :_testid
+                            AND
+                            tests.topic_id = (
+                                SELECT
+                                    topics.id
+                                FROM
+                                    topics
+                                WHERE
+                                    topics.id = :_topicid
+                                    AND
+                                    topics.subject_id = :_subjectid
+                            )
+                    )
+                ORDER BY RAND()
+                LIMIT :_count",
+                array(
+                    ':_testid' => $testid,
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid,
+                    ':_count' => $count
                 ),
                 Model::TYPE_FETCHALL
             );

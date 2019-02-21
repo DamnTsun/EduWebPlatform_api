@@ -152,9 +152,14 @@ class Auth {
             http_response_code(401); return 'You are banned.';
         }
 
+        // Update user lastSignInDate field.
+        if ($userController->updateUserLastSignInDate($user[0]['id']) == null) {
+            http_response_code(500); return 'Something went wrong. Unable to update your lastSignInDate field.';
+        }
+
 
         // Create and return JWT to user.
-        Auth::createJWT($user[0]['id']);
+        Auth::createJWT($user[0]['id'], ($user[0]['level'] == Auth::PRIVILEGE_LEVELS['admin']));
         return null;
     }
 
@@ -259,7 +264,7 @@ class Auth {
      * Creates a JWT for the given user_id. JWT is encoded with Sha256 using secret Hmac key.
      * @param user_id - id of user.
      */
-    public static function createJWT($user_id) {
+    public static function createJWT($user_id, $isAdmin) {
         require_once $_ENV['dir_vendor'] . 'autoload.php';
 
         // Create token with sha256 encryption. (1 shared key) and return it.
@@ -270,6 +275,7 @@ class Auth {
                                                 ->setIssuedAt(time())                       // Issued at:   Now.
                                                 ->setExpiration(time() + 3600)              // Expires in:  1 hour.
                                                 ->set('user_id', (int)$user_id)             // Store user_id as claim.
+                                                ->set('user_admin', $isAdmin)               // Store whether user is an admin.
                                                 ->sign($signer, $_ENV['JWT_Hmac_key'])      // Sign using Sha256.
                                                 ->getToken();
         } catch (Exception $e) {
@@ -280,6 +286,7 @@ class Auth {
         echo json_encode(
             array(
                 'idToken' => (string)$jwt,
+                'isAdmin' => $jwt->getClaim('user_admin'),
                 'expiresAt' => $jwt->getClaim('exp')
             ),
             JSON_HEX_QUOT | JSON_HEX_TAG

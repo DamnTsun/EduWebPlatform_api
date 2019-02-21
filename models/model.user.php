@@ -183,4 +183,206 @@ class Model_User extends Model {
         }
     }
 
+
+
+
+    
+    /**
+     * Updates specified user's 'lastSignInDate' field to the current timestamp.
+     * This field is used to delete old users, based on whether the timestamp is a set time in the past. (e.g. 180 days).
+     * @param userid- id of user.
+     */
+    public function updateUserLastSignInDate($userid) {
+        try {
+            return $this->query(
+                "UPDATE
+                    users
+                SET
+                    users.lastSignInDate = DEFAULT
+                WHERE
+                    users.id = :_userid",
+                array(
+                    ':_userid' => $userid
+                ),
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+    /**
+     * Deletes user with given id.
+     */
+    public function deleteUser($id) {
+        try {
+            return $this->query(
+                "DELETE from
+                    users
+                WHERE
+                    id = :_id",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_DELETE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+    /**
+     * Updates a users display name.
+     * @param id - id of user.
+     * @param name - new name for user.
+     */
+    public function changeUserName($id, $name) {
+        try {
+            return $this->query(
+                "UPDATE
+                    users
+                SET
+                    displayName = :_name
+                WHERE
+                    id = :_id",
+                array(
+                    ':_name' => $name,
+                    ':_id' => $id
+                ),
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+    /**
+     * Gets users from users table, ordered by id.
+     * @param count - number of users to get.
+     * @param offset - number of users to skip.
+     */
+    public function getUsers($count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    users.id,
+                    users.displayName,
+                    privilegeLevels.level
+                FROM
+                    users
+                JOIN privilegeLevels ON
+                    privilegeLevels.id = users.privilegeLevel_id
+                ORDER BY users.id
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Gets users whose displayname is like the given value.
+     * @param name - value for displayname search.
+     * @param count - number of records to get.
+     * @param offset - number of records to skip.
+     */
+    public function getUsersByName($name, $count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    users.id,
+                    users.displayName,
+                    privilegeLevels.level
+                FROM
+                    users
+                JOIN privilegeLevels ON
+                    privilegeLevels.id = users.privilegeLevel_id
+                WHERE
+                    users.displayName LIKE :_name
+                ORDER BY users.id
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_name' => $name,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
+
+
+    /**
+     * Sets privilege level of a user.
+     * Sets to 1 if regular user, 2 if admin.
+     * @param id - id of user.
+     * @param setToAdmin - whether to set user to admin.
+     */
+    public function setUserAdminStatus($id, $setToAdmin) {
+        // Privilege level 1 is normal. 2 is admin.
+        $level = ($setToAdmin) ? '2' : '1';
+
+        // Attempt to set.
+        return $this->setUserPrivilegeLevel($id, $level);
+    }
+
+    /**
+     * Sets whether a user is banned.
+     * @param id - id of user.
+     * @param setToBanned - whether to set user to banned.
+     */
+    public function setUserBannedStatus($id, $setToBanned) {
+        // If user is being unbanned, they get regular user privilege level (1).
+        $level = ($setToBanned) ? '3' : '1';
+
+        // Attempt to set.
+        return $this->setUserPrivilegeLevel($id, $level);
+    }
+
+
+    /**
+     * Sets users privilege leve (regular, admin, banned, etc).
+     * @param id - id of user.
+     * @param value - id of privilege level in privilegeLevels table. CURRENTLY... (1 = regular, 2 = admin, 3 = banned)
+     */
+    private function setUserPrivilegeLevel($id, $value) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "UPDATE
+                    users
+                SET
+                    users.privilegeLevel_id = :_level
+                WHERE
+                    users.id = :_id",
+                array(
+                    ':_level' => $value,
+                    ':_id' => $id
+                ),
+                Model::TYPE_UPDATE
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }

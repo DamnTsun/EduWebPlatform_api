@@ -63,6 +63,21 @@ class Router {
             $controller = new Subjects();
             $controller->getSubjectByID($params[1]); // subjectid
         });
+        // ***********************
+        // *** SUBJECTS ADMINS ***
+        // ***********************
+        // Get subject admins for the specified subject. (Requires user to be signed in. Admin not required.)
+        $this->addGETRoute('/^\/subjects\/\d+\/admins\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subject_admins'];
+            $controller = new SubjectAdmins();
+            $controller->getSubjectAdmins($params[1]); // Subjectid
+        });
+        // Gets whether current user is a subject admin.
+        $this->addGETRoute('/^\/subjects\/\d+\/admins\/me?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subject_admins'];
+            $controller = new SubjectAdmins();
+            $controller->isCurrentUserASubjectAdmin($params[1]); // Subjectid
+        });
 
 
         // **************
@@ -112,7 +127,7 @@ class Router {
         $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['tests'];
             $controller = new Tests();
-            $controller->getTestByID($params[1], $params[3], $params[5]); // subjectid, topicid, lessonid
+            $controller->getTestByID($params[1], $params[3], $params[5]); // subjectid, topicid, testid
         });
 
 
@@ -132,6 +147,12 @@ class Router {
             // subjectid, topicid, testid, testquestionid
             $controller->getTestQuestionByID($params[1], $params[3], $params[5], $params[7]);
         });
+        // GET n random questions from specific test.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/questions\/random\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['test_questions'];
+            $controller = new TestQuestions();
+            $controller->getRandomTestQuestionsByTest($params[1], $params[3], $params[5]); // subjectid, topicid, testid
+        });
 
 
         // *************
@@ -148,6 +169,155 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['posts'];
             $controller = new Posts();
             $controller->getPostByID($params[1], $params[3]); // subjectid, postid
+        });
+
+
+        // *************
+        // *** USERS ***
+        // *************
+        // Get all users ordered by id.
+        $this->addGETRoute('/^\/users\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->getAllUsers();
+        });
+
+        // Get current users details. (Based on passed idToken header)
+        $this->addGETRoute('/^\/users\/me\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->getCurrentUserDetails();
+        });
+
+
+
+        // ******************
+        // *** USER TESTS ***
+        // ******************
+        // NOTES...
+        // new route: subjects/:id/topics/:id/tests/:id/user_tests
+        // For getting all (regardless of test it was based on): users/user_tests
+
+        // Get current users user_tests by test.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->getCurrentUserUserTestsByTest($params[1], $params[3], $params[5]); // subjectid, topicid, testid.
+        });
+
+        // Gets a user_test (by id) associated with the current user. (Based on passed idToken header)
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->getCurrentUserUserTestByID($params[1], $params[3], $params[5], $params[7]); // subjectid, topicid, testid, utestid.
+        });
+
+        // ****************************
+        // *** USER TESTS QUESTIONS ***
+        // ****************************
+        // Get current users user_testquestions for the given user_test.
+        $this->addGETRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/\d+\/questions\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_test_questions'];
+            $controller = new User_TestQuestions();
+            $controller->getCurrentUserUserTestQuestionsByUserTest($params[1], $params[3], $params[5], $params[7]); // subjectid, topicid, testid, utestid.
+        });
+
+
+
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        // Get user messages.
+        $this->addGETRoute('/^\/users\/messages\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserMessages();
+        });
+
+        // Get user messages from a specific user.
+        $this->addGETRoute('/^\/users\/messages\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserMessagesFromUser($params[2]); // sender_id.
+        });
+
+        // Get user messages current user has sent.
+        $this->addGETRoute('/^\/users\/messages\/sent\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserSentMessages();
+        });
+
+        // Get user messages current user has sent to a specific user.
+        $this->addGETRoute('/^\/users\/messages\/sent\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserSentMessagesToUser($params[3]); // receiver_id.
+        });
+
+
+
+
+        // *******************************************************************
+        // *** EXPERIMENTAL IM CHAT (may replace current messaging system) ***
+        // *******************************************************************
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        // Get messages between 2 users. (Will be used by either sender or receiver to view list of messages, ordered by date)
+        $this->addGETRoute('/^\/users\/chat\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getCurrentUserChat($params[2]);
+        });
+
+
+
+
+
+
+
+
+
+        // *******************
+        // *** USER GROUPS ***
+        // *******************
+        // Gets groups that the current user is part of.
+        $this->addGETRoute('/^\/groups\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getCurrentUserGroups();
+        });
+        // Gets all groups (admin only)
+        $this->addGETRoute('/^\/groups\/all\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getAllUserGroups();
+        });
+        // Get group by id.
+        $this->addGETRoute('/^\/groups\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getUserGroupByID($params[1]);
+        });
+        // Get users who are members of a group.
+        $this->addGETRoute('/^\/groups\/\d+\/members\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getUsersInGroup($params[1]);
+        });
+        // Get users who are not members of a group.
+        $this->addGETRoute('/^\/groups\/\d+\/nonmembers\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->getUsersNotInGroup($params[1]);
+        });
+
+        // Get group messages.
+        $this->addGETRoute('/^\/groups\/\d+\/chat\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->getGroupChat($params[1]);
         });
     }
 
@@ -173,6 +343,15 @@ class Router {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subjects'];
             $controller = new Subjects();
             $controller->modifySubject($params[1]); // subjectid
+        });
+        // ***********************
+        // *** SUBJECTS ADMINS ***
+        // ***********************
+        // Adds the current user as a subject admin to the specified subject. (Admin-only)
+        $this->addPOSTRoute('/^\/subjects\/\d+\/admins\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subject_admins'];
+            $controller = new SubjectAdmins();
+            $controller->addSubjectAdmin($params[1]); // Subjectid
         });
 
 
@@ -298,6 +477,125 @@ class Router {
         });
         // Check authentification status with server (Facebook) - NOT IMPLEMENTED
         // Check authentification status with server (LinkedIn) - NOT IMPLEMENTED
+
+        // Change current users name.
+        $this->addPOSTRoute('/^\/users\/me\/name\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->updateCurrentUserName();
+        });
+
+
+        // ******************
+        // *** USER_TESTS ***
+        // ******************
+        // Creates a new user test. (Based on idToken header and passed POST parameter)
+        $this->addPOSTRoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->createUserTest($params[1], $params[3], $params[5]); // subjectid, topicid, testid.
+        });
+
+
+
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        // Send a user message.
+        $this->addPOSTRoute('/^\/users\/messages\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->sendUserMessage($params[2]); // receiver_id
+        });
+
+
+
+
+
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        $this->addPOSTRoute('/^\/users\/chat\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->createUserChatMessage($params[2]); // receiver_id
+        });
+
+
+
+
+
+
+        // *************
+        // *** ADMIN ***
+        // *************
+        // Set user to admin.
+        $this->addPOSTRoute('/^\/admin\/setAdmin\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->setUserAdminStatus($params[2], true); // userid, set to admin.
+        });
+        // Set user to regular user.
+        $this->addPOSTRoute('/^\/admin\/removeAdmin\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->setUserAdminStatus($params[2], false); // userid, set to banned.
+        });
+
+        // Set user to banned.
+        $this->addPOSTRoute('/^\/admin\/banUser\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->setUserBannedStatus($params[2], true); // userid, set to banned.
+        });
+
+        // Set user to not banned.
+        $this->addPOSTRoute('/^\/admin\/unbanUser\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->setUserBannedStatus($params[2], false); // userid, set to banned.
+        });
+
+
+
+
+
+
+
+
+
+
+        // *******************
+        // *** USER GROUPS ***
+        // *******************
+        // Create user group.
+        $this->addPOSTRoute('/^\/groups\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->createGroup();
+        });
+        // Modify existing user group.
+        $this->addPOSTRoute('/^\/groups\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->modifyGroup($params[1]); // groupid
+        });
+
+        // Add member to group. (Remove member is a delete route)
+        $this->addPOSTRoute('/^\/groups\/\d+\/members\/\d+?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->addUserToGroup($params[1], $params[3]); // groupid, userid
+        });
+
+
+        // Send user group message.
+        // Add member to group. (Remove member is a delete route)
+        $this->addPOSTRoute('/^\/groups\/\d+\/chat\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->createGroupChatMessage($params[1]); // groupid
+        });
     }
 
 
@@ -317,6 +615,16 @@ class Router {
             $controller = new Subjects();
             $controller->deleteSubject($params[1]); // subjectid
         });
+        // ***********************
+        // *** SUBJECTS ADMINS ***
+        // ***********************
+        // Removes the current user as a subject_admin from the specified group. (requires admin)
+        $this->addDELETERoute('/^\/subjects\/\d+\/admins\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subject_admins'];
+            $controller = new SubjectAdmins();
+            $controller->removeSubjectAdmin($params[1]); // Subjectid
+        });
+
 
 
         // **************
@@ -374,6 +682,89 @@ class Router {
             $controller->deletePost($params[1], $params[3]); // subjectid, postid
         });
 
+
+
+        // ******************
+        // *** USER_TESTS ***
+        // ******************
+        // Deletes all user tests associated with current user. (Based on idToken header)
+        $this->addDELETERoute('/^\/users\/user_tests\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->deleteAllCurrentUserUserTests();
+        });
+        
+        // Deletes a user test (by id) associated with current user. (Based on idToken header)
+        $this->addDELETERoute('/^\/subjects\/\d+\/topics\/\d+\/tests\/\d+\/user_tests\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['user_tests'];
+            $controller = new User_Tests();
+            $controller->deleteCurrentUserUserTest($params[1], $params[3], $params[5], $params[7]); // subjectid, topicid, testid, utestid.
+        });
+
+
+
+        // *************
+        // *** USERS ***
+        // *************
+        // Deletes current users account. (Based on JWT in header)
+        $this->addDELETERoute('/^\/users\/me\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
+            $controller = new Users();
+            $controller->deleteCurrentAccount();
+        });
+
+
+
+        // *********************
+        // *** USER MESSAGES ***
+        // *********************
+        // Delete a user message. (only if user is sender / receiver)
+        $this->addDELETERoute('/^\/users\/messages\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->deleteUserMessage($params[2]); // message_id.
+        });
+
+
+
+
+
+
+
+
+
+
+        // *******************
+        // *** USER GROUPS ***
+        // *******************
+        // Create user group.
+        $this->addDELETERoute('/^\/groups\/\d+\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->deleteGroup($params[1]); // groupid
+        });
+
+
+
+
+
+        // Remove member from group.
+        $this->addDELETERoute('/^\/groups\/\d+\/members\/\d+?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->removeUserFromGroup($params[1], $params[3]); // groupid, userid
+        });
+
+
+
+
+
+        // Remove member from group.
+        $this->addDELETERoute('/^\/groups\/\d+\/chat\/\d+?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
+            $controller = new Messages();
+            $controller->deleteGroupChatMessage($params[1], $params[3]); // groupid, messageid
+        });
     }
 
 
