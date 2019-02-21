@@ -261,3 +261,30 @@ CREATE EVENT `delete_old_users`
             `users`.`lastSignInDate` < CURRENT_TIMESTAMP - INTERVAL 180 DAY
 ;
 
+
+/**
+ * *** Sorta GDPR RELATED ***
+ * Deletes users from subject_admin table who are not admins.
+ * Subject_admins are not automatically removed from the table when demoted. This way partly in case admin is accidently demoted.
+ * Automatically deleting immediately would result in them having to re-assocated with each subject.
+ * Runs once per day at 00:00:00.
+ */
+CREATE EVENT `delete_non-admin_subject_admins`
+    ON SCHEDULE
+        EVERY 1 DAY
+        STARTS '2019-01-01 00:00:00'
+    ON COMPLETION PRESERVE ENABLE
+    DO
+        DELETE FROM
+            subject_admins
+        WHERE
+            -- Where the associated user is not an admin.
+            (
+                SELECT
+                    users.id
+                FROM
+                    users
+                WHERE
+                    users.id = subject_admins.user_id
+            ) != 2
+;

@@ -63,6 +63,16 @@ class Router {
             $controller = new Subjects();
             $controller->getSubjectByID($params[1]); // subjectid
         });
+        // ***********************
+        // *** SUBJECTS ADMINS ***
+        // ***********************
+        // Get subject admins for the specified subject. (Requires user to be signed in. Admin not required.)
+        $this->addGETRoute('/^\/subjects\/\d+\/admins\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subject_admins'];
+            $controller = new SubjectAdmins();
+            $controller->getSubjectAdmins($params[1]); // Subjectid
+        });
+
 
 
         // **************
@@ -329,6 +339,15 @@ class Router {
             $controller = new Subjects();
             $controller->modifySubject($params[1]); // subjectid
         });
+        // ***********************
+        // *** SUBJECTS ADMINS ***
+        // ***********************
+        // Adds the current user as a subject admin to the specified subject. (Admin-only)
+        $this->addPOSTRoute('/^\/subjects\/\d+\/admins\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subject_admins'];
+            $controller = new SubjectAdmins();
+            $controller->addSubjectAdmin($params[1]); // Subjectid
+        });
 
 
         // **************
@@ -591,6 +610,16 @@ class Router {
             $controller = new Subjects();
             $controller->deleteSubject($params[1]); // subjectid
         });
+        // ***********************
+        // *** SUBJECTS ADMINS ***
+        // ***********************
+        // Removes the current user as a subject_admin from the specified group. (requires admin)
+        $this->addDELETERoute('/^\/subjects\/\d+\/admins\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['subject_admins'];
+            $controller = new SubjectAdmins();
+            $controller->removeSubjectAdmin($params[1]); // Subjectid
+        });
+
 
 
         // **************

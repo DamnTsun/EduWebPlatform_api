@@ -580,22 +580,3 @@ class Groups extends Controller {
     }
 }
 
-
-
-
-/*
--- Get groups with no members
-SELECT
-	groups.id
-FROM
-	groups
-WHERE
-	(
-        SELECT
-        	COUNT(*)
-        FROM
-        	user_groups
-        WHERE
-        	user_groups.group_id = groups.id
-    ) = 0
-*/

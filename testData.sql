@@ -237,6 +237,39 @@ INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilege
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_05', 'fake05a', 1, 2);
 
 
+-- Subject admins.
+-- Actual admins (normal).
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (2, 1);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (54, 1);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (55, 1);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (56, 1);
+
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (2, 2);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (54, 2);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (55, 2);
+
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (2, 3);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (56, 3);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (57, 3);
+
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (2, 4);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (54, 4);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (58, 4);
+
+
+-- Non-admins (should be auto-deleted by daily event)
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (1, 1);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (3, 1);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (4, 1);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (5, 1);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (6, 1);
+
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (6, 2);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (7, 2);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (8, 2);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (9, 2);
+INSERT INTO subject_admins (`user_id`, subject_id) VALUES (10, 2);
+
 -- Posts
 INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 1', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
 INSERT INTO posts (title, body, subject_id, user_id) VALUES ('Mathematics post 2', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt.', 1, 1);
