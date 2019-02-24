@@ -56,7 +56,7 @@ class Model_Subject extends Model {
 
 
     /**
-     * Gets all subjects.
+     * Gets all subjects. Does not get subjects that are hidden or have no contained topics.
      * @param count - how many records to get. Optional, default 10.
      * @param offset - how many records to skip. Optional, default 0.
      */
@@ -76,7 +76,58 @@ class Model_Subject extends Model {
                             topics
                         WHERE
                             topics.subject_id = subjects.id
-                    ) as 'topicCount'
+                    ) AS 'topicCount'
+                FROM
+                    subjects
+                WHERE
+                    -- Not hidden.
+                    subjects.hidden != 1
+                    AND
+                    -- Contains at least 1 topic.
+                    (
+                        SELECT
+                            COUNT(topics.id)
+                        FROM
+                            topics
+                        WHERE
+                            topics.subject_id = subjects.id
+                    ) > 0
+                ORDER BY
+                    subjects.name
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets all subjects.
+     * @param count - how many records to get. Optional, default 10.
+     * @param offset - how many records to skip. Optional, default 0.
+     */
+    public function getAllSubjectsAdmin($count = 10, $offset = 0) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $results = $this->query(
+                "SELECT
+                    subjects.id,
+                    subjects.name,
+                    subjects.description,
+                    subjects.hidden,
+                    (
+                        SELECT
+                            COUNT(topics.id)
+                        FROM
+                            topics
+                        WHERE
+                            topics.subject_id = subjects.id
+                    ) AS 'topicCount'
                 FROM
                     subjects
                 ORDER BY
@@ -95,7 +146,7 @@ class Model_Subject extends Model {
 
 
     /**
-     * Gets subject with given id.
+     * Gets subject with given id. Does not get subjects that are hidden or do not contain any topics.
      * @param id - id of subject.
      */
     public function getSubjectByID($id) {
@@ -113,7 +164,55 @@ class Model_Subject extends Model {
                             topics
                         WHERE
                             topics.subject_id = subjects.id
-                    ) as 'topicCount'
+                    ) AS 'topicCount'
+                FROM
+                    subjects
+                WHERE
+                    subjects.id = :_id
+                    AND
+                    -- Not hidden.
+                    subjects.hidden != 1
+                    AND
+                    -- Contains at least 1 topic.
+                    (
+                        SELECT
+                            COUNT(topics.id)
+                        FROM
+                            topics
+                        WHERE
+                            topics.subject_id = subjects.id
+                    ) > 0
+                LIMIT 1",
+                array(
+                    ':_id' => $id
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Gets subject with given id.
+     * @param id - id of subject.
+     */
+    public function getSubjectByIDAdmin($id) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    subjects.id,
+                    subjects.name,
+                    subjects.description,
+                    subjects.hidden,
+                    (
+                        SELECT
+                            COUNT(topics.id)
+                        FROM
+                            topics
+                        WHERE
+                            topics.subject_id = subjects.id
+                    ) AS 'topicCount'
                 FROM
                     subjects
                 WHERE

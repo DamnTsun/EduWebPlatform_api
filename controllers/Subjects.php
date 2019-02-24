@@ -32,12 +32,22 @@ class Subjects extends Controller {
      * Gets all subjects.
      */
     public function getAllSubjects() {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Get count / offset GET params if given.
         $count = App::getGETParameter('count', 10);
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getAllSubjects($count, $offset);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Including hidden/auto-hidden subjects.
+            $results = $this->db->getAllSubjectsAdmin($count, $offset);
+        } else {
+            // Not admin. Get non-hidden subjects.
+            $results = $this->db->getAllSubjects($count, $offset);
+        }
         if (!isset($results)) {
             http_response_code(500); return;
         }
@@ -53,8 +63,18 @@ class Subjects extends Controller {
      * @param id - id of subject.
      */
     public function getSubjectByID($id) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Attempt query.
-        $results = $this->db->getSubjectByID($id);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Get any subject.
+            $results = $this->db->getSubjectByIDAdmin($id);
+        } else {
+            // Not admin. Only get non-hidden subjects.
+            $results = $this->db->getSubjectByID($id);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
