@@ -106,14 +106,6 @@ class Auth {
         return $payload;
     }
 
-    /**
-     * Validates given linkedin id_token.
-     * @param id_token - id_token to be validated.
-     */
-    private static function validateIdToken_LinkedIn($id_token) {
-        throw new NotImplementedException();
-    }
-
 
 
 
@@ -202,13 +194,6 @@ class Auth {
         // $payload->data->user_id is user's facebook id.
         // Attempt to initialize session with given social media id of type 'facebook'. Return to return any errors.
         return Auth::initSession($payload->data->user_id, 'facebook');
-    }
-
-    /**
-     * Initiates a new session. Checks and validates a linkedin id_token. (given via POST)
-     */
-    public static function initSession_LinkedIn() {
-        throw new NotImplementedException();
     }
 
 
