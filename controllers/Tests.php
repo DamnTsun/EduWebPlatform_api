@@ -53,6 +53,9 @@ class Tests extends Controller {
      * @param topicid - topic that the test is inside of.
      */
     public function getAllTestsByTopic($subjectid, $topicid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
             http_response_code(404); return;
@@ -64,7 +67,14 @@ class Tests extends Controller {
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getTestsByTopic($subjectid, $topicid, $count, $offset);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden tests.
+            $results = $this->db->getTestsByTopicAdmin($subjectid, $topicid, $count, $offset);
+        } else {
+            // Not admin. Get non-hidden tests.
+            $results = $this->db->getTestsByTopic($subjectid, $topicid, $count, $offset);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -86,8 +96,18 @@ class Tests extends Controller {
      * @param testid - id of test.
      */
     public function getTestByID($subjectid, $topicid, $testid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Attempt query.
-        $results = $this->db->getTestByID($subjectid, $topicid, $testid);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden tests.
+            $results = $this->db->getTestByIDAdmin($subjectid, $topicid, $testid);
+        } else {
+            // Not admin. Get non-hidden tests.
+            $results = $this->db->getTestByID($subjectid, $topicid, $testid);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;

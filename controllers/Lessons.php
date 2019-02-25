@@ -53,6 +53,9 @@ class Lessons extends Controller {
      * @param topicid - id of topic.
      */
     public function getAllLessonsByTopic($subjectid, $topicid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
             http_response_code(404); return;
@@ -63,10 +66,18 @@ class Lessons extends Controller {
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getLessonsByTopic($subjectid, $topicid, $count, $offset);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden lessons.
+            $results = $this->db->getLessonsByTopicAdmin($subjectid, $topicid, $count, $offset);
+        } else {
+            // Not admin. Get non-hidden lessons.
+            $results = $this->db->getLessonsByTopic($subjectid, $topicid, $count, $offset);
+        }
         // Check successful.
         if (!isset($results)) {
-            http_response_code(400); return;
+            var_dump($results);
+            http_response_code(500); return;
         }
 
         // Format and display results.
@@ -82,11 +93,21 @@ class Lessons extends Controller {
      * @param lessonid - id of lesson.
      */
     public function getLessonByID($subjectid, $topicid, $lessonid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Attempt query.
-        $results = $this->db->getLessonByID($subjectid, $topicid, $lessonid);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden lessons.
+            $results = $this->db->getLessonByIDAdmin($subjectid, $topicid, $lessonid);
+        } else {
+            // Not admin. Get non-hidden lessons.
+            $results = $this->db->getLessonByID($subjectid, $topicid, $lessonid);
+        }
         // Check successful.
         if (!isset($results)) {
-            http_response_code(400); return;
+            http_response_code(500); return;
         }
         // Check found.
         if (sizeof($results) == 0) {

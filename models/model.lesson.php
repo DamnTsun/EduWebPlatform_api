@@ -73,13 +73,59 @@ class Model_Lesson extends Model {
 
 
     /**
-     * Gets all lessons inside the given topic (by id), inside the given subject (by id).
+     * Gets all lessons inside the given topic (by id), inside the given subject (by id). Does not get hidden lessons.
      * @param subjectid - id of subject.
      * @param topicid - id of topic.
      * @param count - how many records to get. Optional, default 10.
      * @param offset - how many records to skip. Optional, default 0.
      */
     public function getLessonsByTopic($subjectid, $topicid, $count = 10, $offset = 0) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $results = $this->query(
+                "SELECT
+                    lessons.id,
+                    lessons.name,
+                    lessons.body,
+                    lessons.hidden
+                FROM
+                    lessons
+                WHERE
+                    lessons.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )
+                    AND
+                    -- Not hidden.
+                    lessons.hidden != 1
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_subjectid' => $subjectid,
+                    ':_topicid' => $topicid,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets all lessons inside the given topic (by id), inside the given subject (by id).
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
+     * @param count - how many records to get. Optional, default 10.
+     * @param offset - how many records to skip. Optional, default 0.
+     */
+    public function getLessonsByTopicAdmin($subjectid, $topicid, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
         try {
             return $results = $this->query(
@@ -116,12 +162,56 @@ class Model_Lesson extends Model {
     }
 
     /**
-     * Gets the lesson with the given id, inside the given topic (by id), inside the given subject (by id).
+     * Gets the lesson with the given id, inside the given topic (by id), inside the given subject (by id). Does not get hidden lessons.
      * @param subjectid - id of subject.
      * @param topicid - id of topic.
      * @param lessonid - id of lesson.
      */
     public function getLessonByID($subjectid, $topicid, $lessonid) {
+        try {
+            return $this->query(
+                "SELECT
+                    lessons.id,
+                    lessons.name,
+                    lessons.body,
+                    lessons.hidden
+                FROM
+                    lessons
+                WHERE
+                    lessons.id = :_lessonid
+                    AND
+                    lessons.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )
+                    AND
+                    -- Not hidden.
+                    lessons.hidden != 1",
+                array(
+                    ':_lessonid' => $lessonid,
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid
+                ),
+                Model::TYPE_FETCHALL
+        );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the lesson with the given id, inside the given topic (by id), inside the given subject (by id).
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
+     * @param lessonid - id of lesson.
+     */
+    public function getLessonByIDAdmin($subjectid, $topicid, $lessonid) {
         try {
             return $this->query(
                 "SELECT

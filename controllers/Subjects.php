@@ -42,7 +42,7 @@ class Subjects extends Controller {
         // Attempt query.
         $results = null;
         if (isset($user)) {
-            // Admin. Including hidden/auto-hidden subjects.
+            // Admin. Include hidden/auto-hidden subjects.
             $results = $this->db->getAllSubjectsAdmin($count, $offset);
         } else {
             // Not admin. Get non-hidden subjects.

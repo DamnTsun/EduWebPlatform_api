@@ -74,11 +74,72 @@ class Model_Test extends Model {
 
     /**
      * Gets all tests within the given topic, within the given subject.
+     * Does not get hidden tests or tests with less than 10 associated questions.
      * @param topicid - topic_id of tests being looked for.
      * @param count - Number of records to be returned. - Optional, default 10.
      * @param offset - Number of records to skip when getting records. - Optional, default 0.
      */
     public function getTestsByTopic($subjectid, $topicid, $count = 10, $offset = 0) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    tests.id,
+                    tests.name,
+                    tests.description,
+                    tests.hidden,
+                    (
+                        SELECT
+                            COUNT(testQuestions.id)
+                        FROM
+                            testQuestions
+                        WHERE
+                            testQuestions.test_id = tests.id
+                    ) as 'testQuestionCount'
+                FROM
+                    tests
+                WHERE
+                    tests.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )
+                    AND
+                    -- Not hidden
+                    tests.hidden != 1
+                    AND
+                    -- Contains at least 10 questions.
+                    (
+                        SELECT COUNT(testQuestions.id)
+                        FROM testQuestions
+                        WHERE testQuestions.test_id = tests.id
+                    ) >= 10
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_subjectid' => $subjectid,
+                    ':_topicid' => $topicid,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets all tests within the given topic, within the given subject.
+     * @param topicid - topic_id of tests being looked for.
+     * @param count - Number of records to be returned. - Optional, default 10.
+     * @param offset - Number of records to skip when getting records. - Optional, default 0.
+     */
+    public function getTestsByTopicAdmin($subjectid, $topicid, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
         try {
             return $this->query(
@@ -122,13 +183,77 @@ class Model_Test extends Model {
         }
     }
 
+
+
+
+
+    /**
+     * Gets test record with given id, in the given topic, in the given subject.
+     * Does not get tests that are hidden or contain less than 10 questions.
+     * @param subjectid - id of subject.
+     * @param topicid - id of topic.
+     * @param testid - id of test.
+     */
+    public function getTestByID($subjectid, $topicid, $testid) {
+        try {
+            return $results = $this->query(
+                "SELECT
+                    tests.id,
+                    tests.name,
+                    tests.description,
+                    tests.hidden,
+                    (
+                        SELECT
+                            COUNT(testQuestions.id)
+                        FROM
+                            testQuestions
+                        WHERE
+                            testQuestions.test_id = tests.id
+                    ) as 'testQuestionCount'
+                FROM
+                    tests
+                WHERE
+                    tests.id = :_testid
+                    AND
+                    tests.topic_id = (
+                        SELECT
+                            topics.id
+                        FROM
+                            topics
+                        WHERE
+                            topics.id = :_topicid
+                            AND
+                            topics.subject_id = :_subjectid
+                    )
+                    AND
+                    -- Not hidden
+                    tests.hidden != 1
+                    AND
+                    -- Contains at least 10 questions.
+                    (
+                        SELECT COUNT(testQuestions.id)
+                        FROM testQuestions
+                        WHERE testQuestions.test_id = tests.id
+                    ) >= 10",
+                array(
+                    ':_testid' => $testid,
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
     /**
      * Gets test record with given id, in the given topic, in the given subject.
      * @param subjectid - id of subject.
      * @param topicid - id of topic.
      * @param testid - id of test.
      */
-    public function getTestByID($subjectid, $topicid, $testid) {
+    public function getTestByIDAdmin($subjectid, $topicid, $testid) {
         try {
             return $results = $this->query(
                 "SELECT
