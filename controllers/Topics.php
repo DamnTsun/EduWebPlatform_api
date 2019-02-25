@@ -49,6 +49,9 @@ class Topics extends Controller {
      * @param id - id of subject.
      */
     public function getAllTopicsBySubject($id) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Check subject exists.
         if (!$this->checkSubjectExists($id)) {
             http_response_code(404); return;
@@ -60,7 +63,14 @@ class Topics extends Controller {
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getTopicsBySubject($id, $count, $offset);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden topics.
+            $results = $this->db->getTopicsBySubjectAdmin($id, $count, $offset);
+        } else {
+            // Not admin. Get non-hidden topics.
+            $results = $this->db->getTopicsBySubject($id, $count, $offset);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -79,8 +89,18 @@ class Topics extends Controller {
      * @param topicid - id of topic.
      */
     public function getTopicByID($subjectid, $topicid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Attempt query.
-        $results = $this->db->getTopicByID($subjectid, $topicid);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden topics.
+            $results = $this->db->getTopicByIDAdmin($subjectid, $topicid);
+        } else {
+            // Not admin. Get non-hidden topics.
+            $results = $this->db->getTopicByID($subjectid, $topicid);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
