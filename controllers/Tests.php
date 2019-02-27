@@ -180,7 +180,7 @@ class Tests extends Controller {
         }
 
         // Get newly created test and return it.
-        $record = $this->db->getTestByID($subjectid, $topicid, $results);
+        $record = $this->db->getTestByIDAdmin($subjectid, $topicid, $results);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Test was created, but cannot be retreived.');
             http_response_code(500); return;
@@ -258,7 +258,7 @@ class Tests extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getTestByID($subjectid, $topicid, $testid);
+        $record = $this->db->getTestByIDAdmin($subjectid, $topicid, $testid);
         if (!isset($record)) {
             $this->printJSON('Something went wrong. Test was updated, but cannot be retrieved.');
             http_response_code(500); return;

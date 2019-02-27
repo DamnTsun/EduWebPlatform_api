@@ -176,7 +176,7 @@ class Lessons extends Controller {
         }
 
         // Get newly created lesson and return it.
-        $record = $this->db->getLessonByID($subjectid, $topicid, $result);
+        $record = $this->db->getLessonByIDAdmin($subjectid, $topicid, $result);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Lesson was created, but cannot be retreived.');
             http_response_code(500); return;
@@ -255,7 +255,7 @@ class Lessons extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getLessonByID($subjectid, $topicid, $lessonid);
+        $record = $this->db->getLessonByIDAdmin($subjectid, $topicid, $lessonid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Lesson was updated, but cannot be retrieved.');
             http_response_code(500); return;

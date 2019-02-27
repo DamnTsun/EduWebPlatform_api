@@ -171,7 +171,7 @@ class Topics extends Controller {
         }
 
         // Get newly created resource and return it.
-        $record = $this->db->getTopicByID($subjectID, $result);
+        $record = $this->db->getTopicByIDAdmin($subjectID, $result);
         if (!isset($record)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Topic was created, but cannot be retrieved.');
@@ -250,7 +250,7 @@ class Topics extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getTopicByID($subjectid, $topicid);
+        $record = $this->db->getTopicByIDAdmin($subjectid, $topicid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Topic was updated, but cannot be retrieved.');
             http_response_code(500); return;

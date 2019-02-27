@@ -137,7 +137,7 @@ class Subjects extends Controller {
         }
 
         // Get newly create resource and return it.
-        $record = $this->db->getSubjectByID($result);
+        $record = $this->db->getSubjectByIDAdmin($result);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Subject was created, but cannot be retrieved.');
             http_response_code(500); return;
@@ -213,7 +213,7 @@ class Subjects extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getSubjectByID($subjectid);
+        $record = $this->db->getSubjectByIDAdmin($subjectid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Subject was updated, but cannot be retrieved.');
             http_response_code(500); return;
