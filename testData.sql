@@ -4,7 +4,10 @@ USE EduWebApp;
 insert into subjects (name, description, hidden) values ('Mathematics', 'Covers mathematics, such as: basic arithmetic, basic fractions, basic algebra, and similar.', 0);
 insert into subjects (name, description, hidden) values ('English Language', 'Covers English Language, such as: Letters, Words, Non-Euclidean Geometry', 0);
 insert into subjects (name, description, hidden) values ('Physics', 'Covers Physics, such as: Things that move, Things that don\'t move, Things that only move sometimes.', 0);
-insert into subjects (name, description, hidden) values ('Cricket', 'Covers Cricket. After reading all of the contained content, you will know around 15% of the rules of cricket.', 0);
+
+insert into subjects (name, description, hidden) values ('hidden', '', 1);
+insert into subjects (name, description, hidden) values ('auto-hidden', '', 0);
+
 insert into subjects (name, description, hidden) values ('z_test_subject01', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt. Quisque in dictum risus. Morbi ut luctus magna. Suspendisse efficitur vitae quam et feugiat. Sed tincidunt dolor elit, sed suscipit justo pharetra eget. Quisque eleifend lobortis ante, efficitur efficitur diam vehicula non. Pellentesque at ipsum ut arcu viverra sollicitudin. Nunc varius justo vitae ipsum tincidunt auctor. Quisque sodales facilisis iaculis. Maecenas ex ipsum, tincidunt in nunc vestibulum, consectetur viverra nulla. Ut dolor diam, semper eget imperdiet pharetra, imperdiet ut lectus. In scelerisque eros dui, eget laoreet turpis facilisis sit amet.', 1);
 insert into subjects (name, description, hidden) values ('z_test_subject02', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt. Quisque in dictum risus. Morbi ut luctus magna. Suspendisse efficitur vitae quam et feugiat. Sed tincidunt dolor elit, sed suscipit justo pharetra eget. Quisque eleifend lobortis ante, efficitur efficitur diam vehicula non. Pellentesque at ipsum ut arcu viverra sollicitudin. Nunc varius justo vitae ipsum tincidunt auctor. Quisque sodales facilisis iaculis. Maecenas ex ipsum, tincidunt in nunc vestibulum, consectetur viverra nulla. Ut dolor diam, semper eget imperdiet pharetra, imperdiet ut lectus. In scelerisque eros dui, eget laoreet turpis facilisis sit amet.', 0);
 insert into subjects (name, description, hidden) values ('z_test_subject03', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt. Quisque in dictum risus. Morbi ut luctus magna. Suspendisse efficitur vitae quam et feugiat. Sed tincidunt dolor elit, sed suscipit justo pharetra eget. Quisque eleifend lobortis ante, efficitur efficitur diam vehicula non. Pellentesque at ipsum ut arcu viverra sollicitudin. Nunc varius justo vitae ipsum tincidunt auctor. Quisque sodales facilisis iaculis. Maecenas ex ipsum, tincidunt in nunc vestibulum, consectetur viverra nulla. Ut dolor diam, semper eget imperdiet pharetra, imperdiet ut lectus. In scelerisque eros dui, eget laoreet turpis facilisis sit amet.', 1);
@@ -19,6 +22,10 @@ insert into subjects (name, description, hidden) values ('z_test_subject07', 'Lo
 insert into topics (name, description, subject_id, hidden) values ('Addition', 'How to add numbers together...', 1, 0);
 insert into topics (name, description, subject_id, hidden) values ('Subtraction', 'How to take one number from another...', 1, 0);
 insert into topics (name, description, subject_id, hidden) values ('Multiplication', 'How to multiply numbers together...', 1, 0);
+
+insert into topics (name, description, subject_id, hidden) values ('hidden', '', 1, 1);
+insert into topics (name, description, subject_id, hidden) values ('auto-hidden', '', 1, 0);
+
 insert into topics (name, description, subject_id, hidden) values ('Latin Letters', 'Hail the Phoencians.', 2, 0);
 insert into topics (name, description, subject_id, hidden) values ('Words', 'Now in string format. Never deal with char[] again.', 2, 0);
 insert into topics (name, description, subject_id, hidden) values ('Non-Euclidean Geometry', 'Howard, I don\'t think you know what Non-Euclidean means.', 2, 0);
@@ -47,6 +54,9 @@ insert into topics (name, description, subject_id, hidden) values ('z_maths_topi
 insert into lessons (name, body, topic_id, hidden) values ('Addition 1', '2 + 2 = 4<h2>List:</h2><ul><li>1</li><li>2</li></ul>', 1, 0);
 insert into lessons (name, body, topic_id, hidden) values ('Addition 2', '3 + 3 = 6', 1, 1);
 insert into lessons (name, body, topic_id, hidden) values ('Addition 3', 'Do you really not understand?', 1, 0);
+
+insert into lessons (name, body, topic_id, hidden) values ('hidden', '', 1, 1);
+
 insert into lessons (name, body, topic_id, hidden) values ('Subtraction 1', '2 - 2 = 0', 2, 0);
 insert into lessons (name, body, topic_id, hidden) values ('Subtraction 2', '3 - 3 = 0', 2, 0);
 insert into lessons (name, body, topic_id, hidden) values ('Subtraction 3', 'Do you really not understand?', 2, 0);
@@ -57,12 +67,12 @@ insert into lessons (name, body, topic_id, hidden) values ('Multiplication 3', '
 insert into lessons (name, body, topic_id, hidden) values ('Alphabet 1', 'abcdefghijklmnopqrstuvwxyz', 4, 0);
 insert into lessons (name, body, topic_id, hidden) values ('Alphabet 2', 'abcdefghijklmnopqrstuvwxyz', 4, 0);
 insert into lessons (name, body, topic_id, hidden) values ('Alphabet 3', 'abcdefghijklmnopqrstuvwxyz', 4, 0);
-insert into lessons (name, body, topic_id, hidden) values ('Words 1', 'Word word word. Word word word', 5, 0);
-insert into lessons (name, body, topic_id, hidden) values ('Words 2', 'Word word word. Word word word', 5, 0);
-insert into lessons (name, body, topic_id, hidden) values ('Words 3', 'Word word word. Word word word', 5, 0);
-insert into lessons (name, body, topic_id, hidden) values ('Other stuff', 'Stuff goes here.', 6, 0);
-insert into lessons (name, body, topic_id, hidden) values ('Other stuff 2', 'Stuff goes here.', 6, 0);
-insert into lessons (name, body, topic_id, hidden) values ('Other stuff 3', 'Stuff goes here.', 6, 0);
+insert into lessons (name, body, topic_id, hidden) values ('Words 1', 'Word word word. Word word word', 6, 0);
+insert into lessons (name, body, topic_id, hidden) values ('Words 2', 'Word word word. Word word word', 6, 0);
+insert into lessons (name, body, topic_id, hidden) values ('Words 3', 'Word word word. Word word word', 6, 0);
+insert into lessons (name, body, topic_id, hidden) values ('Other stuff', 'Stuff goes here.', 7, 0);
+insert into lessons (name, body, topic_id, hidden) values ('Other stuff 2', 'Stuff goes here.', 7, 0);
+insert into lessons (name, body, topic_id, hidden) values ('Other stuff 3', 'Stuff goes here.', 7, 0);
 
 insert into lessons (name, body, topic_id, hidden) values ('z_maths_lesson01_01', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt. Quisque in dictum risus. Morbi ut luctus magna. Suspendisse efficitur vitae quam et feugiat. Sed tincidunt dolor elit, sed suscipit justo pharetra eget. Quisque eleifend lobortis ante, efficitur efficitur diam vehicula non. Pellentesque at ipsum ut arcu viverra sollicitudin. Nunc varius justo vitae ipsum tincidunt auctor. Quisque sodales facilisis iaculis. Maecenas ex ipsum, tincidunt in nunc vestibulum, consectetur viverra nulla. Ut dolor diam, semper eget imperdiet pharetra, imperdiet ut lectus. In scelerisque eros dui, eget laoreet turpis facilisis sit amet.', 1, 0);
 insert into lessons (name, body, topic_id, hidden) values ('z_maths_lesson01_02', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut finibus sapien a malesuada tincidunt. Quisque in dictum risus. Morbi ut luctus magna. Suspendisse efficitur vitae quam et feugiat. Sed tincidunt dolor elit, sed suscipit justo pharetra eget. Quisque eleifend lobortis ante, efficitur efficitur diam vehicula non. Pellentesque at ipsum ut arcu viverra sollicitudin. Nunc varius justo vitae ipsum tincidunt auctor. Quisque sodales facilisis iaculis. Maecenas ex ipsum, tincidunt in nunc vestibulum, consectetur viverra nulla. Ut dolor diam, semper eget imperdiet pharetra, imperdiet ut lectus. In scelerisque eros dui, eget laoreet turpis facilisis sit amet.', 1, 1);
@@ -82,6 +92,10 @@ insert into lessons (name, body, topic_id, hidden) values ('z_maths_lesson01_09'
 insert into tests (name, description, topic_id, hidden) values ('Addition 1', 'Basic addition. (1 digit)', 1, 0);
 insert into tests (name, description, topic_id, hidden) values ('Addition 2', 'Basic addition. (2 digit)', 1, 0);
 insert into tests (name, description, topic_id, hidden) values ('Addition 3', 'Intermediate addition. (3 digit)', 1, 1);
+
+insert into tests (name, description, topic_id, hidden) values ('hidden', '', 1, 1);
+insert into tests (name, description, topic_id, hidden) values ('auto-hidden', '', 1, 0);
+
 insert into tests (name, description, topic_id, hidden) values ('z_addition_test01', 'Placeholer description', 1, 0);
 insert into tests (name, description, topic_id, hidden) values ('z_addition_test02', 'Placeholer description', 1, 1);
 insert into tests (name, description, topic_id, hidden) values ('z_addition_test03', 'Placeholer description', 1, 1);
@@ -466,3 +480,11 @@ INSERT INTO group_messages (group_id, message_id) VALUES (1, 33);
 INSERT INTO group_messages (group_id, message_id) VALUES (1, 34);
 INSERT INTO group_messages (group_id, message_id) VALUES (1, 35);
 INSERT INTO group_messages (group_id, message_id) VALUES (1, 36);
+
+
+/*
+
+
+
+
+*/

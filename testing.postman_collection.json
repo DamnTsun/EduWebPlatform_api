@@ -1,0 +1,7017 @@
+{
+	"info": {
+		"_postman_id": "590de7d9-01aa-48c3-a7f6-1e17d27c5a5f",
+		"name": "testing",
+		"description": "# Testing for EduWebPlatform API\n---\n## Usage notes:\n- Drop database if already exists.\n- Import schema.sql to create the database, tables, and populate the tables with required data (privilege levels, social media providers, etc).\n- Import postmanTestData.sql.\n  - This contains data used for testing. These tests will not act correctly if different data is used, as the the tests rely on certain records having certain ids, such as hidden/auto-hidden subjects having ids of 4/5.\n- Some tests create and delete records, so the entire database should be dropped, rebuilt, and repopulated between test runs.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1.0 - authorization",
+			"item": [
+				{
+					"name": "1.1.1 - authWithGoogle - No Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7387bca6-4194-4608-bc8c-c29d990f3aee",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/users/auth/google",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"google"
+							]
+						},
+						"description": "Attempts to authorize with API using Google.\r\nDoes not send the ```'google_id_token'``` parameter."
+					},
+					"response": []
+				},
+				{
+					"name": "1.1.2 - authWithGoogle - Invalid Token (not JWT)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "43d9b132-0c24-480a-bfba-889e7609978a",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "google_id_token",
+									"value": "not a valid JWT",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/auth/google",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"google"
+							]
+						},
+						"description": "Attempts to authorize with API using Google.\nSends an invalid JWT (aka not in format 'a.b.c')."
+					},
+					"response": []
+				},
+				{
+					"name": "1.1.3 - authWithGoogle - Invalid Token (JWT)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f12e37cb-f2ac-4c27-8eeb-0fdf8d30c4c3",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "google_id_token",
+									"value": "a.b.c",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/auth/google",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"google"
+							]
+						},
+						"description": "Attempts to authorize with API using Google.\nSends a JWT (a.b.c) that is in a valid format, but will not be successfully verified with Google (it's garbage)."
+					},
+					"response": []
+				},
+				{
+					"name": "1.1.4 - authWithGoogle - Valid Token (admin user)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f12e37cb-f2ac-4c27-8eeb-0fdf8d30c4c3",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.test('Auth object should be returned.', () => {",
+									"    pm.expect(jsonData).to.not.equal(null);",
+									"});",
+									"",
+									"pm.test('Auth object should contain idToken attribute.', () => {",
+									"    pm.expect(jsonData).to.have.property('idToken');",
+									"});",
+									"",
+									"pm.test('Auth object should contain expiresAt attribute.', () => {",
+									"    pm.expect(jsonData).to.have.property('expiresAt');",
+									"});",
+									"",
+									"pm.test('Auth object should contain isAdmin attribute.', () => {",
+									"    pm.expect(jsonData).to.have.property('isAdmin');",
+									"});",
+									"",
+									"pm.test('Auth object should correspond to an admin user.', () => {",
+									"    pm.expect(jsonData.isAdmin).to.equal(true);",
+									"});",
+									"",
+									"// Set admin auth token.",
+									"pm.environment.set('admin_authToken', jsonData.idToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "google_id_token",
+									"value": "{{google_idtoken}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/auth/google",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"google"
+							]
+						},
+						"description": "Attempts to authorize with API using Google.\nSends a JWT (a.b.c) that is in a valid format and should successfully verified to a Google account.\n\nBased on ```google_idtoken``` collection parameter. This must be an up to date value for a non-banned google account. The token should be obtained somehow. One way is to update SignInService on the frontend to console log the user info when the user signed in. This will include an id_token for their account, provided by Google."
+					},
+					"response": []
+				},
+				{
+					"name": "1.2.1 - authWithFacebook - No Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3f1c4288-45cc-4055-925f-065ffdd56bdc",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/users/auth/facebook",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"facebook"
+							]
+						},
+						"description": "Attempts to authorize with API using Google.\r\nDoes not send the ```'facebook_id_token'``` parameter."
+					},
+					"response": []
+				},
+				{
+					"name": "1.2.2 - authWithFacebook - Invalid Token (not JWT)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "43d9b132-0c24-480a-bfba-889e7609978a",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "facebook_id_token",
+									"value": "not a valid JWT",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/auth/facebook",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"facebook"
+							]
+						},
+						"description": "Attempts to authorize with API using Facebook.\nSends an invalid JWT (aka not in format 'a.b.c')."
+					},
+					"response": []
+				},
+				{
+					"name": "1.2.3 - authWithFacebook - Invalid Token (JWT)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f12e37cb-f2ac-4c27-8eeb-0fdf8d30c4c3",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "facebook_id_token",
+									"value": "a.b.c",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/auth/facebook",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"facebook"
+							]
+						},
+						"description": "Attempts to authorize with API using Facebook.\nSends a JWT (a.b.c) that is in a valid format, but will not be successfully verified with Facebook (it's garbage)."
+					},
+					"response": []
+				},
+				{
+					"name": "1.2.4 - authWithFacebook - Valid Token (regular user)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f12e37cb-f2ac-4c27-8eeb-0fdf8d30c4c3",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.test('Auth object should be returned.', () => {",
+									"    pm.expect(jsonData).to.not.equal(null);",
+									"});",
+									"",
+									"pm.test('Auth object should contain idToken attribute.', () => {",
+									"    pm.expect(jsonData).to.have.property('idToken');",
+									"});",
+									"",
+									"pm.test('Auth object should contain expiresAt attribute.', () => {",
+									"    pm.expect(jsonData).to.have.property('expiresAt');",
+									"});",
+									"",
+									"pm.test('Auth object should contain isAdmin attribute.', () => {",
+									"    pm.expect(jsonData).to.have.property('isAdmin');",
+									"});",
+									"",
+									"pm.test('Auth object should correspond to a regular user.', () => {",
+									"    pm.expect(jsonData.isAdmin).to.equal(false);",
+									"});",
+									"",
+									"// Set admin auth token.",
+									"pm.environment.set('regular_authtoken', jsonData.idToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "facebook_id_token",
+									"value": "{{facebook_idtoken}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/auth/facebook",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"facebook"
+							]
+						},
+						"description": "Attempts to authorize with API using Facebook.\nSends a JWT (a.b.c) that is in a valid format and should successfully verified to a Facebook account.\n\nBased on ```facebook_idtoken``` collection parameter. This must be an up to date value for a non-banned facebook account. The token should be obtained somehow. One way is to update SignInService on the frontend to console log the user info when the user signed in. This will include an id_token for their account, provided by Facebook."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2.0 - General Content",
+			"item": [
+				{
+					"name": "2.1 - Subjects",
+					"item": [
+						{
+							"name": "2.1.1 - Get subjects (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "07e94ec2-e1a6-402e-bcf9-e7828eb90093",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should receive response object.\", function () {",
+											"    pm.expect(jsonData).to.not.equal(null);",
+											"});",
+											"",
+											"pm.test('Some subjects should be returned.', () => {",
+											"    pm.expect(jsonData.length).to.not.equal(0);",
+											"});",
+											"",
+											"pm.test('No subjects should be hidden.', () => {",
+											"   _.each(jsonData, (item) => {",
+											"       pm.expect(item.hidden).to.equal(false);",
+											"   });",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.2 - Get subjects (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "07e94ec2-e1a6-402e-bcf9-e7828eb90093",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should receive response object.\", function () {",
+											"    pm.expect(jsonData).to.not.equal(null);",
+											"});",
+											"",
+											"pm.test('Some subjects should be returned.', () => {",
+											"    pm.expect(jsonData.length).to.not.equal(0);",
+											"});",
+											"",
+											"pm.test('Some subjects should be hidden.', () => {",
+											"    var hidden = false;",
+											"    _.each(jsonData, (item) => {",
+											"        hidden = hidden || item.hidden;",
+											"    });",
+											"    pm.expect(hidden).to.equal(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									},
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{url}}/subjects",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.3.1 - Get 3 subjects",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"3 subjects should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects?count=3&offset=0",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.3.2 - Get 3 subjects, offset 3 (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"0 subject should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects?count=3&offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.3.3 - Get 3 subjects, offset 3 (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"3 subject should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects?count=3&offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.4.1 - Get subject by id (exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should return a 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.4.2 - Get subject by id (not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1000000",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1000000"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.4.3 - Get subject by id (hidden, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/4",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.4.4 - Get subject by id (hidden, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Response should be 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});",
+											"",
+											"pm.test(\"Subject should be hidden.\", function () {",
+											"    pm.expect(jsonData[0].hidden).to.equal(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/4",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.4.5 - Get subject by id (auto-hidden, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/5",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"5"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.4.6 - Get subject by id (auto-hidden, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Response should be 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});",
+											"",
+											"pm.test(\"Subject should contain 0 topics.\", function () {",
+											"    pm.expect(jsonData[0].topicCount).to.equal(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/5",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"5"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.5.1 - Create subject (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.5.2 - Create subject (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.5.3 - Create subject (admin) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.5.4 - Create subject (admin) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.5.5 - Create subject (admin) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Should return created subject in 1 item array.\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.5.6 - Create subject (admin) - same name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.6.1 - Edit subject (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.6.2 - Edit subject (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.6.3 - Edit subject (admin) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/6",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.6.4 - Edit subject (admin) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/6",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.6.5 - Edit subject (admin) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should return created subject in 1 item array.\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\": \"abcde\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/6",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.6.6 - Edit subject (admin) - same name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\": \"abcde\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/6",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.6.7 - Edit subject (admin, not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1000000",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1000000"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.7.1 - Delete subject (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/6",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.7.2 - Delete subject (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/6",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.7.3 - Delete subject (admin, exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/6",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.7.4 - Delete subject (admin, not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/6",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"6"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "2.2 - Topics",
+					"item": [
+						{
+							"name": "2.2.1 - Get topics (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "07e94ec2-e1a6-402e-bcf9-e7828eb90093",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should receive response object.\", function () {",
+											"    pm.expect(jsonData).to.not.equal(null);",
+											"});",
+											"",
+											"pm.test('Some topics should be returned.', () => {",
+											"    pm.expect(jsonData.length).to.not.equal(0);",
+											"});",
+											"",
+											"pm.test('No topics should be hidden.', () => {",
+											"   _.each(jsonData, (item) => {",
+											"       pm.expect(item.hidden).to.equal(false);",
+											"   });",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.2 - Get topics (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "07e94ec2-e1a6-402e-bcf9-e7828eb90093",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should receive response object.\", function () {",
+											"    pm.expect(jsonData).to.not.equal(null);",
+											"});",
+											"",
+											"pm.test('Some topics should be returned.', () => {",
+											"    pm.expect(jsonData.length).to.not.equal(0);",
+											"});",
+											"",
+											"pm.test('Some topics should be hidden.', () => {",
+											"    var hidden = false;",
+											"    _.each(jsonData, (item) => {",
+											"        hidden = hidden || item.hidden;",
+											"    });",
+											"    pm.expect(hidden).to.equal(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									},
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.3.1 - Get 3 topics",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"3 topics should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics?count=3&offset=0",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.3.2 - Get 3 topics, offset 3 (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"0 topics should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics?count=3&offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.3.3 - Get 3 topics, offset 3 (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"3 items should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics?count=3&offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.4.1 - Get topic by id (exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should return a 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.4.2 - Get topic by id (not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topic/1000000",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topic",
+										"1000000"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.4.3 - Get topic by id (hidden, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/11",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"11"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.4.4 - Get topic by id (hidden, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Response should be 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});",
+											"",
+											"pm.test(\"topic should be hidden.\", function () {",
+											"    pm.expect(jsonData[0].hidden).to.equal(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/11",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"11"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.4.5 - Get topic by id (auto-hidden, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/12",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"12"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.4.6 - Get topic by id (auto-hidden, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Response should be 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});",
+											"",
+											"pm.test(\"should contain 0 lessons.\", function () {",
+											"    pm.expect(jsonData[0].lessonCount).to.equal(0);",
+											"});",
+											"",
+											"pm.test(\"should contain 0 tests.\", function () {",
+											"    pm.expect(jsonData[0].testCount).to.equal(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/12",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"12"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.4.7 - Get topic by id (wrong subject)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/2/topics/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"2",
+										"topics",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.4.8 - Get topic by id (hidden subject, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/4/topics/10",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"4",
+										"topics",
+										"10"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.4.9 - Get topic by id (hidden subject, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Should get the topic\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/4/topics/10",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"4",
+										"topics",
+										"10"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.5.1 - Create topic (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.5.2 - Create topic (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.5.3 - Create topic (admin) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.5.4 - Create topic (admin) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.5.5 - Create topic (admin) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Should return created topic in 1 item array.\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.5.6 - Create topics (admin) - same name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.6.1 - Edit topic (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.6.2 - Edit topic (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.6.3 - Edit topic (admin) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.6.4 - Edit topic (admin) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.6.5 - Edit topic (admin) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should return created topic in 1 item array.\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\": \"abcde\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.6.6 - Edit topic (admin) - same name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\": \"abcde\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.6.7 - Edit topic (admin, not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1000000",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1000000"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.7.1 - Delete topic (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.7.2 - Delete topic (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.7.3 - Delete topic (admin, exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2.7.4 - Delete topic (admin, not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/13",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"13"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "813610ca-c334-4922-b3cf-462991974e8b",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "f53d3558-5fd1-4374-9219-0be7b737ec96",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "2.3 - Lessons",
+					"item": [
+						{
+							"name": "2.3.1 - Get lessons (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "07e94ec2-e1a6-402e-bcf9-e7828eb90093",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should receive response object.\", function () {",
+											"    pm.expect(jsonData).to.not.equal(null);",
+											"});",
+											"",
+											"pm.test('should get some lessons.', () => {",
+											"    pm.expect(jsonData.length).to.not.equal(0);",
+											"});",
+											"",
+											"pm.test('No lessons should be hidden.', () => {",
+											"   _.each(jsonData, (item) => {",
+											"       pm.expect(item.hidden).to.equal(false);",
+											"   });",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.2 - Get lessons (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "07e94ec2-e1a6-402e-bcf9-e7828eb90093",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should receive response object.\", function () {",
+											"    pm.expect(jsonData).to.not.equal(null);",
+											"});",
+											"",
+											"pm.test('Some lessons should be returned.', () => {",
+											"    pm.expect(jsonData.length).to.not.equal(0);",
+											"});",
+											"",
+											"pm.test('Some lessons should be hidden.', () => {",
+											"    var hidden = false;",
+											"    _.each(jsonData, (item) => {",
+											"        hidden = hidden || item.hidden;",
+											"    });",
+											"    pm.expect(hidden).to.equal(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									},
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.3.1 - Get 3 lessons",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"3 lessons should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons?count=3&offset=0",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.3.2 - Get 3 lessons, offset 3 (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"0 lessons should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics?count=3&offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.3.3 - Get 3 lessons, offset 3 (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"2 items should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(2);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons?count=3&offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.1 - Get lesson by id (exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should return a 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.2 - Get lesson by id (not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topic/1/lessons/1000000",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topic",
+										"1",
+										"lessons",
+										"1000000"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.3 - Get lesson by id (hidden, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/30",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"30"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.4 - Get lesson by id (hidden, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Response should be 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});",
+											"",
+											"pm.test(\"should be hidden.\", function () {",
+											"    pm.expect(jsonData[0].hidden).to.equal(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/30",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"30"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.5 - Get lesson by id (wrong subject)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/4",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.6 - Get lesson by id (wrong topic)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/2/lessons/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"2",
+										"lessons",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.7 - Get lesson by id (hidden subject regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/4/topics/10/lessons/28",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"4",
+										"topics",
+										"10",
+										"lessons",
+										"28"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.8 - Get lesson by id (hidden subject, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Should get the lesson\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/4/topics/10/lessons/28",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"4",
+										"topics",
+										"10",
+										"lessons",
+										"28"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.9 - Get lesson by id (hidden topic, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/11/lessons/29",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"11",
+										"lessons",
+										"29"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.4.10 - Get lesson by id (hidden topic, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Should get the lesson\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/11/lessons/29",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"11",
+										"lessons",
+										"29"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.5.1 - Create lesson (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.5.2 - Create lesson (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.5.3 - Create lesson (admin) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.5.4 - Create lesson (admin) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.5.5 - Create lesson (admin) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Should return created lesson in 1 item array.\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"body\": \"xyz\"\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.5.6 - Create lesson (admin) - same name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"body\": \"xyz\"\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.6.1 - Edit lesson (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.6.2 - Edit lesson (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.6.3 - Edit lesson (admin) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.6.4 - Edit lesson  (admin) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.6.5 - Edit lesson (admin) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should return editted lesson in 1 item array.\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\": \"abcde\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.6.6 - Edit lesson (admin) - same name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\": \"abcde\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.6.7 - Edit lesson (admin, not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/1000000",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"1000000"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.7.1 - Delete lesson (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.7.2 - Delete lesson (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.7.3 - Delete lesson (admin, exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3.7.4 - Delete lesson (admin, not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/lessons/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"lessons",
+										"31"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "813610ca-c334-4922-b3cf-462991974e8b",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "f53d3558-5fd1-4374-9219-0be7b737ec96",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "2.4 - Tests",
+					"item": [
+						{
+							"name": "2.4.1 - Get tests (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "07e94ec2-e1a6-402e-bcf9-e7828eb90093",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should receive response object.\", function () {",
+											"    pm.expect(jsonData).to.not.equal(null);",
+											"});",
+											"",
+											"pm.test('should get some tests.', () => {",
+											"    pm.expect(jsonData.length).to.not.equal(0);",
+											"});",
+											"",
+											"pm.test('No tests should be hidden.', () => {",
+											"   _.each(jsonData, (item) => {",
+											"       pm.expect(item.hidden).to.equal(false);",
+											"   });",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.2 - Get tests (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "07e94ec2-e1a6-402e-bcf9-e7828eb90093",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should receive response object.\", function () {",
+											"    pm.expect(jsonData).to.not.equal(null);",
+											"});",
+											"",
+											"pm.test('Some tests should be returned.', () => {",
+											"    pm.expect(jsonData.length).to.not.equal(0);",
+											"});",
+											"",
+											"pm.test('Some tests should be hidden.', () => {",
+											"    var hidden = false;",
+											"    _.each(jsonData, (item) => {",
+											"        hidden = hidden || item.hidden;",
+											"    });",
+											"    pm.expect(hidden).to.equal(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									},
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.3.1 - Get 3 tests",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"3 tests should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests?count=3&offset=0",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.3.2 - Get 3 tests, offset 3 (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"0 tests should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests?count=3&offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.3.3 - Get 3 tests, offset 3 (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fe7d486-39b4-44e7-9b33-05c0b550e1d3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"3 items should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests?count=3&offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.1 - Get test by id (exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should return a 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.2 - Get test by id (not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topic/1/tests/1000000",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topic",
+										"1",
+										"tests",
+										"1000000"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.3 - Get test by id (hidden, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/test/30",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"test",
+										"30"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.4 - Get test by id (hidden, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Response should be 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});",
+											"",
+											"pm.test(\"should be hidden.\", function () {",
+											"    pm.expect(jsonData[0].hidden).to.equal(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/30",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"30"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.5 - Get test by id (auto-hidden, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.4 - Get test by id (auto-hidden, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Response should be 1 item array.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});",
+											"",
+											"pm.test(\"should be hidden.\", function () {",
+											"    pm.expect(jsonData[0].hidden).to.equal(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.5 - Get test by id (wrong subject)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/2/topics/1/tests/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"2",
+										"topics",
+										"1",
+										"tests",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.6 - Get test by id (wrong topic)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/2/tests/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"2",
+										"tests",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.7 - Get test by id (hidden subject, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/4/topics/10/tests/28",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"4",
+										"topics",
+										"10",
+										"tests",
+										"28"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.8 - Get test by id (hidden subject, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Should get the test\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/4/topics/10/tests/28",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"4",
+										"topics",
+										"10",
+										"tests",
+										"28"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.9 - Get test by id (hidden topic, regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/11/tests/29",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"11",
+										"tests",
+										"29"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.4.10 - Get test by id (hidden topic, admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "aaae4dd2-4773-4d43-b640-905deb9bf675",
+										"exec": [
+											"// topic 1 is NOT in subject 2.",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Should get the test\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/11/tests/29",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"11",
+										"tests",
+										"29"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.5.1 - Create test (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.5.2 - Create test (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.5.3 - Create test (admin) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.5.4 - Create test (admin) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.5.5 - Create test (admin) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Should return created test in 1 item array.\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"xyz\"\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.5.6 - Create test (admin) - same name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"xyz\"\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.6.1 - Edit test (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.6.2 - Edit test (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.6.3 - Edit test (admin) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.6.4 - Edit test  (admin) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.6.5 - Edit test (admin) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should return created test in 1 item array.\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\": \"abcde\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.6.6 - Edit test (admin) - same name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\": \"abcde\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/31",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.6.7 - Edit test (admin, not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "caaaf96f-9f37-42aa-ab65-9e3f7ea258b9",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\n\"name\": \"abc\",\n\"description\": \"desc\"\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/1000000",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"1000000"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.7.1 - Delete test (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/32",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"32"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.7.2 - Delete test (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/32",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"32"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.7.3 - Delete test (admin, exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/32",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"32"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4.7.4 - Delete test (admin, not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "610d1c31-1a47-49a8-9b0a-f7ddd40f6232",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/32",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"32"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "813610ca-c334-4922-b3cf-462991974e8b",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "f53d3558-5fd1-4374-9219-0be7b737ec96",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			],
+			"description": "Handles general content related stuff:\n- Subjects\n- Subject admins\n- Topics\n- Lessons\n- Tests\n- Test questions",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9b3792d1-93e2-40a7-842c-5ca574510e60",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "0384bcee-146d-4f2b-b9b0-9253cd0b891a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "70405c20-4368-49f5-bee2-4bf732c5bb57",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "81b4d325-8fb4-4fb8-bb66-9f2225320a65",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

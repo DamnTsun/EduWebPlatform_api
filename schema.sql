@@ -218,7 +218,20 @@ CREATE TABLE `group_messages` (
 
 
 
+-- Privilege levels
+INSERT INTO privilegeLevels (level) VALUES ('Normal');
+INSERT INTO privilegeLevels (level) VALUES ('Admin');
+INSERT INTO privilegeLevels (level) VALUES ('Banned');
 
+-- Social Media Providers
+INSERT INTO socialMediaProviders (name) VALUES ('Google');
+INSERT INTO socialMediaProviders (name) VALUES ('Facebook');
+INSERT INTO socialMediaProviders (name) VALUES ('LinkedIn');
+
+-- Users
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the normie', '102562326633765021134', 1, 1); -- Google account, normal.
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the admin', '117929523951432123072', 1, 2); -- Google account, admin.
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the banned', '111865521247464378466', 1, 3); -- Google account, banned.
 
 
 
