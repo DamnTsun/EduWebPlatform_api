@@ -100,7 +100,7 @@ class SubjectAdmins extends Controller {
             $this->printMessage('Something went wrong. Unable to lookup subject admins for subject.');
             http_response_code(500); return;
         }
-
+        
         // Format and display results.
         $this->printJSON($this->formatRecords($results));
     }

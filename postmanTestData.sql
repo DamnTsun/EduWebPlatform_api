@@ -1,3 +1,24 @@
+/*
+TESTED:
+[x] auth system
+
+[x] subjects
+[x] topics
+[x] lessons
+[x] tests
+[x] test questions
+[x] posts
+[x] subject admins
+
+[] user tests
+[] user test questions
+
+[] users
+
+[] messages
+[] groups
+*/
+
 use EduWebApp;
 
 -- Subjects
@@ -100,8 +121,8 @@ insert into tests (name, description, topic_id, hidden) values ('hidden subject 
 insert into tests (name, description, topic_id, hidden) values ('hidden topic test', '', 11, 0); -- 29
 
 insert into tests (name, description, topic_id, hidden) values ('hidden test', '', 1, 1); -- 30
-insert into tests (name, description, topic_id, hidden) values ('auto-hidden test', '', 1, 1); -- 31
-insert into tests (name, description, topic_id, hidden) values ('delete test', '', 1, 1); -- 32
+insert into tests (name, description, topic_id, hidden) values ('auto-hidden test', '', 1,0); -- 31
+insert into tests (name, description, topic_id, hidden) values ('delete test', '', 1, 0); -- 32
 
 
 
@@ -403,7 +424,72 @@ insert into testQuestions (`question`, answer, test_id) values ('7', '7', 27);
 insert into testQuestions (`question`, answer, test_id) values ('8', '8', 27);
 insert into testQuestions (`question`, answer, test_id) values ('9', '9', 27); -- 270
 
-insert into testQuestions (`question`, answer, test_id) values ('hidden subject question', 'a', 1); -- 271
-insert into testQuestions (`question`, answer, test_id) values ('hidden topic question', 'a', 1); -- 272
-insert into testQuestions (`question`, answer, test_id) values ('hidden test question', 'a', 1); -- 273
-insert into testQuestions (`question`, answer, test_id) values ('delete question', 'a', 1); -- 274
+insert into testQuestions (`question`, answer, test_id) values ('delete question', 'a', 1); -- 271
+
+
+-- Subject posts
+insert into posts (title, body, subject_id, user_id) values ('post1.1', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('post1.2', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('post1.3', '', 1, 2);
+
+insert into posts (title, body, subject_id, user_id) values ('post2.1', '', 2, 2);
+insert into posts (title, body, subject_id, user_id) values ('post2.2', '', 2, 2);
+insert into posts (title, body, subject_id, user_id) values ('post2.3', '', 2, 2);
+
+-- Test users and subject admins
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_user1', 'test1', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_user2', 'test2', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_user3', 'test3', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_user4', 'test4', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_user5', 'test5', 1, 1, CURRENT_TIMESTAMP); -- 9
+
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_admin', 'test1a', 1, 2, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_admin', 'test2a', 1, 2, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_admin', 'test3a', 1, 2, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_admin', 'test4a', 1, 2, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_admin', 'test5a', 1, 2, CURRENT_TIMESTAMP);
+
+insert into subject_admins (user_id, subject_id) values (12, 1);
+insert into subject_admins (user_id, subject_id) values (10, 1);
+insert into subject_admins (user_id, subject_id) values (11, 1);
+
+insert into subject_admins (user_id, subject_id) values (2, 2);
+insert into subject_admins (user_id, subject_id) values (12, 2);
+insert into subject_admins (user_id, subject_id) values (13, 2);
+
+
+
+-- user tests
+insert into user_tests (title, test_id, user_id) values ('test1.1', 1, 2);
+insert into user_tests (title, test_id, user_id) values ('test1.2', 1, 2);
+insert into user_tests (title, test_id, user_id) values ('test1.3', 2, 2);
+
+insert into user_tests (title, test_id, user_id) values ('test2.1', 1, 4);
+insert into user_tests (title, test_id, user_id) values ('test2.2', 2, 4);
+insert into user_tests (title, test_id, user_id) values ('test2.3', 2, 4);
+
+-- user test questions
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 1);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 1);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 1);
+
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 2);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 2);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 5, 2);
+
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 3);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 3);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 3);
+
+
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 4);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 4);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 4);
+
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 5);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 5);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 5);
+
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 16, 6);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 17, 6);
+insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 18, 6);
