@@ -331,7 +331,7 @@ class Lessons extends Controller {
                 array(
                     'id' => (int)$rec['id'],
                     'name' => $rec['name'],
-                    'body' => addslashes($rec['body']),
+                    'body' => $rec['body'],
                     'hidden' => ($rec['hidden'] == '1')
                 )
             );
