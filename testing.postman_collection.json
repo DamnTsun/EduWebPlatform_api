@@ -10363,7 +10363,2563 @@
 			]
 		},
 		{
-			"name": "3.0 - User",
+			"name": "4.0 - Messages and Groups",
+			"item": [
+				{
+					"name": "4.1 - Messages",
+					"item": [
+						{
+							"name": "4.1.1 - Get messages with user 4 (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test('Message should be from user 2 or 4.', () => {",
+											"    var flag = false;",
+											"    _.each(jsonData, (item) => {",
+											"        flag = flag || (item.sender_id !== 4 && item.sender_id !== 2);",
+											"    });",
+											"    pm.expect(flag).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users/chat/4",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"chat",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.2 - Get messages with user 4, count 3 (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should get 3 messages\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users/chat/4?count=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"chat",
+										"4"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.3 - Get messages with user 1 (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test('Message should be from user 2 or 1.', () => {",
+											"    var flag = false;",
+											"    _.each(jsonData, (item) => {",
+											"        flag = flag || (item.sender_id !== 1 && item.sender_id !== 2);",
+											"    });",
+											"    pm.expect(flag).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users/chat/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"chat",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.4 - Get messages with user 1 (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test('Message should be from user 2 or 1.', () => {",
+											"    var flag = false;",
+											"    _.each(jsonData, (item) => {",
+											"        flag = flag || (item.sender_id !== 1 && item.sender_id !== 2);",
+											"    });",
+											"    pm.expect(flag).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users/chat/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"chat",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.5.1 - Get messages with user 1 after date (invalid date)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users/chat/1?date=abc",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"chat",
+										"1"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "abc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.5.2 - Get messages with user 1 after date (valid)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test('Message should have dates after 2019-01-01 12:00:08', () => {",
+											"    var flag = false;",
+											"    _.each(jsonData, (item) => {",
+											"        flag = flag || (item.date <= '2019-01-01 12:00:08')",
+											"    });",
+											"    pm.expect(flag).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users/chat/1?date=2019-01-01 12:00:08",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"chat",
+										"1"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "2019-01-01 12:00:08"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.6 - Send message to user 4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test('Message should be returned as a 1 item array', () => {",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"message\":\"hello\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/users/chat/4",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"chat",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.7 - Delete message (exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"message\":\"hello\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/users/messages/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"messages",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.8 - Delete message (not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"message\":\"hello\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/users/messages/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"messages",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.9 - Delete message (not sent by current user)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"message\":\"hello\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/users/messages/11",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"messages",
+										"11"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "4.2 - Group Messages",
+					"item": [
+						{
+							"name": "4.2.1 - Get messages with group 1 (member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test('Should get messages.', () => {",
+											"    pm.expect(jsonData.length).to.eql(10);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/chat",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"chat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.1 - Get messages with group 1, offset 3 (member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"First returned message should have id of 27 (30 - 3)\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData[0].id).to.eql(27);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/chat?offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"chat"
+									],
+									"query": [
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.3 - Get messages with group 2 (member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test('Should get 10 messages.', () => {",
+											"    pm.expect(jsonData.length).to.eql(10);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/2/chat",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2",
+										"chat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.4 - Get messages with group 2 (non-member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/2/chat",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2",
+										"chat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.5.1 - Get messages with group 1 after date (member, invalid date)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/2/chat?date=abc",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2",
+										"chat"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "abc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.5.2 - Get messages with group 1 after date (member, valid date)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test('Message should have dates after 2019-01-01 12:00:08', () => {",
+											"    var flag = false;",
+											"    _.each(jsonData, (item) => {",
+											"        flag = flag || (item.date <= '2019-01-01 12:00:08')",
+											"    });",
+											"    pm.expect(flag).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/chat?date=2019-01-01 12:00:08",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"chat"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "2019-01-01 12:00:08"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.6.1 - Send message to group 1 (member) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"message\":\"hello\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/chat",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"chat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.6.2 - Send message to group 1 (member) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/chat",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"chat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.6.3 - Send message to group 1 (member) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should get created message in 1 item array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"message\":\"hello\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/chat",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"chat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.7 - Delete message (member, exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"message\":\"hello\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/chat/21",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"chat",
+										"21"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.8 - Delete message (member, not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"message\":\"hello\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/chat/21",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"chat",
+										"21"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.9 - Delete message (non-member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"message\":\"hello\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/2/chat/35",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2",
+										"chat",
+										"35"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "fea3c0a8-ab6c-4a88-ba6b-3698c180487a",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "c2c71cee-1a55-4958-ac82-621fa9da74cd",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "4.3 - Groups",
+					"item": [
+						{
+							"name": "4.2.1.1 - Get my groups (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.1.2 - Get my groups (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should get 2 groups\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(2);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.1.1 - Get all groups (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authtoken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/all",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.2.2 - Get all groups (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should get 3 groups\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/all",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.3 - Get group by id (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should get 1 groups\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.4.1 - Get group by id that current user is not in (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.4.2 - Get group by id that current user is not in (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should get 1 groups\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.x.1 - Group group members (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"/**pm.test(\"Should get 1 groups\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});",
+											"*/"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/members",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"members"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.x.2 - Group group members (member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should get groups members\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.not.eql(1);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/members",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"members"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.x.3 - Group group members (non-member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/2/members",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2",
+										"members"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.x.4 - Group group members (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should get groups members\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.not.eql(1);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/2/members",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2",
+										"members"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.5.1 - Create group (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.5.2 - Create group (regular) - no content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.5.3 - Create group (regular) - invalid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.5.4 - Create group (regular) - valid content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Created group should be returned in 1 item array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.6.1 - Add member to group (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"/*pm.test(\"Created group should be returned in 1 item array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});*/"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/members/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"members",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.6.2 - Add member to group (non-member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"/*pm.test(\"Created group should be returned in 1 item array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});*/"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/2/members/8",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2",
+										"members",
+										"8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.6.3 - Add member to group (member, not member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/members/8",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"members",
+										"8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.6.4 - Add member to group (member, member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/members/8",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"members",
+										"8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.7.1 - Remove member (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/members/8",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"members",
+										"8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.7.2 - Remove member (non-member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/2/members/8",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2",
+										"members",
+										"8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.7.3 - Remove member (member, member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/members/8",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"members",
+										"8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.7.4 - Remove member (member, non-member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1/members/8",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1",
+										"members",
+										"8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.8.1 - Delete group (non-member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.8.2 - Delete group (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2.8.3 - Delete group (member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new group\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/groups/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "3.0 - User (LAST)",
 			"item": [
 				{
 					"name": "3.1 - User Tests",
@@ -11398,9 +13954,1289 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "3.1.5 - Delete all user tests",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a79ebdd8-4977-4649-8ba5-a8d8814ec164",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{ \n    \"title\": \"abc\",\n    \"questions\": [\n        {\n            \"id\":1,\n            \"answer\": \"a\"\n        },\n        {\n            \"id\": 2,\n            \"answer\": \"b\"\n        }\n    ]\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/users/user_tests",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"user_tests"
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "3.2 - User Test Questions",
+					"item": [
+						{
+							"name": "3.1.1.1 Get user test questions by user test (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fdbd6442-3a24-451e-850e-b12d7d0c5c02",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{admin_authToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/1/user_tests/1/questions",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"1",
+										"user_tests",
+										"1",
+										"questions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.1.1.2 Get user test questions by user test (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fdbd6442-3a24-451e-850e-b12d7d0c5c02",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/1/user_tests/4/questions",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"1",
+										"user_tests",
+										"4",
+										"questions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.1.1.3 Get user test questions by user test (different user)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fdbd6442-3a24-451e-850e-b12d7d0c5c02",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/1/user_tests/4/questions",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"1",
+										"user_tests",
+										"4",
+										"questions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.1.1.4 Get user test questions by user test (different test)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fdbd6442-3a24-451e-850e-b12d7d0c5c02",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/2/user_tests/5/questions",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"2",
+										"user_tests",
+										"5",
+										"questions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.1.1.5 Get user test questions by user test (not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fdbd6442-3a24-451e-850e-b12d7d0c5c02",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/subjects/1/topics/1/tests/2/user_tests/1000/questions",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"subjects",
+										"1",
+										"topics",
+										"1",
+										"tests",
+										"2",
+										"user_tests",
+										"1000",
+										"questions"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Tests getting details about a specific user test.\nDetails are the questions completed, including the question, user answer, and correct answer.\n\nOnly getting details is tested. This is no way to directly create or delete user test details, these are automatically created/deleted when the corresponding user test is created/deleted.",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "19e46bb9-6a2f-4352-952d-4a5e2cc260fc",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "50fc7ff7-7a80-43c6-ae26-4bbc0b77733d",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "3.3 - Users (LAST)",
+					"item": [
+						{
+							"name": "3.3.1 - Get users (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.2 - Get users (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"value": "{{regular_authtoken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.3 - Get 3 users",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should get 3 users\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(3);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users?count=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.4 - Get 3 users, offset 3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should get 3 users\", function () {",
+											"    pm.expect(jsonData.length).to.eql(3);",
+											"});",
+											"",
+											"pm.test('1st user should have id of 4', () => {",
+											"    pm.expect(jsonData[0].id).to.eql(4); ",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users?count=3&offset=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users"
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "3"
+										},
+										{
+											"key": "offset",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.5.1 - Get current user details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should get user details in 1 item array\", function () {",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test('User should have id of 2', () => {",
+											"    pm.expect(jsonData[0].id).to.eql(2); ",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users/me",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.5.2 - Get current user details (different user)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should get user details in 1 item array\", function () {",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test('User should have id of 4', () => {",
+											"    pm.expect(jsonData[0].id).to.eql(4); ",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users/me",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.6 - Change current users name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Should get user details in 1 item array\", function () {",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test('User should have name of `new name`', () => {",
+											"    pm.expect(jsonData[0].displayname).to.eql('new name'); ",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/users/me/name",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"me",
+										"name"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.7.1 - Make user admin (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/admin/setAdmin/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"setAdmin",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.7.2 - Make user admin (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Affected user should be returned\", function () {",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test('Affected user should be an admin', () => {",
+											"    pm.expect(jsonData[0].admin).to.eql(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/admin/setAdmin/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"setAdmin",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.8.1 - Remove user admin (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/admin/removeAdmin/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"removeAdmin",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.8.2 - Remove user admin (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Affected user should be returned\", function () {",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test('Affected user should not be an admin', () => {",
+											"    pm.expect(jsonData[0].admin).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/admin/removeAdmin/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"removeAdmin",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.9.1 - Ban user (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/admin/banUser/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"banUser",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.9.2 - Ban user (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Affected user should be returned\", function () {",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test('Affected user should be banned', () => {",
+											"    pm.expect(jsonData[0].banned).to.eql(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/admin/banUser/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"banUser",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.10.1 - Unban user (regular)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/admin/unbanUser/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"unbanUser",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.10.2 - Unban user (admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"pm.test(\"Affected user should be returned\", function () {",
+											"    pm.expect(jsonData.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test('Affected user should not be banned', () => {",
+											"    pm.expect(jsonData[0].banned).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{admin_authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/admin/unbanUser/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"unbanUser",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3.11 - Delete current user account",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a42be0d-4a68-4e53-9f47-1dee1e97183e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "idtoken",
+										"type": "text",
+										"value": "{{regular_authtoken}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "{\"name\":\"new name\"}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/users/me",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"me"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "181dc4f5-896e-44ac-b2f7-a067ef2e2175",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "6cbfab51-9bcc-4066-a391-27c5d99189b4",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "eacdd104-5c1f-4682-a53f-cad7d9d2fbad",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "1ccbe96d-c154-44f0-aa34-1f280e598062",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		}

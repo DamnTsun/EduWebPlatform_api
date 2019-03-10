@@ -149,6 +149,16 @@ class User_Tests extends Controller {
             array_push($questionanswers, $q['answer']);
         }
 
+        // validate title
+        if (strlen($title) == 0) {
+            $this->printMessage('Title cannot be blank.');
+            http_response_code(400); return;
+        }
+        if (strlen($title) > 30) {
+            $this->printMessage('Title cannot be longer than 30 characters.');
+            http_response_code(400); return;
+        }
+
 
         // Check specified test exists.
         if (!$this->checkTestExists($subjectid, $topicid, $testid)) {

@@ -123,6 +123,15 @@ class Subjects extends Controller {
         // Convert hidden (bool) to string. (0 / 1).
         $hidden = App::boolToString($hidden);
 
+
+        // validate values
+        $validate = $this->validateValues($name, $description);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+
+
         // Check subject with name does not exist.
         if ($this->db->checkSubjectExists($name)) {
             $this->printMessage('Subject with name `' . $name . '` already exists. Subject names must be unique.');
@@ -191,6 +200,15 @@ class Subjects extends Controller {
         $hidden =                   (isset($json['hidden'])) ? $json['hidden'] : null;
         // Convert hidden (bool) to string. (0 / 1).
         if (isset($hidden)) { $hidden = App::boolToString($hidden); }
+
+
+        // validate values
+        $validate = $this->validateValues($name, $description);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+
 
         // Ensure a value is actually being changed. (max is only null if all array items are null)
         if (max( array($name, $description, $hidden) ) == null) {
@@ -306,5 +324,22 @@ class Subjects extends Controller {
         }
 
         return $object;
+    }
+
+
+    /**
+     * Validates values. Returns message if invalid. Returns null if valid.
+     */
+    protected function validateValues($name, $description) {
+        // NAME
+        if (isset($name)) {
+            if (strlen($name) == 0) { return 'Name cannot be blank.'; }
+            if (strlen($name) > 100) { return 'Name cannot be longer than 100 characters.'; }
+        }
+        // DESCRIPTION
+        if (isset($description)) {
+            if (strlen($description) > 4096) { return 'Description cannot be longer than 4096 characters.'; }
+        }
+        return null;
     }
 }

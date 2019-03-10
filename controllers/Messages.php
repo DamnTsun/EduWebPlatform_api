@@ -157,6 +157,13 @@ class Messages extends Controller {
         }
 
 
+        $validate = $this->validateValues($json['message']);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+
+
         // Attempt to create message and user_message records.
         $results = $this->db->createUserMessage($user['id'], (int)$receiver_id, $json['message']);
         if (!isset($results)) {
@@ -245,6 +252,14 @@ class Messages extends Controller {
         }
 
         return $object;
+    }
+
+
+    // Validates values. Returns message if invalid. Returns null if valid.
+    private function validateValues($message) {
+        if (strlen($message) == 0) { return 'Message cannot be blank.'; }
+        if (strlen($message) > 1024) { return 'Message cannot be more than 1024 characters long.'; }
+        return null;
     }
 
 
@@ -366,7 +381,7 @@ class Messages extends Controller {
 
         // Validate message.
         $message = $json['message'];
-        if (sizeof($message) < 1 || sizeof($message) > 1024) {
+        if (strlen($message) < 1 || strlen($message) > 1024) {
             $this->printMessage('Message must be between 1 and 1024 characters long.');
             http_response_code(400); return;
         }
@@ -388,6 +403,7 @@ class Messages extends Controller {
         }
 
         $this->printJSON($this->formatRecords($chatMsg));
+        http_response_code(201);
     }
 
 
@@ -489,7 +505,7 @@ class Messages extends Controller {
 
         // Validate message.
         $message = $json['message'];
-        if (sizeof($message) < 1 || sizeof($message) > 1024) {
+        if (strlen($message) < 1 || strlen($message) > 1024) {
             $this->printMessage('Message must be between 1 and 1024 characters long.');
             http_response_code(400); return;
         }
@@ -509,6 +525,7 @@ class Messages extends Controller {
             http_response_code(500); return;
         }
         $this->printJSON($this->formatRecords($record));
+        http_response_code(201);
     }
 
 
@@ -538,7 +555,7 @@ class Messages extends Controller {
         if ($user['privilegeLevel'] != 'Admin') {
             if (!$this->checkUserInGroup($user['id'], $groupid)) {
                 $this->printMessage('Cannot delete group message. You are not a member of the group.');
-                http_response_code(400); return;
+                http_response_code(401); return;
             }
         }
 

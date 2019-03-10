@@ -10,8 +10,8 @@ TESTED:
 [x] posts
 [x] subject admins
 
-[] user tests
-[] user test questions
+[x] user tests
+[x] user test questions
 
 [] users
 
@@ -493,3 +493,117 @@ insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) value
 insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 16, 6);
 insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 17, 6);
 insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 18, 6);
+
+
+
+-- user messages.
+insert into messages (message, `date`, sender_id) values ('m1', '2019-01-01 12:00:00', 2);
+insert into messages (message, `date`, sender_id) values ('m2', '2019-01-01 12:00:01', 2);
+insert into messages (message, `date`, sender_id) values ('m3', '2019-01-01 12:00:02', 2);
+insert into messages (message, `date`, sender_id) values ('m4', '2019-01-01 12:00:03', 4);
+insert into messages (message, `date`, sender_id) values ('m5', '2019-01-01 12:00:04', 4);
+insert into messages (message, `date`, sender_id) values ('m6', '2019-01-01 12:00:05', 2);
+insert into messages (message, `date`, sender_id) values ('m7', '2019-01-01 12:00:06', 2);
+insert into messages (message, `date`, sender_id) values ('m8', '2019-01-01 12:00:07', 4);
+insert into messages (message, `date`, sender_id) values ('m9', '2019-01-01 12:00:08', 4);
+insert into messages (message, `date`, sender_id) values ('m10', '2019-01-01 12:00:09', 4); -- 10
+
+insert into user_messages (message_id, user_id) values (1, 4);
+insert into user_messages (message_id, user_id) values (2, 4);
+insert into user_messages (message_id, user_id) values (3, 4);
+insert into user_messages (message_id, user_id) values (4, 2);
+insert into user_messages (message_id, user_id) values (5, 2);
+insert into user_messages (message_id, user_id) values (6, 4);
+insert into user_messages (message_id, user_id) values (7, 4);
+insert into user_messages (message_id, user_id) values (8, 2);
+insert into user_messages (message_id, user_id) values (9, 2);
+insert into user_messages (message_id, user_id) values (10, 2);
+
+
+insert into messages (message, `date`, sender_id) values ('mm1', '2019-01-01 12:00:00', 1);
+insert into messages (message, `date`, sender_id) values ('mm2', '2019-01-01 12:00:01', 1);
+insert into messages (message, `date`, sender_id) values ('mm3', '2019-01-01 12:00:02', 1);
+insert into messages (message, `date`, sender_id) values ('mm4', '2019-01-01 12:00:03', 2);
+insert into messages (message, `date`, sender_id) values ('mm5', '2019-01-01 12:00:04', 2);
+insert into messages (message, `date`, sender_id) values ('mm6', '2019-01-01 12:00:05', 2);
+insert into messages (message, `date`, sender_id) values ('mm7', '2019-01-01 12:00:06', 2);
+insert into messages (message, `date`, sender_id) values ('mm8', '2019-01-01 12:00:07', 1);
+insert into messages (message, `date`, sender_id) values ('mm9', '2019-01-01 12:00:08', 1);
+insert into messages (message, `date`, sender_id) values ('mm10', '2019-01-01 12:00:09', 1); -- 20
+
+insert into user_messages (message_id, user_id) values (11, 2);
+insert into user_messages (message_id, user_id) values (12, 2);
+insert into user_messages (message_id, user_id) values (13, 2);
+insert into user_messages (message_id, user_id) values (14, 1);
+insert into user_messages (message_id, user_id) values (15, 1);
+insert into user_messages (message_id, user_id) values (16, 1);
+insert into user_messages (message_id, user_id) values (17, 1);
+insert into user_messages (message_id, user_id) values (18, 2);
+insert into user_messages (message_id, user_id) values (19, 2);
+insert into user_messages (message_id, user_id) values (20, 2);
+
+
+
+-- groups
+insert into groups (name, description) values ('group1', '');
+insert into groups (name, description) values ('group2', '');
+insert into groups (name, description) values ('group3', '');
+
+insert into user_groups (user_id, group_id) values (1, 1);
+insert into user_groups (user_id, group_id) values (2, 1);
+insert into user_groups (user_id, group_id) values (4, 1);
+
+insert into user_groups (user_id, group_id) values (2, 2);
+insert into user_groups (user_id, group_id) values (5, 2);
+insert into user_groups (user_id, group_id) values (6, 2);
+
+insert into user_groups (user_id, group_id) values (4, 3);
+insert into user_groups (user_id, group_id) values (5, 3);
+insert into user_groups (user_id, group_id) values (6, 3);
+
+
+
+-- group messages
+insert into messages (message, `date`, sender_id) values ('gm1', '2019-01-01 12:00:00', 1);
+insert into messages (message, `date`, sender_id) values ('gm2', '2019-01-01 12:00:01', 1);
+insert into messages (message, `date`, sender_id) values ('gm3', '2019-01-01 12:00:02', 2);
+insert into messages (message, `date`, sender_id) values ('gm4', '2019-01-01 12:00:03', 4);
+insert into messages (message, `date`, sender_id) values ('gm5', '2019-01-01 12:00:04', 2);
+insert into messages (message, `date`, sender_id) values ('gm6', '2019-01-01 12:00:05', 2);
+insert into messages (message, `date`, sender_id) values ('gm7', '2019-01-01 12:00:06', 1);
+insert into messages (message, `date`, sender_id) values ('gm8', '2019-01-01 12:00:07', 1);
+insert into messages (message, `date`, sender_id) values ('gm9', '2019-01-01 12:00:08', 2);
+insert into messages (message, `date`, sender_id) values ('gm10', '2019-01-01 12:00:09', 4); -- 30
+
+insert into group_messages (message_id, group_id) values (21, 1);
+insert into group_messages (message_id, group_id) values (22, 1);
+insert into group_messages (message_id, group_id) values (23, 1);
+insert into group_messages (message_id, group_id) values (24, 1);
+insert into group_messages (message_id, group_id) values (25, 1);
+insert into group_messages (message_id, group_id) values (26, 1);
+insert into group_messages (message_id, group_id) values (27, 1);
+insert into group_messages (message_id, group_id) values (28, 1);
+insert into group_messages (message_id, group_id) values (29, 1);
+insert into group_messages (message_id, group_id) values (30, 1);
+
+insert into messages (message, `date`, sender_id) values ('gmm1', '2019-01-01 12:00:00', 2);
+insert into messages (message, `date`, sender_id) values ('gmm2', '2019-01-01 12:00:01', 2);
+insert into messages (message, `date`, sender_id) values ('gmm3', '2019-01-01 12:00:02', 5);
+insert into messages (message, `date`, sender_id) values ('gmm4', '2019-01-01 12:00:03', 6);
+insert into messages (message, `date`, sender_id) values ('gmm5', '2019-01-01 12:00:04', 6);
+insert into messages (message, `date`, sender_id) values ('gmm6', '2019-01-01 12:00:05', 6);
+insert into messages (message, `date`, sender_id) values ('gmm7', '2019-01-01 12:00:06', 5);
+insert into messages (message, `date`, sender_id) values ('gmm8', '2019-01-01 12:00:07', 2);
+insert into messages (message, `date`, sender_id) values ('gmm9', '2019-01-01 12:00:08', 5);
+insert into messages (message, `date`, sender_id) values ('gmm10', '2019-01-01 12:00:09', 2); -- 40
+
+insert into group_messages (message_id, group_id) values (31, 2);
+insert into group_messages (message_id, group_id) values (32, 2);
+insert into group_messages (message_id, group_id) values (33, 2);
+insert into group_messages (message_id, group_id) values (34, 2);
+insert into group_messages (message_id, group_id) values (35, 2);
+insert into group_messages (message_id, group_id) values (36, 2);
+insert into group_messages (message_id, group_id) values (37, 2);
+insert into group_messages (message_id, group_id) values (38, 2);
+insert into group_messages (message_id, group_id) values (39, 2);
+insert into group_messages (message_id, group_id) values (40, 2);

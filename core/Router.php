@@ -727,7 +727,7 @@ class Router {
         // *******************
         // *** USER GROUPS ***
         // *******************
-        // Create user group.
+        // Delete group
         $this->addDELETERoute('/^\/groups\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
             $controller = new Groups();
@@ -749,7 +749,7 @@ class Router {
 
 
 
-        // Remove member from group.
+        // Remove group chat message.
         $this->addDELETERoute('/^\/groups\/\d+\/chat\/\d+?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
             $controller = new Messages();

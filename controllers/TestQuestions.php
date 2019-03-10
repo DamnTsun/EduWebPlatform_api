@@ -194,6 +194,14 @@ class TestQuestions extends Controller {
         $answer =           $json['answer']; // Required.
         $imageUrl =         (isset($json['imageUrl'])) ? $json['imageUrl'] : '';
 
+
+        // validate values
+        $validate = $this->validateValues($question, $answer, $imageUrl);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+
         // Check test exists.
         if (!$this->checkTestExists($subjectid, $topicid, $testid)) {
             $this->printMessage('Specified test does not exists.');
@@ -273,6 +281,14 @@ class TestQuestions extends Controller {
         // Ensure a value is actually being changed. (max is only null if all array items are null)
         if (max( array($question, $answer, $imageUrl) ) == null) {
             $this->printMessage('No fields specified to update.');
+            http_response_code(400); return;
+        }
+
+
+        // validate values
+        $validate = $this->validateValues($question, $answer, $imageUrl);
+        if (isset($validate)) {
+            $this->printMessage($validate);
             http_response_code(400); return;
         }
 
@@ -380,5 +396,28 @@ class TestQuestions extends Controller {
             return null;
         }
         return $object;
+    }
+
+
+
+    /**
+     * Validates values. Returns message if invalid. Returns null if valid.
+     */
+    protected function validateValues($question, $answer, $imageUrl) {
+        // QUESTION
+        if (isset($question)) {
+            if (strlen($question) == 0) { return 'Answer cannot be blank.'; }
+            if (strlen($question) > 255) { return 'Answer cannot be longer than 255 characters.'; }
+        }
+        // ANSWER
+        if (isset($answer)) {
+            if (strlen($answer) == 0) { return 'Answer cannot be blank.'; }
+            if (strlen($answer) > 255) { return 'Answer cannot be longer than 255 characters.'; }
+        }
+        // IMAGEURL
+        if (isset($imageUrl)) {
+            if (strlen($imageUrl) > 255) { return 'Image Url cannot be longer than 255 characters.'; }
+        }
+        return null;
     }
 }
