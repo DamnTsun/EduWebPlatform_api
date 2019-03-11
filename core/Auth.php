@@ -166,7 +166,12 @@ class Auth {
         }
 
         // Attempt to get payload from id_token.
-        $payload = Auth::validateIdToken_Google($_POST[Auth::GOOGLE_TOKEN_NAME]);
+        $payload = null;
+        try {
+            $payload = Auth::validateIdToken_Google($_POST[Auth::GOOGLE_TOKEN_NAME]);
+        } catch (UnexpectedValueException $e) {
+            $payload = null;
+        }
         if (!isset($payload)) {
             http_response_code(400); return '`' . Auth::GOOGLE_TOKEN_NAME . '` is not valid.';
         }
