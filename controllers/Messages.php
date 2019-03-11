@@ -431,7 +431,7 @@ class Messages extends Controller {
         if ($user['privilegeLevel'] != 'Admin') {
             if (!$this->checkUserInGroup($user['id'], $groupid)) {
                 $this->printMessage('Cannot lookup group messages. You are not a member of the group.');
-                http_response_code(400); return;
+                http_response_code(401); return;
             }
         }
 

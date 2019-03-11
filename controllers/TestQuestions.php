@@ -177,16 +177,15 @@ class TestQuestions extends Controller {
 
         // Check JSON sent as POST param.
         if (!isset($_POST['content'])) {
-            http_response_code(400);
             $this->printMessage('`content` parameter not given in POST body.');
-            return;
+            http_response_code(400); return;
         }
 
         // Validate JSON.
         $json = $this->validateJSON($_POST['content']);
         if (!isset($json)) {
             $this->printMessage('`content` parameter is invalid or does not contain required fields.');
-            return;
+            http_response_code(400); return;
         }
 
         // Set values.

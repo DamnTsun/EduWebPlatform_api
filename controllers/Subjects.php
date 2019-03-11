@@ -113,7 +113,7 @@ class Subjects extends Controller {
         $json = $this->validateJSON($_POST['content']);
         if (!isset($json)) {
             $this->printMessage('`content` parameter is invalid or does not contain required fields.');
-            return;
+            http_response_code(400); return;
         }
 
         // Set values.
