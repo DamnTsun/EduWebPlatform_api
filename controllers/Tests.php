@@ -53,6 +53,9 @@ class Tests extends Controller {
      * @param topicid - topic that the test is inside of.
      */
     public function getAllTestsByTopic($subjectid, $topicid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
             http_response_code(404); return;
@@ -64,7 +67,14 @@ class Tests extends Controller {
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getTestsByTopic($subjectid, $topicid, $count, $offset);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden tests.
+            $results = $this->db->getTestsByTopicAdmin($subjectid, $topicid, $count, $offset);
+        } else {
+            // Not admin. Get non-hidden tests.
+            $results = $this->db->getTestsByTopic($subjectid, $topicid, $count, $offset);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -86,8 +96,18 @@ class Tests extends Controller {
      * @param testid - id of test.
      */
     public function getTestByID($subjectid, $topicid, $testid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Attempt query.
-        $results = $this->db->getTestByID($subjectid, $topicid, $testid);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden tests.
+            $results = $this->db->getTestByIDAdmin($subjectid, $topicid, $testid);
+        } else {
+            // Not admin. Get non-hidden tests.
+            $results = $this->db->getTestByID($subjectid, $topicid, $testid);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -121,16 +141,15 @@ class Tests extends Controller {
 
         // Check JSON sent as POST param.
         if (!isset($_POST['content'])) {
-            http_response_code(400);
             $this->printMessage('`content` parameter not given in POST body.');
-            return;
+            http_response_code(400); return;
         }
 
         // Validate JSON.
         $json = $this->validateJSON($_POST['content']);
         if (!isset($json)) {
             $this->printMessage('`content` parameter is invalid or does not contain required fields.');
-            return;
+            http_response_code(400); return;
         }
 
         // Set values.
@@ -139,6 +158,14 @@ class Tests extends Controller {
         $hidden =                       (isset($json['hidden'])) ? $json['hidden'] : false;
         // Convert hidden (bool) to string. (0 / 1).
         $hidden = App::boolToString($hidden);
+
+
+        // validate values.
+        $validate = $this->validateValues($name, $description);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
 
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
@@ -160,7 +187,7 @@ class Tests extends Controller {
         }
 
         // Get newly created test and return it.
-        $record = $this->db->getTestByID($subjectid, $topicid, $results);
+        $record = $this->db->getTestByIDAdmin($subjectid, $topicid, $results);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Test was created, but cannot be retreived.');
             http_response_code(500); return;
@@ -183,7 +210,7 @@ class Tests extends Controller {
         // Check user signed into a session. Require that they be an admin.
         $user = Auth::validateSession(true);
         if (!isset($user)) {
-            //http_response_code(401); return;
+            http_response_code(401); return;
         }
 
         // Check test exists.
@@ -218,8 +245,16 @@ class Tests extends Controller {
         // Convert hidden (bool) to string. (0 / 1).
         if (isset($hidden)) { $hidden = App::boolToString($hidden); }
 
+
+        // validate values.
+        $validate = $this->validateValues($name, $description);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+
         // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($name, $description) ) == null) {
+        if (max( array($name, $description, $hidden) ) == null) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }
@@ -238,7 +273,7 @@ class Tests extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getTestByID($subjectid, $topicid, $testid);
+        $record = $this->db->getTestByIDAdmin($subjectid, $topicid, $testid);
         if (!isset($record)) {
             $this->printJSON('Something went wrong. Test was updated, but cannot be retrieved.');
             http_response_code(500); return;
@@ -336,5 +371,23 @@ class Tests extends Controller {
         }
 
         return $object;
+    }
+
+
+    /**
+     * Validates values. Returns message if invalid. Returns null if valid.
+     */
+    protected function validateValues($name, $description) {
+        // NAME
+        if (isset($name)) {
+            if (strlen($name) == 0) { return 'Name canont be blank.'; }
+            if (strlen($name) > 100) { return 'Name cannot be longer than 100 characters.'; }
+        }
+        // DESCRIPTION
+        if (isset($description)) {
+            if (strlen($description) == 0) { return 'Description cannot be blank.'; }
+            if (strlen($description) > 4096) { return 'Description cannot be longer than 4096 characters.'; }
+        }
+        return null;
     }
 }

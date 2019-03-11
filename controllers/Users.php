@@ -195,8 +195,8 @@ class Users extends Controller {
         }
 
         // Check name is not blank or more than 50 characters.
-        if (strlen($json['name']) > 50 || strlen($json['name']) < 1) {
-            $this->printMessage('Given name is not valid. Name must be between 1 and 50 characters.');
+        if (strlen($json['name']) > 30 || strlen($json['name']) < 1) {
+            $this->printMessage('Given name is not valid. Name must be between 1 and 30 characters.');
             http_response_code(400); return;
         }
 

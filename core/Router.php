@@ -463,21 +463,11 @@ class Router {
                 echo json_encode(array('message' => $error), JSON_HEX_QUOT | JSON_HEX_TAG);
             }
         });
-        // Authenticate with server (LinkedIn) - NOT IMPLEMENTED
 
 
-        // Check authentification status with server (Google)
-        $this->addPOSTRoute('/^\/users\/auth\/google\/validate\/?$/', function($params) {
-            // Check admin if 'checkAdmin' included in GET parameters.
-            $checkAdmin = (isset($_GET['checkAdmin']));
-            $user = Auth::validateSession($checkAdmin);
-            // If user is null (invalid token, user doesn't exist, user banned, user not admin, etc), return 403 - Unauthorized.
-            if (!isset($user)) { http_response_code(401); return; }
-            echo json_encode($user, JSON_HEX_QUOT | JSON_HEX_TAG);
-        });
-        // Check authentification status with server (Facebook) - NOT IMPLEMENTED
-        // Check authentification status with server (LinkedIn) - NOT IMPLEMENTED
 
+
+        
         // Change current users name.
         $this->addPOSTRoute('/^\/users\/me\/name\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
@@ -737,7 +727,7 @@ class Router {
         // *******************
         // *** USER GROUPS ***
         // *******************
-        // Create user group.
+        // Delete group
         $this->addDELETERoute('/^\/groups\/\d+\/?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
             $controller = new Groups();
@@ -759,7 +749,7 @@ class Router {
 
 
 
-        // Remove member from group.
+        // Remove group chat message.
         $this->addDELETERoute('/^\/groups\/\d+\/chat\/\d+?$/', function($params) {
             require_once $_ENV['dir_controllers'] . $_ENV['controllers']['messages'];
             $controller = new Messages();

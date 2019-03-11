@@ -106,14 +106,6 @@ class Auth {
         return $payload;
     }
 
-    /**
-     * Validates given linkedin id_token.
-     * @param id_token - id_token to be validated.
-     */
-    private static function validateIdToken_LinkedIn($id_token) {
-        throw new NotImplementedException();
-    }
-
 
 
 
@@ -131,7 +123,7 @@ class Auth {
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $userController = new Users();
 
-
+        $newUser = false;
         // Check if user exists with given socialMediaID, associated with given socialMediaProvider.
         if (!$userController->checkUserExistsBySocialMediaID($socialMediaID, $socialMediaProviderName)) {
             // Attempt to create user account for user, using google, with normal privilege level.
@@ -139,6 +131,7 @@ class Auth {
             if (!isset($result)) {
                 http_response_code(500); return 'Something went wrong. Unable to create new internal user record.';
             }
+            $newUser = true;
         }
 
         // Get user record using socialMediaID ($payload['sub']) and socialMediaProvider name (google).
@@ -152,9 +145,12 @@ class Auth {
             http_response_code(401); return 'You are banned.';
         }
 
-        // Update user lastSignInDate field.
-        if ($userController->updateUserLastSignInDate($user[0]['id']) == null) {
-            http_response_code(500); return 'Something went wrong. Unable to update your lastSignInDate field.';
+
+        // Update user lastSignInDate field if not new user.
+        if (!$newUser) {
+            if ($userController->updateUserLastSignInDate($user[0]['id']) == null) {
+                http_response_code(500); return 'Something went wrong. Unable to update your lastSignInDate field.';
+            }
         }
 
 
@@ -174,7 +170,12 @@ class Auth {
         }
 
         // Attempt to get payload from id_token.
-        $payload = Auth::validateIdToken_Google($_POST[Auth::GOOGLE_TOKEN_NAME]);
+        $payload = null;
+        try {
+            $payload = Auth::validateIdToken_Google($_POST[Auth::GOOGLE_TOKEN_NAME]);
+        } catch (UnexpectedValueException $e) {
+            $payload = null;
+        }
         if (!isset($payload)) {
             http_response_code(400); return '`' . Auth::GOOGLE_TOKEN_NAME . '` is not valid.';
         }
@@ -202,13 +203,6 @@ class Auth {
         // $payload->data->user_id is user's facebook id.
         // Attempt to initialize session with given social media id of type 'facebook'. Return to return any errors.
         return Auth::initSession($payload->data->user_id, 'facebook');
-    }
-
-    /**
-     * Initiates a new session. Checks and validates a linkedin id_token. (given via POST)
-     */
-    public static function initSession_LinkedIn() {
-        throw new NotImplementedException();
     }
 
 

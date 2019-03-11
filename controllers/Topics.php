@@ -49,6 +49,9 @@ class Topics extends Controller {
      * @param id - id of subject.
      */
     public function getAllTopicsBySubject($id) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Check subject exists.
         if (!$this->checkSubjectExists($id)) {
             http_response_code(404); return;
@@ -60,7 +63,14 @@ class Topics extends Controller {
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getTopicsBySubject($id, $count, $offset);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden topics.
+            $results = $this->db->getTopicsBySubjectAdmin($id, $count, $offset);
+        } else {
+            // Not admin. Get non-hidden topics.
+            $results = $this->db->getTopicsBySubject($id, $count, $offset);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -79,8 +89,18 @@ class Topics extends Controller {
      * @param topicid - id of topic.
      */
     public function getTopicByID($subjectid, $topicid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Attempt query.
-        $results = $this->db->getTopicByID($subjectid, $topicid);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden topics.
+            $results = $this->db->getTopicByIDAdmin($subjectid, $topicid);
+        } else {
+            // Not admin. Get non-hidden topics.
+            $results = $this->db->getTopicByID($subjectid, $topicid);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -131,6 +151,15 @@ class Topics extends Controller {
         // Convert hidden (bool) to string. (0 / 1).
         $hidden = App::boolToString($hidden);
         
+
+        // validate values.
+        $validate = $this->validateValues($name, $description);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+        
+
         // Check subject exists.
         if (!$this->checkSubjectExists($subjectID)) {
             $this->printMessage('Specified subject does not exist.');
@@ -151,7 +180,7 @@ class Topics extends Controller {
         }
 
         // Get newly created resource and return it.
-        $record = $this->db->getTopicByID($subjectID, $result);
+        $record = $this->db->getTopicByIDAdmin($subjectID, $result);
         if (!isset($record)) {
             http_response_code(500);
             $this->printMessage('Something went wrong. Topic was created, but cannot be retrieved.');
@@ -215,6 +244,15 @@ class Topics extends Controller {
             http_response_code(400); return;
         }
 
+
+        // validate values.
+        $validate = $this->validateValues($name, $description);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+
+
         // Check no topic with name and subject id.
         if (isset($name) && $this->db->checkTopicExists($subjectid, $name)) {
             $this->printMessage('Topic with name `' . $name . '` already exists in the specified subject.');
@@ -230,7 +268,7 @@ class Topics extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getTopicByID($subjectid, $topicid);
+        $record = $this->db->getTopicByIDAdmin($subjectid, $topicid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Topic was updated, but cannot be retrieved.');
             http_response_code(500); return;
@@ -326,5 +364,23 @@ class Topics extends Controller {
             return null;
         }
         return $object;
+    }
+
+
+
+    /**
+     * Validates values. Returns message if invalid. Returns null if valid.
+     */
+    protected function validateValues($name, $description) {
+        // NAME
+        if (isset($name)) {
+            if (strlen($name) == 0) { return 'Name cannot be blank.'; }
+            if (strlen($name) > 100) { return 'Name cannot be longer than 100 characters.'; }
+        }
+        // DESCRIPTION
+        if (isset($description)) {
+            if (strlen($description) > 4096) { return 'Description cannot be longer than 4096 characters.'; }
+        }
+        return null;
     }
 }

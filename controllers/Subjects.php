@@ -32,12 +32,22 @@ class Subjects extends Controller {
      * Gets all subjects.
      */
     public function getAllSubjects() {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Get count / offset GET params if given.
         $count = App::getGETParameter('count', 10);
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getAllSubjects($count, $offset);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden/auto-hidden subjects.
+            $results = $this->db->getAllSubjectsAdmin($count, $offset);
+        } else {
+            // Not admin. Get non-hidden subjects.
+            $results = $this->db->getAllSubjects($count, $offset);
+        }
         if (!isset($results)) {
             http_response_code(500); return;
         }
@@ -53,8 +63,18 @@ class Subjects extends Controller {
      * @param id - id of subject.
      */
     public function getSubjectByID($id) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Attempt query.
-        $results = $this->db->getSubjectByID($id);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Get any subject.
+            $results = $this->db->getSubjectByIDAdmin($id);
+        } else {
+            // Not admin. Only get non-hidden subjects.
+            $results = $this->db->getSubjectByID($id);
+        }
         // Check successful.
         if (!isset($results)) {
             http_response_code(400); return;
@@ -93,7 +113,7 @@ class Subjects extends Controller {
         $json = $this->validateJSON($_POST['content']);
         if (!isset($json)) {
             $this->printMessage('`content` parameter is invalid or does not contain required fields.');
-            return;
+            http_response_code(400); return;
         }
 
         // Set values.
@@ -102,6 +122,15 @@ class Subjects extends Controller {
         $hidden =                       (isset($json['hidden'])) ? $json['hidden'] : false;
         // Convert hidden (bool) to string. (0 / 1).
         $hidden = App::boolToString($hidden);
+
+
+        // validate values
+        $validate = $this->validateValues($name, $description);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+
 
         // Check subject with name does not exist.
         if ($this->db->checkSubjectExists($name)) {
@@ -117,7 +146,7 @@ class Subjects extends Controller {
         }
 
         // Get newly create resource and return it.
-        $record = $this->db->getSubjectByID($result);
+        $record = $this->db->getSubjectByIDAdmin($result);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Subject was created, but cannot be retrieved.');
             http_response_code(500); return;
@@ -172,6 +201,15 @@ class Subjects extends Controller {
         // Convert hidden (bool) to string. (0 / 1).
         if (isset($hidden)) { $hidden = App::boolToString($hidden); }
 
+
+        // validate values
+        $validate = $this->validateValues($name, $description);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+
+
         // Ensure a value is actually being changed. (max is only null if all array items are null)
         if (max( array($name, $description, $hidden) ) == null) {
             $this->printMessage('No fields specified to update.');
@@ -193,7 +231,7 @@ class Subjects extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getSubjectByID($subjectid);
+        $record = $this->db->getSubjectByIDAdmin($subjectid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Subject was updated, but cannot be retrieved.');
             http_response_code(500); return;
@@ -286,5 +324,22 @@ class Subjects extends Controller {
         }
 
         return $object;
+    }
+
+
+    /**
+     * Validates values. Returns message if invalid. Returns null if valid.
+     */
+    protected function validateValues($name, $description) {
+        // NAME
+        if (isset($name)) {
+            if (strlen($name) == 0) { return 'Name cannot be blank.'; }
+            if (strlen($name) > 100) { return 'Name cannot be longer than 100 characters.'; }
+        }
+        // DESCRIPTION
+        if (isset($description)) {
+            if (strlen($description) > 4096) { return 'Description cannot be longer than 4096 characters.'; }
+        }
+        return null;
     }
 }

@@ -53,6 +53,9 @@ class Lessons extends Controller {
      * @param topicid - id of topic.
      */
     public function getAllLessonsByTopic($subjectid, $topicid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
             http_response_code(404); return;
@@ -63,10 +66,18 @@ class Lessons extends Controller {
         $offset = App::getGETParameter('offset', 0);
 
         // Attempt query.
-        $results = $this->db->getLessonsByTopic($subjectid, $topicid, $count, $offset);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden lessons.
+            $results = $this->db->getLessonsByTopicAdmin($subjectid, $topicid, $count, $offset);
+        } else {
+            // Not admin. Get non-hidden lessons.
+            $results = $this->db->getLessonsByTopic($subjectid, $topicid, $count, $offset);
+        }
         // Check successful.
         if (!isset($results)) {
-            http_response_code(400); return;
+            var_dump($results);
+            http_response_code(500); return;
         }
 
         // Format and display results.
@@ -82,11 +93,21 @@ class Lessons extends Controller {
      * @param lessonid - id of lesson.
      */
     public function getLessonByID($subjectid, $topicid, $lessonid) {
+        // Attempt to authorize user as admin. Not required.
+        $user = Auth::validateSession(true);
+
         // Attempt query.
-        $results = $this->db->getLessonByID($subjectid, $topicid, $lessonid);
+        $results = null;
+        if (isset($user)) {
+            // Admin. Include hidden lessons.
+            $results = $this->db->getLessonByIDAdmin($subjectid, $topicid, $lessonid);
+        } else {
+            // Not admin. Get non-hidden lessons.
+            $results = $this->db->getLessonByID($subjectid, $topicid, $lessonid);
+        }
         // Check successful.
         if (!isset($results)) {
-            http_response_code(400); return;
+            http_response_code(500); return;
         }
         // Check found.
         if (sizeof($results) == 0) {
@@ -134,6 +155,14 @@ class Lessons extends Controller {
         $hidden =                       (isset($json['hidden'])) ? $json['hidden'] : false;
         // Convert hidden (bool) to string. (0 / 1).
         $hidden = App::boolToString($hidden);
+
+
+        // Validate values.
+        $validate = $this->validateValues($name, $body);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
         
         // Check topic exists.
         if (!$this->checkTopicExists($subjectid, $topicid)) {
@@ -155,7 +184,7 @@ class Lessons extends Controller {
         }
 
         // Get newly created lesson and return it.
-        $record = $this->db->getLessonByID($subjectid, $topicid, $result);
+        $record = $this->db->getLessonByIDAdmin($subjectid, $topicid, $result);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Lesson was created, but cannot be retreived.');
             http_response_code(500); return;
@@ -213,6 +242,15 @@ class Lessons extends Controller {
         // Convert hidden (bool) to string. (0 / 1).
         if (isset($hidden)) { $hidden = App::boolToString($hidden); }
 
+
+        // Validate values.
+        $validate = $this->validateValues($name, $body);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+        
+
         // Ensure a value is actually being changed. (max is only null if all array items are null)
         if (max( array($name, $body, $hidden) ) == null) {
             $this->printMessage('No fields specified to update.');
@@ -234,7 +272,7 @@ class Lessons extends Controller {
         }
 
         // Get updated resource and return it.
-        $record = $this->db->getLessonByID($subjectid, $topicid, $lessonid);
+        $record = $this->db->getLessonByIDAdmin($subjectid, $topicid, $lessonid);
         if (!isset($record)) {
             $this->printMessage('Something went wrong. Lesson was updated, but cannot be retrieved.');
             http_response_code(500); return;
@@ -293,7 +331,7 @@ class Lessons extends Controller {
                 array(
                     'id' => (int)$rec['id'],
                     'name' => $rec['name'],
-                    'body' => addslashes($rec['body']),
+                    'body' => $rec['body'],
                     'hidden' => ($rec['hidden'] == '1')
                 )
             );
@@ -329,5 +367,23 @@ class Lessons extends Controller {
         }
 
         return $object;
+    }
+
+
+    /**
+     * Validates values. Returns message if not valid. Returns null if valid.
+     */
+    protected function validateValues($name, $body) {
+        // NAME
+        if (isset($name)) {
+            if (strlen($name) == 0) { return 'Name cannot be blank.'; }
+            if (strlen($name) > 100) { return 'Name cannot have more than 100 characters.'; }
+        }
+        // BODY
+        if (isset($body)) {
+            if (strlen($body) == 0) { return 'Body cannot be blank.'; }
+            if (strlen($body) > 65535) { return 'Body cannot have more than 65535 characters.'; }
+        }
+        return null;
     }
 }

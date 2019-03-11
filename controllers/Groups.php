@@ -31,7 +31,7 @@ class Groups extends Controller {
      * @param userid - id of user.
      * @param groupdid - id of group.
      */
-    private function checkUserInGroup($userid, $groupid) {
+    public function checkUserInGroup($userid, $groupid) {
         $result = $this->db->checkUserInGroup($userid, $groupid);
         if (!isset($result)) {
             return false;
@@ -180,6 +180,12 @@ class Groups extends Controller {
         $description =          (isset($json['description'])) ? $json['description'] : '';
         $imageUrl =             (isset($json['imageUrl'])) ? $json['imageUrl'] : '';
 
+        // Validate values.
+        $validation = $this->validateValues($name, $description, $imageUrl);
+        if (isset($validation)) {
+            $this->printMessage($validation);
+            http_response_code(400); return;
+        }
         
         // Attempt to create.
         $result = $this->db->createGroup($user['id'], $name, $description, $imageUrl);
@@ -261,6 +267,14 @@ class Groups extends Controller {
             http_response_code(400); return;
         }
 
+        // Validate values.
+        $validation = $this->validateValues($name, $description, $imageUrl);
+        if (isset($validation)) {
+            $this->printMessage($validation);
+            http_response_code(400); return;
+        }
+
+
         // Attempt to update.
         $result = $this->db->modifyGroup($groupid, $name, $description, $imageUrl);
         if (!isset($result)) {
@@ -318,7 +332,6 @@ class Groups extends Controller {
         }
     }
     // **********
-
 
 
 
@@ -485,7 +498,7 @@ class Groups extends Controller {
         // If user is NOT admin, check they are part of the specified group.
         if ($user['privilegeLevel'] != 'Admin') {
             if (!$this->checkUserInGroup($user['id'], $groupid)) {
-                $this->printMessage('Cannot add member to group. You are not a member of the group.');
+                $this->printMessage('Cannot remove member from group. You are not a member of the group.');
                 http_response_code(401); return;
             }
         }
@@ -577,6 +590,29 @@ class Groups extends Controller {
         }
 
         return $object;
+    }
+
+    /**
+     * Validates given values. Returns message if invalid. Returns null if valid.
+     * @param name - name to be validated.
+     * @param description - description to be validated.
+     * @param imageUrl - imageUrl to be validated.
+     */
+    protected function validateValues($name, $description, $imageUrl) {
+        // NAME
+        if (isset($name)) {
+            if (strlen($name) == 0) { return 'Name cannot be blank.'; }
+            if (strlen($name) > 100) { return 'Name cannot be longer than 100 characters.'; }
+        }
+        // DESCRIPTION
+        if (isset($description)) {
+            if (strlen($description) > 4096) { return 'Description cannot be longer than 4096 characters.'; }
+        }
+        // IMAGEURL
+        if (isset($imageUrl)) {
+            if (strlen($imageUrl) > 255) { return 'ImageUrl cannot be longer than 255 characters.'; }
+        }
+        return null;
     }
 }
 

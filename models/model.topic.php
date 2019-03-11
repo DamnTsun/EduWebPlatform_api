@@ -64,12 +64,82 @@ class Model_Topic extends Model {
 
 
     /**
-     * Gets all topics within the given subject.
+     * Gets all topics within the given subject. Does not return topics that are hidden or contain no lessons/tests.
      * @param subjectID - id of subject.
      * @param count - how many records to get. Optional, default 10.
      * @param offset - how many records to skip. Optional, default 0.
      */
     public function getTopicsBySubject($subjectID, $count = 10, $offset = 0) {
+        $this->setPDOPerformanceMode(false);
+        try{
+            return $results = $this->query(
+                "SELECT
+                    topics.id,
+                    topics.name,
+                    topics.description,
+                    topics.hidden,
+                    (
+                        SELECT
+                            COUNT(lessons.id)
+                        FROM
+                            lessons
+                        WHERE
+                            lessons.topic_id = topics.id
+                    ) as 'lessonCount',
+                    (
+                        SELECT
+                            COUNT(tests.id)
+                        FROM
+                            tests
+                        WHERE
+                            tests.topic_id = topics.id
+                    ) as 'testCount'
+                FROM
+                    topics
+                WHERE
+                    -- Topic not hidden
+                    topics.hidden != 1
+                    AND
+                    -- Topic contains at least 1 lesson/test.
+                    (
+                        SELECT COUNT(lessons.id)
+                        FROM lessons
+                        WHERE lessons.topic_id = topics.id
+                    ) + (
+                        SELECT COUNT(tests.id)
+                        FROM tests
+                        WHERE tests.topic_id = topics.id
+                    ) > 0
+
+                    AND
+                    -- Topic in specified subject and subject not hidden.
+                    topics.subject_id = (
+                        SELECT subjects.id
+                        FROM subjects
+                        WHERE subjects.id = :_id AND subjects.hidden != 1
+                    )
+                ORDER BY
+                    topics.name
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_id' => $subjectID,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets all topics within the given subject.
+     * @param subjectID - id of subject.
+     * @param count - how many records to get. Optional, default 10.
+     * @param offset - how many records to skip. Optional, default 0.
+     */
+    public function getTopicsBySubjectAdmin($subjectID, $count = 10, $offset = 0) {
         $this->setPDOPerformanceMode(false);
         try{
             return $results = $this->query(
@@ -115,11 +185,77 @@ class Model_Topic extends Model {
 
 
     /**
-     * Gets topic with the given id and subjectid.
+     * Gets topic with the given id and subjectid. Does not get hidden topics or topic which contain no lessons/tests.
      * @param subjectid - subjectid of topic.
      * @param topicid - id of topic.
      */
     public function getTopicByID($subjectid, $topicid) {
+        try {
+            return $result = $this->query(
+                "SELECT
+                    topics.id,
+                    topics.name,
+                    topics.description,
+                    topics.hidden,
+                    (
+                        SELECT
+                            COUNT(lessons.id)
+                        FROM
+                            lessons
+                        WHERE
+                            lessons.topic_id = topics.id
+                    ) as 'lessonCount',
+                    (
+                        SELECT
+                            COUNT(tests.id)
+                        FROM
+                            tests
+                        WHERE
+                            tests.topic_id = topics.id
+                    ) as 'testCount'
+                FROM
+                    topics
+                WHERE
+                    topics.id = :_topicid
+                    AND
+                    -- Topic not hidden
+                    topics.hidden != 1
+                    AND
+                    -- Topic contains at least 1 lesson/test.
+                    (
+                        SELECT COUNT(lessons.id)
+                        FROM lessons
+                        WHERE lessons.topic_id = topics.id
+                    ) + (
+                        SELECT COUNT(tests.id)
+                        FROM tests
+                        WHERE tests.topic_id = topics.id
+                    ) > 0
+                    
+                    AND
+                    -- Topic in specified subject and subject not hidden.
+                    topics.subject_id = (
+                        SELECT subjects.id
+                        FROM subjects
+                        WHERE subjects.id = :_subjectid AND subjects.hidden != 1
+                    )",
+                array(
+                    ':_topicid' => $topicid,
+                    ':_subjectid' => $subjectid
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets topic with the given id and subjectid.
+     * @param subjectid - subjectid of topic.
+     * @param topicid - id of topic.
+     */
+    public function getTopicByIDAdmin($subjectid, $topicid) {
         try {
             return $result = $this->query(
                 "SELECT

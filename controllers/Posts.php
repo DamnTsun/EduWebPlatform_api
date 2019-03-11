@@ -142,6 +142,14 @@ class Posts extends Controller {
         $title =                $json['title'];
         $body =                 (isset($json['body'])) ? $json['body'] : '';
 
+
+        // Validate values.
+        $validate = $this->validateValues($title, $body);
+        if (isset($validate)) {
+            $this->printMessage($validate);
+            http_response_code(400); return;
+        }
+
         // Check subject exists.
         if (!$this->checkSubjectExists($subjectid)) {
             $this->printMessage('Specified subject does not exists.');
@@ -212,6 +220,13 @@ class Posts extends Controller {
         // Ensure a value is actually being changed. (max is only null if all array items are null)
         if (max( array($title, $body) ) == null) {
             $this->printMessage('No fields specified to update.');
+            http_response_code(400); return;
+        }
+
+        // Validate values.
+        $validate = $this->validateValues($title, $body);
+        if (isset($validate)) {
+            $this->printMessage($validate);
             http_response_code(400); return;
         }
 
@@ -310,5 +325,22 @@ class Posts extends Controller {
             return null;
         }
         return $object;
+    }
+
+
+
+    /**
+     * Validates values. Returns message if invalid. Returns null if valid.
+     */
+    protected function validateValues($title, $body) {
+        // NAME
+        if (isset($title)) {
+            if (strlen($title) == 0) { return 'Title cannot be blank.'; }
+            if (strlen($title) > 1000) { return 'Title cannot be more than 1000 characters long.'; }
+        }
+        // BODY
+        if (isset($body)) {
+            if (strlen($body) > 65535) { return 'Body cannot be more than 65535 characters long.'; }
+        }
     }
 }
