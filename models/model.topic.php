@@ -97,8 +97,6 @@ class Model_Topic extends Model {
                 FROM
                     topics
                 WHERE
-                    topics.subject_id = :_id
-                    AND
                     -- Topic not hidden
                     topics.hidden != 1
                     AND
@@ -112,6 +110,14 @@ class Model_Topic extends Model {
                         FROM tests
                         WHERE tests.topic_id = topics.id
                     ) > 0
+
+                    AND
+                    -- Topic in specified subject and subject not hidden.
+                    topics.subject_id = (
+                        SELECT subjects.id
+                        FROM subjects
+                        WHERE subjects.id = :_id AND subjects.hidden != 1
+                    )
                 ORDER BY
                     topics.name
                 LIMIT :_count OFFSET :_offset",
@@ -212,8 +218,6 @@ class Model_Topic extends Model {
                 WHERE
                     topics.id = :_topicid
                     AND
-                    topics.subject_id = :_subjectid
-                    AND
                     -- Topic not hidden
                     topics.hidden != 1
                     AND
@@ -226,7 +230,15 @@ class Model_Topic extends Model {
                         SELECT COUNT(tests.id)
                         FROM tests
                         WHERE tests.topic_id = topics.id
-                    ) > 0",
+                    ) > 0
+                    
+                    AND
+                    -- Topic in specified subject and subject not hidden.
+                    topics.subject_id = (
+                        SELECT subjects.id
+                        FROM subjects
+                        WHERE subjects.id = :_subjectid AND subjects.hidden != 1
+                    )",
                 array(
                     ':_topicid' => $topicid,
                     ':_subjectid' => $subjectid

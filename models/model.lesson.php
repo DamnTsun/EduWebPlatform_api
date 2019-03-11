@@ -97,9 +97,20 @@ class Model_Lesson extends Model {
                         FROM
                             topics
                         WHERE
+                            -- Has specified topic id
                             topics.id = :_topicid
                             AND
-                            topics.subject_id = :_subjectid
+                            -- Is not hidden
+                            topics.hidden != 1
+
+                            -- Is inside the specified subject.
+                            AND
+                            topics.subject_id = (
+                                SELECT subjects.id
+                                FROM subjects
+                                -- Has specified id and is not hidden.
+                                WHERE subjects.id = :_subjectid AND subjects.hidden != 1
+                            )
                     )
                     AND
                     -- Not hidden.
@@ -186,9 +197,20 @@ class Model_Lesson extends Model {
                         FROM
                             topics
                         WHERE
+                            -- Has specified id
                             topics.id = :_topicid
                             AND
-                            topics.subject_id = :_subjectid
+                            -- Is not hidden
+                            topics.hidden != 1
+
+                            -- Is inside the specified subject.
+                            AND
+                            topics.subject_id = (
+                                SELECT subjects.id
+                                FROM subjects
+                                -- Has specified id and is not hidden.
+                                WHERE subjects.id = :_subjectid AND subjects.hidden != 1
+                            )
                     )
                     AND
                     -- Not hidden.
