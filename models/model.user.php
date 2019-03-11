@@ -149,7 +149,7 @@ class Model_User extends Model {
         try {
             return $this->query(
                 "INSERT INTO
-                    users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id)
+                    users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate)
                 VALUES
                     (
                         DEFAULT,
@@ -169,7 +169,8 @@ class Model_User extends Model {
                                 privilegeLevels
                             WHERE
                                 privilegeLevels.level = :_plname
-                        )
+                        ),
+                        DEFAULT
                     )",
                 array(
                     ':_smid' => $socialMediaID,

@@ -1,25 +1,11 @@
-/*
-TESTED:
-[x] auth system
-
-[x] subjects
-[x] topics
-[x] lessons
-[x] tests
-[x] test questions
-[x] posts
-[x] subject admins
-
-[x] user tests
-[x] user test questions
-
-[] users
-
-[] messages
-[] groups
-*/
-
 use EduWebApp;
+
+
+-- Users for Testing
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the normie', '102562326633765021134', 1, 1); -- Google account, normal.
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the admin', '117929523951432123072', 1, 2); -- Google account, admin.
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the banned', '111865521247464378466', 1, 3); -- Google account, banned.
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Facebook dude', '2246571735353343', 2, 1); -- Facebook account, normal.
 
 -- Subjects
 insert into subjects (name, description, hidden) values ('normal subject 1', '', 0);

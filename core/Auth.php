@@ -123,7 +123,7 @@ class Auth {
         require_once $_ENV['dir_controllers'] . $_ENV['controllers']['users'];
         $userController = new Users();
 
-
+        $newUser = false;
         // Check if user exists with given socialMediaID, associated with given socialMediaProvider.
         if (!$userController->checkUserExistsBySocialMediaID($socialMediaID, $socialMediaProviderName)) {
             // Attempt to create user account for user, using google, with normal privilege level.
@@ -131,6 +131,7 @@ class Auth {
             if (!isset($result)) {
                 http_response_code(500); return 'Something went wrong. Unable to create new internal user record.';
             }
+            $newUser = true;
         }
 
         // Get user record using socialMediaID ($payload['sub']) and socialMediaProvider name (google).
@@ -144,9 +145,12 @@ class Auth {
             http_response_code(401); return 'You are banned.';
         }
 
-        // Update user lastSignInDate field.
-        if ($userController->updateUserLastSignInDate($user[0]['id']) == null) {
-            http_response_code(500); return 'Something went wrong. Unable to update your lastSignInDate field.';
+
+        // Update user lastSignInDate field if not new user.
+        if (!$newUser) {
+            if ($userController->updateUserLastSignInDate($user[0]['id']) == null) {
+                http_response_code(500); return 'Something went wrong. Unable to update your lastSignInDate field.';
+            }
         }
 
 
