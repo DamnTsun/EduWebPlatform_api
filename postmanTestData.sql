@@ -446,9 +446,9 @@ insert into subject_admins (user_id, subject_id) values (13, 2);
 
 
 -- user tests
-insert into user_tests (title, test_id, user_id) values ('test1.1', 1, 2);
-insert into user_tests (title, test_id, user_id) values ('test1.2', 1, 2);
-insert into user_tests (title, test_id, user_id) values ('test1.3', 2, 2);
+insert into user_tests (title, test_id, user_id, `date`) values ('test1.1', 1, 2, '2019-02-10 00:00:00');
+insert into user_tests (title, test_id, user_id, `date`) values ('test1.2', 1, 2, '2019-03-10 00:00:00');
+insert into user_tests (title, test_id, user_id, `date`) values ('test1.3', 2, 2, '2019-03-10 00:00:10');
 
 insert into user_tests (title, test_id, user_id) values ('test2.1', 1, 4);
 insert into user_tests (title, test_id, user_id) values ('test2.2', 2, 4);

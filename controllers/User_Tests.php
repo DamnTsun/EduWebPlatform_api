@@ -69,11 +69,22 @@ class User_Tests extends Controller {
         // Get GET params if given.
         $count = App::getGETParameter('count', 10, true);
         $offset = App::getGETParameter('offset', 0, true);
+        $timespan = App::getGETParameter('timespan', null, false);
+        
 
-
-        // Attempt query.
-        $results = $this->db->getUserUserTestsByTest($user['id'],
-                $subjectid, $topicid, $testid, $count, $offset);
+        // Attempt query (for specified timespan)
+        $results = null;
+        switch ($timespan) {
+            case 'month':
+                $results = $this->db->getUserUserTestsByTest_lastMonth($user['id'],
+                    $subjectid, $topicid, $testid, $count, $offset);
+                break;
+            // Not given or invalid. Get all.
+            default:
+                $results = $this->db->getUserUserTestsByTest($user['id'],
+                    $subjectid, $topicid, $testid, $count, $offset);
+                break;
+        }
         if (!isset($results)) {
             $this->printMessage('Something went wrong. Unable to lookup user_tests for specfied test.');
             http_response_code(500); return;
@@ -82,6 +93,7 @@ class User_Tests extends Controller {
         // Format and output.
         $this->printJSON($this->formatRecords($results));
     }
+
 
     public function getCurrentUserUserTestByID($subjectid, $topicid, $testid, $utestid) {
         // Check user signed in. (Does not need to be admin).
