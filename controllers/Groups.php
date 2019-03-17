@@ -517,8 +517,35 @@ class Groups extends Controller {
             http_response_code(500); return;
         }
     }
-    // **********
-    // todo: addUserToGroup, removeUserFromGroup
+    
+
+
+    /**
+     * Returns the whether current user is a member of the specified group.
+     * Is admin only.
+     * @param groupid - id of group.
+     */
+    public function isCurrentUserInGroup($groupid) {
+        // Check user authorized. Must be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Check group exists.
+        if (!$this->checkGroupExists($groupid)) {
+            http_response_code(404); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->checkUserInGroup($user['id'], $groupid);
+        if (!isset($result)) {
+            $this->printJSON(array('isMember' => false)); return;
+        }
+        $this->printJSON(array('isMember' => $result));
+    }
 
 
 
