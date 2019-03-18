@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "1.0 - authorization",
+			"name": "1.0 - authorization (0)",
 			"item": [
 				{
 					"name": "1.1.1 - authWithGoogle - No Token",
@@ -494,13 +494,305 @@
 					},
 					"response": []
 				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "89b1bc86-7152-46f5-a7b8-a57e5f21580f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "787651cd-ac00-454f-8677-b7f7c9c25371",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
 			]
 		},
 		{
-			"name": "2.0 - General Content",
+			"name": "x - Additional tests added (due to being forgot, etc)",
 			"item": [
 				{
-					"name": "2.1 - Subjects",
+					"name": "4.1.4.1 - Get messages with group 3 (admin, non-member)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.test('Should get 10 messages.', () => {",
+									"    pm.expect(jsonData.length).to.eql(10);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "idtoken",
+								"type": "text",
+								"value": "{{admin_authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/groups/3/chat",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"groups",
+								"3",
+								"chat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.1.6.3 - Send message to group 2 (regular, non-member)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "idtoken",
+								"type": "text",
+								"value": "{{regular_authtoken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "content",
+									"value": "{\"message\":\"hello\"}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/groups/2/chat",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"groups",
+								"2",
+								"chat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.1.6.3 - Send message to group 3 (admin, non-member)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "idtoken",
+								"type": "text",
+								"value": "{{admin_authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "content",
+									"value": "{\"message\":\"hello\"}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/groups/3/chat",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"groups",
+								"3",
+								"chat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.2.2.2 - Get all groups (admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should get 4 groups\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.eql(4);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "idtoken",
+								"value": "{{admin_authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/groups/all",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"groups",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.1.1.2.1 - Get user tests by test (last 30 days)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a79ebdd8-4977-4649-8ba5-a8d8814ec164",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should get 10 item array.\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.eql(10);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "idtoken",
+								"type": "text",
+								"value": "{{admin_authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/subjects/1/topics/1/tests/1/user_tests?timespan=month",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"subjects",
+								"1",
+								"topics",
+								"1",
+								"tests",
+								"1",
+								"user_tests"
+							],
+							"query": [
+								{
+									"key": "timespan",
+									"value": "month"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2.0 - General Content (9)",
+			"item": [
+				{
+					"name": "2.1 - Subjects (37)",
 					"item": [
 						{
 							"name": "2.1.1 - Get subjects (regular)",
@@ -1879,7 +2171,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "2.2 - Topics",
+					"name": "2.2 - Topics (68)",
 					"item": [
 						{
 							"name": "2.2.1 - Get topics (regular)",
@@ -3485,7 +3777,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "2.3 - Lessons",
+					"name": "2.3 - Lessons (100)",
 					"item": [
 						{
 							"name": "2.3.1 - Get lessons (regular)",
@@ -3728,8 +4020,8 @@
 											"});",
 											"",
 											"var jsonData = pm.response.json();",
-											"pm.test(\"2 items should be returned.\", function () {",
-											"    pm.expect(jsonData.length).to.equal(2);",
+											"pm.test(\"3 items should be returned.\", function () {",
+											"    pm.expect(jsonData.length).to.equal(3);",
 											"});"
 										],
 										"type": "text/javascript"
@@ -5196,7 +5488,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "2.4 - Tests",
+					"name": "2.4 - Tests (134)",
 					"item": [
 						{
 							"name": "2.4.1 - Get tests (regular)",
@@ -7018,7 +7310,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "2.5 - Tests Questions",
+					"name": "2.5 - Tests Questions (164)",
 					"item": [
 						{
 							"name": "2.5.1 - Get test questions (regular)",
@@ -8700,7 +8992,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "2.6 - Subject Admins",
+					"name": "2.6 - Subject Admins (178)",
 					"item": [
 						{
 							"name": "2.6.1.1 - Get subject admins (no auth)",
@@ -9323,7 +9615,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "2.7 - Subject Posts",
+					"name": "2.7 - Subject Posts (198)",
 					"item": [
 						{
 							"name": "2.7.1.1 - Get posts by subject (no auth)",
@@ -10335,6 +10627,28 @@
 							"response": []
 						}
 					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9a3d1b9b-2f30-4454-8901-50ac336a45a1",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "2324f534-77c5-4e7e-9ece-99bcae8d5f62",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
 					"_postman_isSubFolder": true
 				}
 			],
@@ -10366,7 +10680,7 @@
 			"name": "4.0 - Messages and Groups",
 			"item": [
 				{
-					"name": "4.1 - Messages",
+					"name": "4.1 - Messages (208)",
 					"item": [
 						{
 							"name": "4.1.1 - Get messages with user 4 (admin)",
@@ -10694,8 +11008,8 @@
 									"script": {
 										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
 										"exec": [
-											"pm.test(\"Status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
 											"});",
 											"",
 											"var jsonData = pm.response.json();",
@@ -10918,7 +11232,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "4.2 - Group Messages",
+					"name": "4.2 - Group Messages (220)",
 					"item": [
 						{
 							"name": "4.2.1 - Get messages with group 1 (member)",
@@ -11071,7 +11385,7 @@
 							"response": []
 						},
 						{
-							"name": "4.1.4 - Get messages with group 2 (non-member)",
+							"name": "4.1.4 - Get messages with group 2 (regular, non-member)",
 							"event": [
 								{
 									"listen": "test",
@@ -11343,8 +11657,8 @@
 									"script": {
 										"id": "6729e5ab-89d6-4738-86bb-3be0509bd019",
 										"exec": [
-											"pm.test(\"Status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
 											"});",
 											"",
 											"pm.test(\"Should get created message in 1 item array\", function () {",
@@ -11641,9 +11955,9 @@
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
-											"pm.test(\"Should get 2 groups\", function () {",
+											"pm.test(\"Should get 3 groups\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.length).to.eql(2);",
+											"    pm.expect(jsonData.length).to.eql(3);",
 											"});"
 										],
 										"type": "text/javascript"
@@ -11698,53 +12012,6 @@
 									{
 										"key": "idtoken",
 										"value": "{{regular_authtoken}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/groups/all",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"groups",
-										"all"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "4.2.2.2 - Get all groups (admin)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "279268e3-93dc-45ec-aa70-294e85dbc18d",
-										"exec": [
-											"pm.test(\"Status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"pm.test(\"Should get 3 groups\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.length).to.eql(3);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "idtoken",
-										"value": "{{admin_authToken}}",
 										"type": "text"
 									}
 								],
@@ -13029,9 +13296,9 @@
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
-											"pm.test(\"Should get 2 item array.\", function () {",
+											"pm.test(\"Should get 10 item array.\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.length).to.eql(2);",
+											"    pm.expect(jsonData.length).to.eql(10);",
 											"});"
 										],
 										"type": "text/javascript"
