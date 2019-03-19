@@ -277,8 +277,10 @@ class TestQuestions extends Controller {
         $question =             (isset($json['question'])) ? $json['question'] : null;
         $answer =               (isset($json['answer'])) ? $json['answer'] : null;
         $imageUrl =             (isset($json['imageUrl'])) ? $json['imageUrl'] : null;
-        // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($question, $answer, $imageUrl) ) == null) {
+        // Ensure a value is actually being changed.
+        if (!isset($question) &&
+            !isset($answer) &&
+            !isset($imageUrl)) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }

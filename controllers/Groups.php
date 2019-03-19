@@ -261,8 +261,10 @@ class Groups extends Controller {
         $description =      (isset($json['description'])) ? $json['description'] : null;
         $imageUrl =           (isset($json['imageUrl'])) ? $json['imageUrl'] : null;
 
-        // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($name, $description, $imageUrl) ) == null) {
+        // Ensure a value is actually being changed.
+        if (!isset($name) &&
+            !isset($description) &&
+            !isset($imageUrl)) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }

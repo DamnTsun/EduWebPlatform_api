@@ -210,8 +210,10 @@ class Subjects extends Controller {
         }
 
 
-        // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($name, $description, $hidden) ) == null) {
+        // Ensure a value is actually being changed.
+        if (!isset($name) &&
+            !isset($description) &&
+            !isset($hidden)) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }

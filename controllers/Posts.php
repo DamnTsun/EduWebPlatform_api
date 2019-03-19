@@ -217,8 +217,9 @@ class Posts extends Controller {
         // Set values.
         $title =                (isset($json['title'])) ? $json['title'] : null;
         $body =                 (isset($json['body'])) ? $json['body'] : null;
-        // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($title, $body) ) == null) {
+        // Ensure a value is actually being changed.
+        if (!isset($title) &&
+            !isset($body)) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }
