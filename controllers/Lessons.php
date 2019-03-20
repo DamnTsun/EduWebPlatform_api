@@ -384,7 +384,7 @@ class Lessons extends Controller {
         // BODY
         if (isset($body)) {
             if (strlen($body) == 0) { return 'Body cannot be blank.'; }
-            if (strlen($body) > 65535) { return 'Body cannot have more than 65535 characters.'; }
+            if (strlen($body) > 16384) { return 'Body cannot have more than 16384 characters.'; }
         }
         return null;
     }
