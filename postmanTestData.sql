@@ -608,113 +608,113 @@ insert into user_tests (title, test_id, user_id, `date`) values ('z_test20', 1, 
 
 
 -- user test questions
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 1);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 1);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 1);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 1);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 1);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 1);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 2);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 2);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 5, 2);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 2);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 2);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 5, 2);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 3);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 3);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 3);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 3);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 3);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 3);
 
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 4);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 4);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 4);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 4);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 4);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 4);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 5);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 5);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 5);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 5);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 5);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 5);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 16, 6);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 17, 6);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 18, 6);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 16, 6);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 17, 6);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 18, 6);
 
     -- user test questions for addition user tests...
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 7);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 7);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 7);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 7);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 8);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 8);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 8);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 8);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 9);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 9);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 9);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 9);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 10);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 10);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 10);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 10);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 11);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 11);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 11);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 11);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 12);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 12);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 12);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 12);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 13);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 13);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 13);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 13);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 14);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 14);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 14);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 14);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 15);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 15);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 15);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 15);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 16);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 16);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 16);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 16);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 16);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 16);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 16);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 16);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 17);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 17);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 17);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 17);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 17);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 17);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 17);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 17);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 18);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 18);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 18);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 18);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 18);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 18);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 18);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 18);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 19);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 19);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 19);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 19);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 19);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 19);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 19);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 19);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 20);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 20);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 20);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 20);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 20);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 20);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 20);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 20);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 21);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 21);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 21);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 21);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 21);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 21);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 21);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 21);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 22);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 22);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 22);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 22);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 22);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 22);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 22);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 22);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 23);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 23);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 23);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 23);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 23);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 23);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 23);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 23);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 24);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 24);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 24);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 24);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 24);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 24);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 24);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 24);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 25);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 25);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 25);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 25);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 25);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 25);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 25);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 25);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 26);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 26);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 26);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 26);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 26);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 26);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 26);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 26);
 
 
 
