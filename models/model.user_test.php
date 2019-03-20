@@ -139,25 +139,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests,
@@ -197,25 +197,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests
@@ -258,25 +258,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests
@@ -319,25 +319,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests
@@ -416,25 +416,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests
@@ -519,25 +519,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests
@@ -683,7 +683,7 @@ class Model_User_Test extends Model {
         try {
             return $this->query(
                 "INSERT INTO
-                    user_testQuestions
+                    user_TestQuestions
                 (
                     user_Test_id, testQuestion_id, userAnswer
                 )
