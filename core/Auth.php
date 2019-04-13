@@ -169,11 +169,16 @@ class Auth {
             http_response_code(400); return '`' . Auth::GOOGLE_TOKEN_NAME . '` not given in POST body.';
         }
 
+
         // Attempt to get payload from id_token.
         $payload = null;
         try {
             $payload = Auth::validateIdToken_Google($_POST[Auth::GOOGLE_TOKEN_NAME]);
         } catch (UnexpectedValueException $e) {
+            // Invalid token given.
+            $payload = null;
+        } catch (LogicException $e) {
+            // '' given. Doesn't get included in UnexpectedValueException for some reason...
             $payload = null;
         }
         if (!isset($payload)) {
