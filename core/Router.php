@@ -879,7 +879,6 @@ class Router {
  * Class for holding route.
  */
 class Route {
-
     private $regex;             // Regular expression for route.
     private $method;            // Method ran when route is matched.
     
