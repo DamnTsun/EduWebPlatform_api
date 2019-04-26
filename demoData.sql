@@ -1,10 +1,41 @@
 use EduWebApp;
 
 -- Test users
+--  real
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the normie', '102562326633765021134', 1, 1); -- Google account, normal.
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the admin', '117929523951432123072', 1, 2); -- Google account, admin.
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Scott, the banned', '111865521247464378466', 1, 3); -- Google account, banned.
 INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('Facebook dude', '2246571735353343', 2, 1); -- Facebook account, normal.
+--  fake
+--    regular
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_01', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_02', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_03', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_04', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_05', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_06', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_07', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_08', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_09', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_10', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_11', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_12', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_13', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_14', 1, 1);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_regular_15', 1, 1);
+--    admin
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_01', 'google_admin_01', 1, 2);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_02', 'google_admin_02', 1, 2);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_03', 'google_admin_03', 1, 2);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_04', 'google_admin_04', 1, 2);
+INSERT INTO users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('test_admin_05', 'google_admin_05', 1, 2);
+--    banned
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_banned_01', 1, 3);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_banned_02', 1, 3);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_banned_03', 1, 3);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_banned_04', 1, 3);
+INSERT INTO users (socialMediaID, socialMediaProvider_id, privilegeLevel_id) VALUES ('google_banned_05', 1, 3);
+
 
 -- Subjects
 INSERT INTO subjects (name, description, hidden) values ('Mathematics', 'Contains topics covering basic mathematics.', 0);
@@ -729,3 +760,111 @@ INSERT INTO user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) value
 INSERT INTO user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('8', 3, 10);
 INSERT INTO user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('11', 4, 10);
 INSERT INTO user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 5, 10);
+
+-- subject news post.
+INSERT INTO posts (title, body, subject_id, user_id, modificationDate) values ('News post 1', '', 1, 2, '2019-03-01 00:01:00');
+INSERT INTO posts (title, body, subject_id, user_id, modificationDate) values ('News post 2', '', 1, 2, '2019-03-01 00:02:00');
+INSERT INTO posts (title, body, subject_id, user_id, modificationDate) values ('New lessons have been released!', 'New lessons have been released covering 2 and 3 digit addition.', 1, 2, '2019-03-01 00:02:00');
+INSERT INTO posts (title, body, subject_id, user_id, modificationDate) values ('New test have been released!', 'New tests have been released covering 2 and 3 digit addition.', 1, 2, '2019-03-01 00:03:00');
+INSERT INTO posts (title, body, subject_id, user_id, modificationDate) values ('News posts can be styled using Markdown and HTML.', '## This is a heading 2.
+
+#### This is a heading 4.
+
+Tables are also supported, although they can be a little awkward to use.
+
+|Col 1 | Col 2 | Col 3|
+|---|---|---|
+|aaaaaaaaaa|aaaaaaaaaa|aaaaaaaaaa|
+|bbb|bbb|bbb|
+
+<center>Text can also be centered using < center > tags!</center>
+
+<div style="color:red">Text can also be styled, such as changing the color to red!</div>
+
+Though it requires using div or p tags with style attributes, e.g. < div style="color:red" > text < /div >
+
+Also, images. Though they cannot have custom sizes.
+
+![Placeholder image](https://placehold.it/256x256)
+
+Images can also be centered using < center > tags.', 1, 2, '2019-03-01 00:05:00');
+
+
+-- User chat messages.
+INSERT INTO messages (message, `date`, sender_id) values ('Do you know the answers to the test?', '2019-04-01 00:00:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Whch test?', '2019-04-01 00:00:50', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('*Which', '2019-04-01 00:00:52', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Addition (3 digit)', '2019-04-01 00:01:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Okay. Which question?', '2019-04-01 00:02:00', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Uh, 123 + 123.', '2019-04-01 00:05:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Really struggling to work out the answer.', '2019-04-01 00:06:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Okay.', '2019-04-01 00:00:00', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('So you can break each number down by size.', '2019-04-01 00:07:00', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('What do you mean?', '2019-04-01 00:40:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Basically break 123 down into 100, 20, 3.', '2019-04-01 00:50:00', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Okay.', '2019-04-01 00:51:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Makes sense.', '2019-04-01 00:52:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Then what?', '2019-04-01 00:53:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Add each of the bits together.', '2019-04-01 00:54:00', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Then add the results together.', '2019-04-01 00:55:00', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('So do 100 + 100, then 20 + 20, then 3 + 3.', '2019-04-01 00:56:00', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Then add the result together.', '2019-04-01 00:57:00', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Okay, thanks.', '2019-04-01 00:58:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('I got it right.', '2019-04-01 00:59:00', 1);
+
+INSERT INTO user_messages (message_id, user_id) values (1, 2);
+INSERT INTO user_messages (message_id, user_id) values (2, 1);
+INSERT INTO user_messages (message_id, user_id) values (3, 1);
+INSERT INTO user_messages (message_id, user_id) values (4, 2);
+INSERT INTO user_messages (message_id, user_id) values (5, 1);
+INSERT INTO user_messages (message_id, user_id) values (6, 2);
+INSERT INTO user_messages (message_id, user_id) values (7, 2);
+INSERT INTO user_messages (message_id, user_id) values (8, 1);
+INSERT INTO user_messages (message_id, user_id) values (9, 1);
+INSERT INTO user_messages (message_id, user_id) values (10, 2);
+INSERT INTO user_messages (message_id, user_id) values (11, 1);
+INSERT INTO user_messages (message_id, user_id) values (12, 2);
+INSERT INTO user_messages (message_id, user_id) values (13, 2);
+INSERT INTO user_messages (message_id, user_id) values (14, 2);
+INSERT INTO user_messages (message_id, user_id) values (15, 1);
+INSERT INTO user_messages (message_id, user_id) values (16, 1);
+INSERT INTO user_messages (message_id, user_id) values (17, 1);
+INSERT INTO user_messages (message_id, user_id) values (18, 1);
+INSERT INTO user_messages (message_id, user_id) values (19, 2);
+INSERT INTO user_messages (message_id, user_id) values (20, 2);
+
+
+-- Groups
+INSERT INTO groups (name, description, imageUrl) values ('Blue Group', 'This is the description for the blue group.
+
+---
+
+The **best** group.', 'https://placehold.it/512');
+INSERT INTO groups (name, description, imageUrl) values ('Red Group', 'This is the description for the red group.
+
+---
+
+The *best* group.', 'https://placehold.it/512');
+INSERT INTO groups (name, description, imageUrl) values ('Yellow Group', 'This is the description for the yellow group.
+
+---
+
+The ~best~ most awesome group...', '');
+INSERT INTO groups (name, description, imageUrl) values ('Gold Group', 'This is the description for the gold group.
+
+---
+
+## G O L D', '');
+INSERT INTO groups (name, description, imageUrl) values ('Yet another Group', 'Just another group...
+
+Turns out the separator line is optional.
+
+## codeblock!!
+```
+function fizzbuzz(n) {
+    return \'No.\';
+}
+```', '');
+
+
+-- Group messages

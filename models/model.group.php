@@ -110,11 +110,7 @@ class Model_Group extends Model {
                     groups.description,
                     groups.imageUrl
                 FROM
-                    user_groups
-                JOIN groups ON
-                    user_groups.group_id = groups.id
-                GROUP BY
-                    user_groups.group_id
+                    groups
                 LIMIT :_count OFFSET :_offset",
                 array(
                     ':_count' => $count,
