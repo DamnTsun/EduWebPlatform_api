@@ -865,6 +865,36 @@ function fizzbuzz(n) {
     return \'No.\';
 }
 ```', '');
+-- Group members
+INSERT INTO user_groups (group_id, user_id) values (1, 1);
+INSERT INTO user_groups (group_id, user_id) values (1, 2);
+INSERT INTO user_groups (group_id, user_id) values (1, 4);
+INSERT INTO user_groups (group_id, user_id) values (1, 5);
+INSERT INTO user_groups (group_id, user_id) values (1, 6);
+
+INSERT INTO user_groups (group_id, user_id) values (2, 1);
+INSERT INTO user_groups (group_id, user_id) values (2, 2);
+INSERT INTO user_groups (group_id, user_id) values (2, 4);
+INSERT INTO user_groups (group_id, user_id) values (2, 5);
+
+INSERT INTO user_groups (group_id, user_id) values (3, 1);
+INSERT INTO user_groups (group_id, user_id) values (3, 2);
+INSERT INTO user_groups (group_id, user_id) values (3, 4);
+INSERT INTO user_groups (group_id, user_id) values (3, 11);
+INSERT INTO user_groups (group_id, user_id) values (3, 26);
+
+INSERT INTO user_groups (group_id, user_id) values (4, 27);
+INSERT INTO user_groups (group_id, user_id) values (4, 1);
+INSERT INTO user_groups (group_id, user_id) values (4, 4);
+INSERT INTO user_groups (group_id, user_id) values (4, 5);
+INSERT INTO user_groups (group_id, user_id) values (4, 17);
+INSERT INTO user_groups (group_id, user_id) values (4, 16);
+INSERT INTO user_groups (group_id, user_id) values (4, 14);
+INSERT INTO user_groups (group_id, user_id) values (4, 18);
+
+INSERT INTO user_groups (group_id, user_id) values (5, 18);
+INSERT INTO user_groups (group_id, user_id) values (5, 1);
+INSERT INTO user_groups (group_id, user_id) values (5, 4);
 
 
 -- Group messages

@@ -268,6 +268,28 @@ CREATE EVENT `delete_old_users`
             `users`.`lastSignInDate` < CURRENT_TIMESTAMP - INTERVAL 180 DAY
 ;
 
+/**
+ * Deletes groups that contain 0 members.
+ */
+CREATE EVENT `delete_empty_groups`
+    ON SCHEDULE
+        EVERY 1 DAY                             -- Every day.
+        STARTS '2019-01-01 00:00:00'            -- At 00:00:00.
+    ON COMPLETION PRESERVE ENABLE               -- Repeat.
+    DO
+        DELETE FROM
+	        groups
+        WHERE
+	        (
+                SELECT
+        	        COUNT(*)                -- Number of user_groups.
+                FROM
+        	        user_groups
+                WHERE
+        	        groups.id = user_groups.group_id    -- With group id.
+            ) = 0                           -- Is 0.
+;
+
 
 /**
  * *** Sorta GDPR RELATED ***
