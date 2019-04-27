@@ -44,6 +44,22 @@ INSERT INTO subjects (name, description, hidden) values ('zPlaceholder02', 'Plac
 INSERT INTO subjects (name, description, hidden) values ('zPlaceholder03', 'Placehold text placehold text placehold text placehold text placehold text placehold text placehold text placehold text placehold text placehold text placehold text ', 0);
 INSERT INTO subjects (name, description, hidden) values ('zPlaceholder04', 'Placehold text placehold text placehold text placehold text placehold text placehold text placehold text placehold text placehold text placehold text placehold text ', 0);
 
+-- Subject admins
+INSERT INTO subject_admins (subject_id, user_id) values (1, 2);
+INSERT INTO subject_admins (subject_id, user_id) values (1, 20);
+INSERT INTO subject_admins (subject_id, user_id) values (1, 21);
+INSERT INTO subject_admins (subject_id, user_id) values (1, 22);
+INSERT INTO subject_admins (subject_id, user_id) values (1, 23);
+
+INSERT INTO subject_admins (subject_id, user_id) values (2, 20);
+INSERT INTO subject_admins (subject_id, user_id) values (2, 21);
+INSERT INTO subject_admins (subject_id, user_id) values (2, 22);
+
+INSERT INTO subject_admins (subject_id, user_id) values (3, 21);
+INSERT INTO subject_admins (subject_id, user_id) values (3, 22);
+INSERT INTO subject_admins (subject_id, user_id) values (2, 23);
+INSERT INTO subject_admins (subject_id, user_id) values (2, 24);
+
 -- Topics
 INSERT INTO topics (name, description, subject_id, hidden) values ('Addition', 'Covers adding numbers together.', 1, 0);
 INSERT INTO topics (name, description, subject_id, hidden) values ('Subtraction', 'Covers reducing one number by another.', 1, 0);
@@ -868,7 +884,7 @@ function fizzbuzz(n) {
 -- Group members
 INSERT INTO user_groups (group_id, user_id) values (1, 1);
 INSERT INTO user_groups (group_id, user_id) values (1, 2);
-INSERT INTO user_groups (group_id, user_id) values (1, 4);
+INSERT INTO user_groups (group_id, user_id) values (1, 20);
 INSERT INTO user_groups (group_id, user_id) values (1, 5);
 INSERT INTO user_groups (group_id, user_id) values (1, 6);
 
@@ -898,3 +914,44 @@ INSERT INTO user_groups (group_id, user_id) values (5, 4);
 
 
 -- Group messages
+INSERT INTO messages (message, `date`, sender_id) values ('Hi guys!', '2019-04-01 00:00:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Hey.', '2019-04-01 00:00:05', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Hi', '2019-04-01 00:00:15', 20);
+INSERT INTO messages (message, `date`, sender_id) values ('Sup', '2019-04-01 00:00:20', 5);
+INSERT INTO messages (message, `date`, sender_id) values ('Hello', '2019-04-01 00:00:21', 6);
+INSERT INTO messages (message, `date`, sender_id) values ('Do you guys know how to add basic numbers.', '2019-04-01 00:01:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('Yes...', '2019-04-01 00:01:10', 20);
+INSERT INTO messages (message, `date`, sender_id) values ('I do', '2019-04-01 00:01:20', 5);
+INSERT INTO messages (message, `date`, sender_id) values ('Yeah. I can explain it if you want.', '2019-04-01 00:01:23', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Please do!', '2019-04-01 00:01:30', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('You take the first number and you add it to the second.', '2019-04-01 00:03:01', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('So for 2 + 2 you get 4.', '2019-04-01 00:03:03', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Ok.', '2019-04-01 00:03:10', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('But how do I add bigger numbers?', '2019-04-01 00:05:01', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('What if they add to over 10?', '2019-04-01 00:05:04', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('If they go over 10 than you add a 1 to front.', '2019-04-01 00:06:00', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('So for 8 + 8 you\' get 16.', '2019-04-01 00:06:17', 2);
+INSERT INTO messages (message, `date`, sender_id) values ('Ahh. I get it.', '2019-04-01 00:15:00', 1);
+INSERT INTO messages (message, `date`, sender_id) values ('You\'re welcome...', '2019-04-01 00:15:09', 5);
+INSERT INTO messages (message, `date`, sender_id) values ('Aha.', '2019-04-01 00:15:11', 20);
+
+INSERT INTO group_messages(group_id, message_id) values (1, 21);
+INSERT INTO group_messages(group_id, message_id) values (1, 22);
+INSERT INTO group_messages(group_id, message_id) values (1, 23);
+INSERT INTO group_messages(group_id, message_id) values (1, 24);
+INSERT INTO group_messages(group_id, message_id) values (1, 25);
+INSERT INTO group_messages(group_id, message_id) values (1, 26);
+INSERT INTO group_messages(group_id, message_id) values (1, 27);
+INSERT INTO group_messages(group_id, message_id) values (1, 28);
+INSERT INTO group_messages(group_id, message_id) values (1, 29);
+INSERT INTO group_messages(group_id, message_id) values (1, 30);
+INSERT INTO group_messages(group_id, message_id) values (1, 31);
+INSERT INTO group_messages(group_id, message_id) values (1, 32);
+INSERT INTO group_messages(group_id, message_id) values (1, 33);
+INSERT INTO group_messages(group_id, message_id) values (1, 34);
+INSERT INTO group_messages(group_id, message_id) values (1, 35);
+INSERT INTO group_messages(group_id, message_id) values (1, 36);
+INSERT INTO group_messages(group_id, message_id) values (1, 37);
+INSERT INTO group_messages(group_id, message_id) values (1, 38);
+INSERT INTO group_messages(group_id, message_id) values (1, 39);
+INSERT INTO group_messages(group_id, message_id) values (1, 40);
