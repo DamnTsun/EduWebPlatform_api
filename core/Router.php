@@ -319,6 +319,13 @@ class Router {
             $controller = new Messages();
             $controller->getGroupChat($params[1]);
         });
+
+        // Gets whether current user is a member of the specified group.
+        $this->addGETRoute('/^\/groups\/\d+\/members\/me\/?$/', function($params) {
+            require_once $_ENV['dir_controllers'] . $_ENV['controllers']['groups'];
+            $controller = new Groups();
+            $controller->isCurrentUserInGroup($params[1]);
+        });
     }
 
 
@@ -872,7 +879,6 @@ class Router {
  * Class for holding route.
  */
 class Route {
-
     private $regex;             // Regular expression for route.
     private $method;            // Method ran when route is matched.
     

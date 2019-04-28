@@ -15,6 +15,27 @@ insert into subjects (name, description, hidden) values ('normal subject 3', '',
 insert into subjects (name, description, hidden) values ('hidden subject', '', 1); -- 4
 insert into subjects (name, description, hidden) values ('auto-hidden subject', '', 0); -- 5
 insert into subjects (name, description, hidden) values ('delete subject', '', 0); -- 6
+    -- subject to test frontend loading of additional subjects.
+insert into subjects (name, description, hidden) values ('z_subject01', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject02', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject03', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject04', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject05', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject06', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject07', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject08', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject09', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject10', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject11', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject12', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject13', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject14', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject15', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject16', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject17', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject18', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject19', '', 0);
+insert into subjects (name, description, hidden) values ('z_subject20', '', 0);
 
 
 
@@ -34,6 +55,27 @@ insert into topics (name, description, subject_id, hidden) values ('hidden subje
 insert into topics (name, description, subject_id, hidden) values ('hidden topic', '', 1, 1); -- 11
 insert into topics (name, description, subject_id, hidden) values ('auto-hidden topic', '', 1, 0); -- 12
 insert into topics (name, description, subject_id, hidden) values ('delete topic', '', 1, 0); -- 13
+    -- subject to test frontend loading of additional topics.
+insert into topics (name, description, subject_id, hidden) values ('z_topic01', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic02', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic03', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic04', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic05', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic06', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic07', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic08', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic09', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic10', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic11', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic12', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic13', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic14', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic15', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic16', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic17', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic18', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic19', '', 1, 0);
+insert into topics (name, description, subject_id, hidden) values ('z_topic20', '', 1, 0);
 
 
 
@@ -71,6 +113,27 @@ insert into lessons (name, body, topic_id, hidden) values ('hidden topic lesson'
 
 insert into lessons (name, body, topic_id, hidden) values ('hidden lesson', '', 1, 1); -- 30
 insert into lessons (name, body, topic_id, hidden) values ('delete lesson', '', 1, 1); -- 31
+    -- subject to test frontend loading of additional lessons.
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson01', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson02', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson03', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson04', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson05', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson06', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson07', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson08', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson09', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson10', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson11', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson12', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson13', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson14', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson15', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson16', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson17', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson18', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson19', '', 1, 0);
+insert into lessons (name, body, topic_id, hidden) values ('z_lesson20', '', 1, 0);
 
 
 
@@ -109,6 +172,27 @@ insert into tests (name, description, topic_id, hidden) values ('hidden topic te
 insert into tests (name, description, topic_id, hidden) values ('hidden test', '', 1, 1); -- 30
 insert into tests (name, description, topic_id, hidden) values ('auto-hidden test', '', 1,0); -- 31
 insert into tests (name, description, topic_id, hidden) values ('delete test', '', 1, 0); -- 32
+    -- subject to test frontend loading of additional lessons.
+insert into tests (name, description, topic_id, hidden) values ('z_test01', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test02', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test03', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test04', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test05', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test06', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test07', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test08', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test09', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test10', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test11', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test12', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test13', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test14', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test15', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test16', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test17', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test18', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test19', '', 1, 0);
+insert into tests (name, description, topic_id, hidden) values ('z_test20', '', 1, 0);
 
 
 
@@ -421,6 +505,30 @@ insert into posts (title, body, subject_id, user_id) values ('post1.3', '', 1, 2
 insert into posts (title, body, subject_id, user_id) values ('post2.1', '', 2, 2);
 insert into posts (title, body, subject_id, user_id) values ('post2.2', '', 2, 2);
 insert into posts (title, body, subject_id, user_id) values ('post2.3', '', 2, 2);
+    -- subject to test frontend loading of additional lessons.
+insert into posts (title, body, subject_id, user_id) values ('z_post01', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post02', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post03', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post04', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post05', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post06', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post07', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post08', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post09', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post10', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post11', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post12', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post13', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post14', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post15', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post16', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post17', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post18', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post19', '', 1, 2);
+insert into posts (title, body, subject_id, user_id) values ('z_post20', '', 1, 2);
+
+
+
 
 -- Test users and subject admins
 insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_user1', 'test1', 1, 1, CURRENT_TIMESTAMP);
@@ -434,6 +542,27 @@ insert into users (displayName, socialMediaID, socialMediaProvider_id, privilege
 insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_admin', 'test3a', 1, 2, CURRENT_TIMESTAMP);
 insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_admin', 'test4a', 1, 2, CURRENT_TIMESTAMP);
 insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('test_admin', 'test5a', 1, 2, CURRENT_TIMESTAMP);
+    -- Addition users for testing frontend getting additional users.
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user01', 'test__01', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user02', 'test__02', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user03', 'test__03', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user04', 'test__04', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user05', 'test__05', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user06', 'test__06', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user07', 'test__07', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user08', 'test__08', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user09', 'test__09', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user10', 'test__10', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user11', 'test__11', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user12', 'test__12', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user13', 'test__13', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user14', 'test__14', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user15', 'test__15', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user16', 'test__16', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user17', 'test__17', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user18', 'test__18', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user19', 'test__19', 1, 1, CURRENT_TIMESTAMP);
+insert into users (displayName, socialMediaID, socialMediaProvider_id, privilegeLevel_id, lastSignInDate) values ('z_user20', 'test__20', 1, 1, CURRENT_TIMESTAMP);
 
 insert into subject_admins (user_id, subject_id) values (12, 1);
 insert into subject_admins (user_id, subject_id) values (10, 1);
@@ -446,39 +575,148 @@ insert into subject_admins (user_id, subject_id) values (13, 2);
 
 
 -- user tests
-insert into user_tests (title, test_id, user_id) values ('test1.1', 1, 2);
-insert into user_tests (title, test_id, user_id) values ('test1.2', 1, 2);
-insert into user_tests (title, test_id, user_id) values ('test1.3', 2, 2);
+insert into user_tests (title, test_id, user_id, `date`) values ('test1.1', 1, 2, '2019-02-10 00:00:00');
+insert into user_tests (title, test_id, user_id, `date`) values ('test1.2', 1, 2, '2019-03-10 00:00:00');
+insert into user_tests (title, test_id, user_id, `date`) values ('test1.3', 2, 2, '2019-03-10 00:00:10');
 
 insert into user_tests (title, test_id, user_id) values ('test2.1', 1, 4);
 insert into user_tests (title, test_id, user_id) values ('test2.2', 2, 4);
 insert into user_tests (title, test_id, user_id) values ('test2.3', 2, 4);
 
+    -- additional tests for frontend getting additional
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test01', 1, 2, '2019-03-10 00:00:01');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test02', 1, 2, '2019-03-10 00:00:02');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test03', 1, 2, '2019-03-10 00:00:03');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test04', 1, 2, '2019-03-10 00:00:04');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test05', 1, 2, '2019-03-10 00:00:05');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test06', 1, 2, '2019-03-10 00:00:06');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test07', 1, 2, '2019-03-10 00:00:07');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test08', 1, 2, '2019-03-10 00:00:08');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test09', 1, 2, '2019-03-10 00:00:09');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test10', 1, 2, '2019-03-10 00:00:10');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test11', 1, 2, '2019-03-10 00:00:11');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test12', 1, 2, '2019-03-10 00:00:12');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test13', 1, 2, '2019-03-10 00:00:13');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test14', 1, 2, '2019-03-10 00:00:14');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test15', 1, 2, '2019-03-10 00:00:15');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test16', 1, 2, '2019-03-10 00:00:16');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test17', 1, 2, '2019-03-10 00:00:17');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test18', 1, 2, '2019-03-10 00:00:18');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test19', 1, 2, '2019-03-10 00:00:19');
+insert into user_tests (title, test_id, user_id, `date`) values ('z_test20', 1, 2, '2019-03-10 00:00:20');
+
+
+
 -- user test questions
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 1);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 1);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 1);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 1);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 1);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 1);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 2);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 2);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 5, 2);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 2);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 2);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 5, 2);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 3);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 3);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 3);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 3);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 3);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 3);
 
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 4);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 4);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 4);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 4);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 4);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 4);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 5);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 5);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 5);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 11, 5);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 12, 5);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 13, 5);
 
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 16, 6);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 17, 6);
-insert into user_testQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 18, 6);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 16, 6);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 17, 6);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 18, 6);
+
+    -- user test questions for addition user tests...
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 7);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 7);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 8);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 8);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 9);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 9);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 10);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 10);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 11);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 11);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 12);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 12);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 13);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 13);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 14);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 14);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 15);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 15);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 16);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 16);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 16);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 16);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 17);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 17);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 17);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 17);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 18);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 18);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 18);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 18);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 19);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 19);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 19);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 19);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 20);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 20);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 20);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 20);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 21);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 21);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 21);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 4, 21);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 22);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 22);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 22);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 22);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 23);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('2', 2, 23);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 23);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 23);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 24);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 24);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 24);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 24);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 1, 25);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 25);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('3', 3, 25);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 25);
+
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('1', 1, 26);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 2, 26);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('a', 3, 26);
+insert into user_TestQuestions (userAnswer, testQuestion_id, user_Test_id) values ('4', 4, 26);
+
+
 
 
 
@@ -530,10 +768,34 @@ insert into user_messages (message_id, user_id) values (20, 2);
 
 
 
+
 -- groups
 insert into groups (name, description) values ('group1', '');
 insert into groups (name, description) values ('group2', '');
 insert into groups (name, description) values ('group3', '');
+    -- empty groups for frontend testing purposes. (loading additional for list)
+insert into groups (name, description) values ('z_group01', '');
+insert into groups (name, description) values ('z_group02', '');
+insert into groups (name, description) values ('z_group03', '');
+insert into groups (name, description) values ('z_group04', '');
+insert into groups (name, description) values ('z_group05', '');
+insert into groups (name, description) values ('z_group06', '');
+insert into groups (name, description) values ('z_group07', '');
+insert into groups (name, description) values ('z_group08', '');
+insert into groups (name, description) values ('z_group09', '');
+insert into groups (name, description) values ('z_group10', '');
+insert into groups (name, description) values ('z_group11', '');
+insert into groups (name, description) values ('z_group12', '');
+insert into groups (name, description) values ('z_group13', '');
+insert into groups (name, description) values ('z_group14', '');
+insert into groups (name, description) values ('z_group15', '');
+insert into groups (name, description) values ('z_group16', '');
+insert into groups (name, description) values ('z_group17', '');
+insert into groups (name, description) values ('z_group18', '');
+insert into groups (name, description) values ('z_group19', '');
+insert into groups (name, description) values ('z_group20', '');
+
+
 
 insert into user_groups (user_id, group_id) values (1, 1);
 insert into user_groups (user_id, group_id) values (2, 1);
@@ -546,6 +808,9 @@ insert into user_groups (user_id, group_id) values (6, 2);
 insert into user_groups (user_id, group_id) values (4, 3);
 insert into user_groups (user_id, group_id) values (5, 3);
 insert into user_groups (user_id, group_id) values (6, 3);
+    -- Add users 2 and 8 to group 4 for testing purposes.
+insert into user_groups (user_id, group_id) values (2, 4);
+insert into user_groups (user_id, group_id) values (8, 4);
 
 
 
@@ -593,3 +858,134 @@ insert into group_messages (message_id, group_id) values (37, 2);
 insert into group_messages (message_id, group_id) values (38, 2);
 insert into group_messages (message_id, group_id) values (39, 2);
 insert into group_messages (message_id, group_id) values (40, 2);
+
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:00', 4);
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:01', 4);
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:02', 5);
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:03', 5);
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:04', 6);
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:05', 4);
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:06', 4);
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:07', 6);
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:08', 5);
+insert into messages (message, `date`, sender_id) values ('gmmm1', '2019-01-01 12:00:10', 5); -- 50
+
+insert into group_messages (message_id, group_id) values (41, 3);
+insert into group_messages (message_id, group_id) values (42, 3);
+insert into group_messages (message_id, group_id) values (43, 3);
+insert into group_messages (message_id, group_id) values (44, 3);
+insert into group_messages (message_id, group_id) values (45, 3);
+insert into group_messages (message_id, group_id) values (46, 3);
+insert into group_messages (message_id, group_id) values (47, 3);
+insert into group_messages (message_id, group_id) values (48, 3);
+insert into group_messages (message_id, group_id) values (49, 3);
+insert into group_messages (message_id, group_id) values (50, 3);
+
+
+
+    -- Additional messages for frontend testing.
+-- between user 2 and 7
+insert into messages (message, `date`, sender_id) values ('test_msg_01', '2019-01-01 12:00:00', 2); -- 51
+insert into messages (message, `date`, sender_id) values ('test_msg_02', '2019-01-01 12:00:01', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_03', '2019-01-01 12:00:02', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_04', '2019-01-01 12:00:03', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_05', '2019-01-01 12:00:04', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_06', '2019-01-01 12:00:05', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_07', '2019-01-01 12:00:06', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_08', '2019-01-01 12:00:07', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_09', '2019-01-01 12:00:08', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_10', '2019-01-01 12:00:09', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_11', '2019-01-01 12:00:10', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_12', '2019-01-01 12:00:11', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_13', '2019-01-01 12:00:12', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_14', '2019-01-01 12:00:13', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_15', '2019-01-01 12:00:14', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_16', '2019-01-01 12:00:15', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_17', '2019-01-01 12:00:16', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_18', '2019-01-01 12:00:17', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_19', '2019-01-01 12:00:18', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_20', '2019-01-01 12:00:19', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_21', '2019-01-01 12:00:20', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_22', '2019-01-01 12:00:21', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_23', '2019-01-01 12:00:22', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_24', '2019-01-01 12:00:23', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_25', '2019-01-01 12:00:24', 8); -- 75
+
+insert into user_messages (message_id, user_id) values (51, 8);
+insert into user_messages (message_id, user_id) values (52, 8);
+insert into user_messages (message_id, user_id) values (53, 2);
+insert into user_messages (message_id, user_id) values (54, 2);
+insert into user_messages (message_id, user_id) values (55, 2);
+insert into user_messages (message_id, user_id) values (56, 2);
+insert into user_messages (message_id, user_id) values (57, 2);
+insert into user_messages (message_id, user_id) values (58, 2);
+insert into user_messages (message_id, user_id) values (59, 2);
+insert into user_messages (message_id, user_id) values (60, 8);
+insert into user_messages (message_id, user_id) values (61, 2);
+insert into user_messages (message_id, user_id) values (62, 2);
+insert into user_messages (message_id, user_id) values (63, 8);
+insert into user_messages (message_id, user_id) values (64, 8);
+insert into user_messages (message_id, user_id) values (65, 8);
+insert into user_messages (message_id, user_id) values (66, 8);
+insert into user_messages (message_id, user_id) values (67, 2);
+insert into user_messages (message_id, user_id) values (68, 8);
+insert into user_messages (message_id, user_id) values (69, 2);
+insert into user_messages (message_id, user_id) values (70, 8);
+insert into user_messages (message_id, user_id) values (71, 8);
+insert into user_messages (message_id, user_id) values (72, 2);
+insert into user_messages (message_id, user_id) values (73, 8);
+insert into user_messages (message_id, user_id) values (74, 2);
+insert into user_messages (message_id, user_id) values (75, 2);
+
+-- between group 4 (2, 8)
+insert into messages (message, `date`, sender_id) values ('test_msg_100', '2019-01-01 12:00:00', 2); -- 76
+insert into messages (message, `date`, sender_id) values ('test_msg_101', '2019-01-01 12:00:01', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_102', '2019-01-01 12:00:02', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_103', '2019-01-01 12:00:03', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_104', '2019-01-01 12:00:04', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_105', '2019-01-01 12:00:05', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_106', '2019-01-01 12:00:06', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_107', '2019-01-01 12:00:07', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_108', '2019-01-01 12:00:08', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_109', '2019-01-01 12:00:09', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_110', '2019-01-01 12:00:10', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_111', '2019-01-01 12:00:11', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_112', '2019-01-01 12:00:12', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_113', '2019-01-01 12:00:13', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_114', '2019-01-01 12:00:14', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_115', '2019-01-01 12:00:15', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_116', '2019-01-01 12:00:16', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_117', '2019-01-01 12:00:17', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_118', '2019-01-01 12:00:18', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_119', '2019-01-01 12:00:19', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_120', '2019-01-01 12:00:20', 8);
+insert into messages (message, `date`, sender_id) values ('test_msg_121', '2019-01-01 12:00:21', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_122', '2019-01-01 12:00:22', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_123', '2019-01-01 12:00:23', 2);
+insert into messages (message, `date`, sender_id) values ('test_msg_124', '2019-01-01 12:00:24', 8); -- 100
+
+insert into group_messages (message_id, group_id) values (76, 4);
+insert into group_messages (message_id, group_id) values (77, 4);
+insert into group_messages (message_id, group_id) values (78, 4);
+insert into group_messages (message_id, group_id) values (79, 4);
+insert into group_messages (message_id, group_id) values (80, 4);
+insert into group_messages (message_id, group_id) values (81, 4);
+insert into group_messages (message_id, group_id) values (82, 4);
+insert into group_messages (message_id, group_id) values (83, 4);
+insert into group_messages (message_id, group_id) values (84, 4);
+insert into group_messages (message_id, group_id) values (85, 4);
+insert into group_messages (message_id, group_id) values (86, 4);
+insert into group_messages (message_id, group_id) values (87, 4);
+insert into group_messages (message_id, group_id) values (88, 4);
+insert into group_messages (message_id, group_id) values (89, 4);
+insert into group_messages (message_id, group_id) values (90, 4);
+insert into group_messages (message_id, group_id) values (91, 4);
+insert into group_messages (message_id, group_id) values (92, 4);
+insert into group_messages (message_id, group_id) values (93, 4);
+insert into group_messages (message_id, group_id) values (94, 4);
+insert into group_messages (message_id, group_id) values (95, 4);
+insert into group_messages (message_id, group_id) values (96, 4);
+insert into group_messages (message_id, group_id) values (97, 4);
+insert into group_messages (message_id, group_id) values (98, 4);
+insert into group_messages (message_id, group_id) values (99, 4);
+insert into group_messages (message_id, group_id) values (100, 4);

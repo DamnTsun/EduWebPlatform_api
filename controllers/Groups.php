@@ -261,8 +261,10 @@ class Groups extends Controller {
         $description =      (isset($json['description'])) ? $json['description'] : null;
         $imageUrl =           (isset($json['imageUrl'])) ? $json['imageUrl'] : null;
 
-        // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($name, $description, $imageUrl) ) == null) {
+        // Ensure a value is actually being changed.
+        if (!isset($name) &&
+            !isset($description) &&
+            !isset($imageUrl)) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }
@@ -517,8 +519,35 @@ class Groups extends Controller {
             http_response_code(500); return;
         }
     }
-    // **********
-    // todo: addUserToGroup, removeUserFromGroup
+    
+
+
+    /**
+     * Returns the whether current user is a member of the specified group.
+     * Is admin only.
+     * @param groupid - id of group.
+     */
+    public function isCurrentUserInGroup($groupid) {
+        // Check user authorized. Must be an admin.
+        $user = Auth::validateSession(true);
+        if (!isset($user)) {
+            http_response_code(401); return;
+        }
+
+
+        // Check group exists.
+        if (!$this->checkGroupExists($groupid)) {
+            http_response_code(404); return;
+        }
+
+
+        // Attempt query.
+        $result = $this->db->checkUserInGroup($user['id'], $groupid);
+        if (!isset($result)) {
+            $this->printJSON(array('isMember' => false)); return;
+        }
+        $this->printJSON(array('isMember' => $result));
+    }
 
 
 

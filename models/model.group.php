@@ -110,11 +110,7 @@ class Model_Group extends Model {
                     groups.description,
                     groups.imageUrl
                 FROM
-                    user_groups
-                JOIN groups ON
-                    user_groups.group_id = groups.id
-                GROUP BY
-                    user_groups.group_id
+                    groups
                 LIMIT :_count OFFSET :_offset",
                 array(
                     ':_count' => $count,
@@ -312,6 +308,8 @@ class Model_Group extends Model {
                     user_groups.user_id = users.id
                 WHERE
                     user_groups.group_id = :_groupid
+                    AND
+                    users.privilegeLevel_id != 3     -- User not banned.
                 LIMIT :_count OFFSET :_offset",
                 array(
                     ':_groupid' => $groupid,
@@ -353,6 +351,8 @@ class Model_Group extends Model {
                             AND
                             user_groups.user_id = users.id
                     ) = 0
+                    AND
+                        users.privilegeLevel_id != 3 -- User not banned.
                 LIMIT :_count OFFSET :_offset",
                 array(
                     ':_groupid' => $groupid,

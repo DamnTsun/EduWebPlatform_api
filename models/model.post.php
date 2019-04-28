@@ -54,6 +54,7 @@ class Model_Post extends Model {
                     posts
                 WHERE
                     posts.subject_id = :_subjectid
+                ORDER BY posts.modificationDate DESC
                 LIMIT :_count OFFSET :_offset",
                 array(
                     ':_subjectid' => $subjectid,

@@ -17,15 +17,15 @@ class Model_User_Test_Question extends Model {
             return $this->query(
                 "SELECT
                     testQuestions.question,
-                    user_testQuestions.userAnswer,
+                    user_TestQuestions.userAnswer,
                     testQuestions.answer AS 'correctAnswer'
                 FROM
-                    user_testQuestions
+                    user_TestQuestions
                 JOIN testQuestions ON
-                    testQuestions.id = user_testQuestions.testQuestion_id
+                    testQuestions.id = user_TestQuestions.testQuestion_id
                 WHERE
                     -- Require association with specified user_test
-                    user_testQuestions.user_Test_id = (
+                    user_TestQuestions.user_Test_id = (
                         SELECT
                             user_tests.id
                         FROM

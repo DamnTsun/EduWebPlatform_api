@@ -251,8 +251,10 @@ class Lessons extends Controller {
         }
         
 
-        // Ensure a value is actually being changed. (max is only null if all array items are null)
-        if (max( array($name, $body, $hidden) ) == null) {
+        // Ensure a value is actually being changed.
+        if (!isset($name) &&
+            !isset($body) &&
+            !isset($hidden)) {
             $this->printMessage('No fields specified to update.');
             http_response_code(400); return;
         }
@@ -382,7 +384,7 @@ class Lessons extends Controller {
         // BODY
         if (isset($body)) {
             if (strlen($body) == 0) { return 'Body cannot be blank.'; }
-            if (strlen($body) > 65535) { return 'Body cannot have more than 65535 characters.'; }
+            if (strlen($body) > 16384) { return 'Body cannot have more than 16384 characters.'; }
         }
         return null;
     }

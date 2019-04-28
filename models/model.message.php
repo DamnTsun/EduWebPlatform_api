@@ -501,7 +501,8 @@ class Model_Message extends Model {
                     messages.message,
                     messages.date,
                     messages.sender_id,
-                    users.displayName AS 'sender_displayname'
+                    users.displayName AS 'sender_displayname',
+                    users.privilegeLevel_id AS 'sender_isAdmin'
                 FROM
                     group_messages
                 JOIN messages ON
@@ -538,7 +539,8 @@ class Model_Message extends Model {
                     messages.message,
                     messages.date,
                     messages.sender_id,
-                    users.displayName AS 'sender_displayname'
+                    users.displayName AS 'sender_displayname',
+                    users.privilegeLevel_id AS 'sender_isAdmin'
                 FROM
                     group_messages
                 JOIN messages ON
@@ -579,7 +581,8 @@ class Model_Message extends Model {
                     messages.message,
                     messages.date,
                     messages.sender_id,
-                    users.displayName AS 'sender_displayname'
+                    users.displayName AS 'sender_displayname',
+                    users.privilegeLevel_id AS 'sender_isAdmin'
                 FROM
                     group_messages
                 JOIN messages ON

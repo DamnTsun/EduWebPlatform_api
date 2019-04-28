@@ -139,25 +139,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests,
@@ -197,25 +197,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests
@@ -239,6 +239,9 @@ class Model_User_Test extends Model {
     }
 
 
+
+
+
     /**
      * Gets user_test record (by id) associated with given user (by id).
      * @param userid - id of user.
@@ -255,25 +258,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests
@@ -316,25 +319,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests
@@ -393,6 +396,107 @@ class Model_User_Test extends Model {
     }
 
 
+    /**
+     * Gets user tests associated with given user (by id) and test (by id), within the last 30 days.
+     * @param userid - id of user.
+     * @param subjectid - id of subject test is in (via topic)
+     * @param topicid - id of topic test is in.
+     * @param testid - id of test.
+     * @param count - number of records to get.
+     * @param offset - number of records to skip.
+     */
+    public function getUserUserTestsByTest_lastMonth($userid, $subjectid, $topicid, $testid, $count, $offset) {
+        $this->setPDOPerformanceMode(false);
+        try {
+            return $this->query(
+                "SELECT
+                    user_tests.id AS 'User_Test id',
+                    user_tests.title,
+                    user_tests.date,
+                    tests.id AS 'Test id',
+                    (
+                        SELECT
+                            COUNT(user_TestQuestions.id)
+                        FROM
+                            user_TestQuestions
+                        WHERE
+                            user_TestQuestions.user_Test_id = user_tests.id
+                    ) AS 'QuestionCount',
+                    (
+                        SELECT
+                            COUNT(user_TestQuestions.id)
+                        FROM
+                            user_TestQuestions
+                        JOIN
+                            testQuestions
+                        ON
+                            user_TestQuestions.testQuestion_id = testQuestions.id
+                        WHERE
+                            user_TestQuestions.user_Test_id = user_tests.id
+                            AND
+                            user_TestQuestions.userAnswer = testQuestions.answer
+                    ) AS 'Score'
+                FROM
+                    user_tests
+                JOIN tests ON
+                    user_tests.test_id = tests.id
+                WHERE
+                    -- For current user.
+                    user_tests.user_id = :_userid
+                    AND
+
+                    -- For specified test (check it is valid)
+                    user_tests.test_id = (
+                        SELECT
+                            tests.id
+                        FROM
+                            tests
+                        WHERE
+                            tests.id = :_testid
+                            AND
+                            -- Check test inside topic.
+                            tests.topic_id = (
+                                SELECT
+                                    topics.id
+                                FROM
+                                    topics
+                                WHERE
+                                    topics.id = :_topicid
+                                    AND
+                                    -- Check topic inside subject.
+                                    topics.subject_id = (
+                                        SELECT
+                                            subjects.id
+                                        FROM
+                                            subjects
+                                        WHERE
+                                            subjects.id = :_subjectid
+                                    )
+                            )
+                    )
+
+                    -- Completed within last 30 days.
+                    AND
+                    user_tests.date >= CURRENT_TIMESTAMP - INTERVAL 30 DAY
+                ORDER BY
+                    user_tests.date DESC
+                LIMIT :_count OFFSET :_offset",
+                array(
+                    ':_userid' => $userid,
+                    ':_subjectid' => $subjectid,
+                    ':_topicid' => $topicid,
+                    ':_testid' => $testid,
+                    ':_count' => $count,
+                    ':_offset' => $offset
+                ),
+                Model::TYPE_FETCHALL
+            );
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+
 
 
 
@@ -415,25 +519,25 @@ class Model_User_Test extends Model {
                     tests.id AS 'Test id',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                     ) AS 'QuestionCount',
                     (
                         SELECT
-                            COUNT(user_testquestions.id)
+                            COUNT(user_TestQuestions.id)
                         FROM
-                            user_testquestions
+                            user_TestQuestions
                         JOIN
-                            testquestions
+                            testQuestions
                         ON
-                            user_testquestions.testQuestion_id = testquestions.id
+                            user_TestQuestions.testQuestion_id = testQuestions.id
                         WHERE
-                            user_testquestions.user_Test_id = user_tests.id
+                            user_TestQuestions.user_Test_id = user_tests.id
                             AND
-                            user_testquestions.userAnswer = testquestions.answer
+                            user_TestQuestions.userAnswer = testQuestions.answer
                     ) AS 'Score'
                 FROM
                     user_tests
@@ -579,7 +683,7 @@ class Model_User_Test extends Model {
         try {
             return $this->query(
                 "INSERT INTO
-                    user_testQuestions
+                    user_TestQuestions
                 (
                     user_Test_id, testQuestion_id, userAnswer
                 )

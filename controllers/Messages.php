@@ -221,6 +221,7 @@ class Messages extends Controller {
             // Sender values.
             if (isset($rec['sender_id'])) { $values['sender_id'] = $rec['sender_id']; }
             if (isset($rec['sender_displayname'])) { $values['sender_displayname'] = $rec['sender_displayname']; }
+            if (isset($rec['sender_isAdmin'])) { $values['sender_isAdmin'] = ($rec['sender_isAdmin'] == '2'); }
             // Receiver values.
             if (isset($rec['receiver_id'])) { $values['receiver_id'] = $rec['receiver_id']; }
             if (isset($rec['receiver_displayname'])) { $values['receiver_displayname'] = $rec['receiver_displayname']; }
@@ -484,7 +485,7 @@ class Messages extends Controller {
         if ($user['privilegeLevel'] != 'Admin') {
             if (!$this->checkUserInGroup($user['id'], $groupid)) {
                 $this->printMessage('Cannot create group message. You are not a member of the group.');
-                http_response_code(400); return;
+                http_response_code(401); return;
             }
         }
 
