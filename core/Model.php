@@ -29,7 +29,8 @@ class Model {
     private function connect() {
         $dsn = 'mysql:host=' . $_ENV['db_host'] . ';dbname=' . $_ENV['db_name'] . ';charset=utf8';
         $options = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '+00:00'"
         ];
         $this->conn = new PDO($dsn, $_ENV['db_user'], $_ENV['db_pass'], $options);
     }
